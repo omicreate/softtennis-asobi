@@ -13,7 +13,7 @@ describe('あそびかた・ルールのページ', () => {
     }
   })
   it('公式ルールにかかわるゲームは、くわしいルールに根拠（PBK）を書いている', () => {
-    for (const id of ['rally', 'pikuru', 'hayatouch', 'target', 'dink'] as const) {
+    for (const id of ['rally', 'pikuru', 'hayatouch', 'target'] as const) {
       expect(HOWTO[id].detail.join(' '), id).toMatch(/PBK-\d{4}/)
     }
   })

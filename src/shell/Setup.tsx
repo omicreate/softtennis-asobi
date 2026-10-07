@@ -8,7 +8,6 @@ import { getSettings, setSettings, useSettings } from '../core/settings'
 import { sfx, unlockAudio } from '../core/sound'
 import { speak } from '../core/speak'
 import { Half, Stage } from '../core/Stage'
-import { PICK_TIMES } from '../games/serveread/serveread'
 import { HowToSheet } from '../ui/HowToSheet'
 import { PaddleIcon, PaddlePicker } from '../ui/PaddleIcon'
 import type { PaddleLook } from '../ui/paddleArt'
@@ -20,17 +19,9 @@ import './setup.css'
 /** 何点先取か（ラリーポイント制） */
 const TARGETS = [5, 7, 11]
 /** パドルを使うゲーム（パドルをえらぶボタンを出す） */
-const PADDLE_GAMES: GameId[] = ['rally', 'dink', 'breakout2', 'air']
+const PADDLE_GAMES: GameId[] = ['rally']
 /** まんなかの帯の ひとこと */
-const MID_NOTE: Partial<Record<GameId, string>> = {
-  dink: 'ふたりで きょうりょく！',
-  breakout2: 'じかんは 90びょう',
-  air: 'さきに 5てん とったら かち',
-  linestop: 'ラインに ちかい ほうが かち',
-  curling: 'ひとり 4きゅう × 3エンド',
-  serveread: '3かい しょうぶ。ラストは 2ばい',
-  sagasu2: 'さきに 3かい みつけたら かち',
-}
+const MID_NOTE: Partial<Record<GameId, string>> = {}
 
 export function Setup({ game }: { game: GameInfo }) {
   const settings = useSettings()
@@ -84,7 +75,7 @@ export function Setup({ game }: { game: GameInfo }) {
   return (
     <Stage>
       {([1, 0] as Side[]).map((side) => (
-        <Half key={side} side={side} className={`setup-half setup-side-${side} ${game.id === 'rally' || game.id === 'serveread' ? 'setup-half-wide' : ''}`}>
+        <Half key={side} side={side} className={`setup-half setup-side-${side} ${game.id === 'rally' ? 'setup-half-wide' : ''}`}>
           <div className="setup-inner">
             <div className="setup-head">
               <span className={`side-chip side-chip-${side}`}>{SIDE_NAME[side]}</span>
@@ -95,16 +86,6 @@ export function Setup({ game }: { game: GameInfo }) {
                 </button>
               )}
             </div>
-            {game.id === 'serveread' ? (
-              <div className="setup-nolevel">
-                <Pikuru face="think" size={56} />
-                <p>
-                  レベルの ちがいは ないよ。
-                  <br />
-                  {settings.srStyle === 'pass' ? 'てわたし：ひとりずつ がめんを みて えらぶよ。あいてには みせないでね。' : 'むかいあう：あいてが えらぶ あいだは めを とじてね。'}
-                </p>
-              </div>
-            ) : (
             <div className="level-grid" role="radiogroup" aria-label="レベル">
               {LEVELS.map((lv) => (
                 <button
@@ -123,7 +104,6 @@ export function Setup({ game }: { game: GameInfo }) {
                 </button>
               ))}
             </div>
-            )}
             <button className={`btn ready-btn ${ready[side] ? 'is-ready' : 'btn-go'}`} aria-pressed={ready[side]} data-testid={`ready-${side}`} onClick={() => toggleReady(side)}>
               {ready[side] ? 'まってるよ…' : 'じゅんび OK！'}
             </button>
@@ -163,31 +143,6 @@ export function Setup({ game }: { game: GameInfo }) {
                 {settings.rallyTarget}てん
               </button>
             </div>
-          </div>
-        ) : game.id === 'serveread' ? (
-          <div className="setup-rows">
-            <div className="seg" role="radiogroup" aria-label="あそびかた">
-              {(['face', 'pass'] as const).map((m) => (
-                <button key={m} role="radio" aria-checked={settings.srStyle === m} onClick={() => setSettings({ srStyle: m })} data-testid={`sr-style-${m}`}>
-                  {m === 'face' ? 'むかいあう' : 'てわたし'}
-                </button>
-              ))}
-            </div>
-            <div className="seg" role="radiogroup" aria-label="えらぶ じかん">
-              {PICK_TIMES.map((t) => (
-                <button key={t} role="radio" aria-checked={settings.srTime === t} onClick={() => setSettings({ srTime: t })}>
-                  {t}びょう
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : game.id === 'tug' ? (
-          <div className="seg" role="radiogroup" aria-label="なんにんずつ">
-            {([false, true] as const).map((t) => (
-              <button key={String(t)} role="radio" aria-checked={settings.tugTeam === t} onClick={() => setSettings({ tugTeam: t })} data-testid={t ? 'tug-team' : 'tug-solo'}>
-                {t ? '2たい2（チーム）' : '1たい1'}
-              </button>
-            ))}
           </div>
         ) : (
           <div className="setup-mid-note">

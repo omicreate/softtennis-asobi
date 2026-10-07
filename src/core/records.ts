@@ -16,16 +16,11 @@ export interface MedalRule {
 }
 
 export const MEDAL_RULES: Partial<Record<GameId, MedalRule>> = {
-  jump: { need: [50, 150, 300] },
   lift: { need: [5, 15, 30] },
-  catch: { need: [10, 20, 30] },
-  breakout: { need: [20, 50, 100] },
   target: { need: [3, 6, 9] },
   /** ピクルくんに かった レベル（1 ちびっこ・2 キッズ・3 おとな・4 せんしゅ） */
   pikuru: { need: [1, 3, 4] },
   reaction: { need: [700, 500, 380], low: true },
-  stop10: { need: [1000, 400, 150], low: true },
-  dink: { need: [3, 8, 15] },
 }
 
 export const MEDAL_GAMES = Object.keys(MEDAL_RULES) as GameId[]
@@ -61,12 +56,7 @@ export function recordText(game: GameId, v: number): string {
       return `${LEVEL_INFO[LEVELS[Math.max(0, Math.min(3, v - 1))]].label}で かった`
     case 'reaction':
       return `${(v / 1000).toFixed(3)}びょう`
-    case 'stop10':
-      return `ずれ ${(v / 1000).toFixed(2)}びょう`
-    case 'jump':
-      return `${v}m`
     case 'lift':
-    case 'dink':
       return `${v}かい`
     case 'target':
       return `${v}きゅう`

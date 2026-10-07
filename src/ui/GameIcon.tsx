@@ -123,47 +123,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <Ball x={60} y={29} r={5} />
     </>
   ),
-  tug: () => (
-    <>
-      <SplitBg />
-      <rect x={36} y={8} width={24} height={80} rx={12} fill={C.court} />
-      <line x1={48} y1={10} x2={48} y2={86} stroke="#c8a26a" strokeWidth={3} strokeDasharray="4 3" />
-      <rect x={34} y={10} width={28} height={3} rx={1.5} fill={C.blue} />
-      <rect x={34} y={83} width={28} height={3} rx={1.5} fill={C.orange} />
-      <Ball x={48} y={46} r={9} />
-      <path d="M41 69 L48 62 L55 69 M41 77 L48 70 L55 77" fill="none" stroke={C.orange} strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
-      <Tap x={18} y={76} color={C.orange} />
-      <Tap x={80} y={64} color={C.orange} />
-      <Tap x={76} y={20} color={C.blue} />
-    </>
-  ),
-  air: () => (
-    <>
-      <Bg fill={C.navy} />
-      <rect x={8} y={10} width={80} height={76} rx={10} fill={C.court} stroke={C.line} strokeWidth={1.6} />
-      <rect x={8} y={36} width={80} height={24} fill={C.kitchen} />
-      <rect x={34} y={7} width={28} height={5} rx={2} fill={C.blue} />
-      <rect x={34} y={84} width={28} height={5} rx={2} fill={C.orange} />
-      <circle cx={48} cy={48} r={11} fill="none" stroke={C.line} strokeWidth={1.4} />
-      <Paddle x={36} y={66} len={16} color={C.orange} />
-      <Paddle x={60} y={28} len={14} deg={180} color={C.blue} />
-      <path d="M38 50 L30 54 M40 46 L31 47" stroke="#fff" strokeWidth={2} strokeLinecap="round" opacity={0.8} />
-      <Ball x={50} y={44} r={6} />
-    </>
-  ),
-  dink: () => (
-    <>
-      <Bg fill={C.paper} />
-      <rect x={6} y={76} width={84} height={12} rx={3} fill={C.court} />
-      <rect x={30} y={76} width={36} height={12} fill={C.kitchen} />
-      <rect x={46} y={56} width={4} height={22} fill={C.ink} />
-      <rect x={44} y={54} width={8} height={4} rx={1.5} fill="#fff" stroke={C.ink} strokeWidth={1.2} />
-      <Trail d="M20 66 Q44 26 60 74" color={C.body} />
-      <Paddle x={16} y={64} len={14} deg={-35} color={C.orange} />
-      <Ball x={54} y={50} r={6} />
-      <path d="M62 34 q4 -4 8 0 q4 4 8 0" fill="none" stroke={C.blue} strokeWidth={2.4} strokeLinecap="round" />
-    </>
-  ),
   hayatouch: () => (
     <>
       <Bg fill={C.paper} />
@@ -188,35 +147,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <rect x={62} y={74} width={22} height={12} rx={6} fill={C.blue} stroke={C.dark} strokeWidth={1.6} />
     </>
   ),
-  breakout2: () => (
-    <>
-      <Bg fill={C.court} />
-      {[0, 1].map((row) =>
-        [0, 1, 2, 3, 4].map((i) => {
-          const pickle = (row === 0 && i === 3) || (row === 1 && i === 1)
-          return <rect key={`${row}-${i}`} x={9 + i * 16} y={40 + row * 10} width={14} height={8} rx={3} fill={pickle ? C.body : C.paper} stroke={C.dark} strokeWidth={1} />
-        }),
-      )}
-      <Paddle x={46} y={83} len={15} deg={90} color={C.orange} />
-      <Paddle x={50} y={13} len={15} deg={-90} color={C.blue} />
-      <Ball x={30} y={70} r={4.5} ring={C.orange} />
-      <Ball x={66} y={26} r={4.5} ring={C.blue} />
-    </>
-  ),
-  jump: () => (
-    <>
-      <Bg fill={C.p1tint} />
-      <rect x={0} y={74} width={96} height={22} fill={C.court} />
-      <rect x={0} y={72} width={96} height={4} fill={C.kitchen} />
-      <Trail d="M14 70 Q34 8 56 70" color={C.dark} />
-      <MiniPikuru x={34} y={36} h={26} tilt={-8} />
-      <Ball x={72} y={66} r={6} />
-      <path d="M82 62 h8 M82 68 h6" stroke={C.dark} strokeWidth={2} strokeLinecap="round" />
-      {[0, 1, 2].map((i) => (
-        <circle key={i} cx={12 + i * 9} cy={12} r={3.4} fill={C.ball} stroke={C.dark} strokeWidth={1.3} />
-      ))}
-    </>
-  ),
   lift: () => (
     <>
       <Bg fill={C.court} />
@@ -224,35 +154,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <Paddle x={46} y={50} len={36} color={C.orange} />
       <Ball x={56} y={20} r={8} />
       <path d="M72 30 l4 -6 l4 6 M72 40 l4 -6 l4 6" fill="none" stroke={C.ball} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  ),
-  catch: () => (
-    <>
-      <Bg fill="#dff0fb" />
-      <rect x={0} y={84} width={96} height={12} fill={C.court} />
-      <Ball x={42} y={30} r={9} />
-      <circle cx={74} cy={18} r={8} fill="#dfe94a" stroke="#9aa52a" strokeWidth={1.4} />
-      <path d="M67 14 q7 4 0 10 M81 12 q-7 6 0 12" fill="none" stroke="#fff" strokeWidth={1.8} />
-      <path d="M22 60 H70 L64 84 H28 Z" fill="rgba(255,255,255,0.6)" stroke={C.ink} strokeWidth={2.2} strokeLinejoin="round" />
-      {[32, 40, 48, 56, 64].map((x) => (
-        <line key={x} x1={x - 1} y1={60} x2={x - 1 + (48 - x) * 0.12} y2={84} stroke={C.ink} strokeWidth={1} />
-      ))}
-      <line x1={24} y1={70} x2={68} y2={70} stroke={C.ink} strokeWidth={1} />
-      <path d="M42 44 v8 M38 49 l4 4 l4 -4" fill="none" stroke={C.body} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  ),
-  breakout: () => (
-    <>
-      <Bg fill={C.court} />
-      {[0, 1, 2].map((row) =>
-        [0, 1, 2, 3, 4].map((i) => {
-          const pickle = (row === 0 && i === 2) || (row === 2 && i === 4) || (row === 1 && i === 0)
-          return <rect key={`${row}-${i}`} x={9 + i * 16} y={12 + row * 10} width={14} height={8} rx={3} fill={pickle ? C.body : C.paper} stroke={C.dark} strokeWidth={1} />
-        }),
-      )}
-      <Trail d="M46 76 L62 46" />
-      <Ball x={64} y={44} r={5} />
-      <Paddle x={46} y={83} len={16} deg={90} color={C.orange} />
     </>
   ),
   target: () => (
@@ -279,51 +180,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <Ball x={57} y={38} r={5} />
     </>
   ),
-  linestop: () => (
-    <>
-      <Bg fill={C.court} />
-      <rect x={0} y={56} width={96} height={40} fill={C.navy} />
-      <rect x={0} y={52} width={96} height={7} fill={C.line} />
-      <circle cx={42} cy={48} r={20} fill="rgba(255,255,255,0.12)" stroke={C.ink} strokeWidth={4} />
-      <line x1={56} y1={62} x2={72} y2={80} stroke={C.ink} strokeWidth={6} strokeLinecap="round" />
-      <Ball x={42} y={47} r={8} />
-      <circle cx={42} cy={51.5} r={2.2} fill="#ff3b3b" />
-      <path d="M20 18 v12 M14 24 l6 6 l6 -6" fill="none" stroke={C.ball} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  ),
-  curling: () => (
-    <>
-      <Bg fill={C.kitchen} />
-      <circle cx={48} cy={42} r={28} fill={C.ball} stroke={C.dark} strokeWidth={2} />
-      <circle cx={48} cy={42} r={18} fill="#fff" stroke={C.dark} strokeWidth={1.4} />
-      <circle cx={48} cy={42} r={8} fill={C.orange} stroke={C.dark} strokeWidth={1.4} />
-      <Ball x={58} y={36} r={5} ring={C.blue} />
-      <path d="M34 80 L20 90 M40 82 L30 92" stroke="rgba(255,255,255,0.7)" strokeWidth={2.4} strokeLinecap="round" />
-      <Ball x={42} y={76} r={5} ring={C.orange} />
-    </>
-  ),
-  serveread: () => (
-    <>
-      <SplitBg />
-      {[
-        [8, '3'],
-        [37, '2'],
-        [66, '1'],
-      ].map(([x, n]) => (
-        <g key={n}>
-          <rect x={Number(x)} y={40} width={22} height={30} rx={5} fill="#fff" stroke={C.dark} strokeWidth={2} />
-          <text x={Number(x) + 11} y={62} textAnchor="middle" fontSize={17} fontWeight={900} fill={C.orange} fontFamily="'Zen Maru Gothic', sans-serif">
-            {n}
-          </text>
-        </g>
-      ))}
-      <path d="M30 10 H66 A6 6 0 0 1 72 16 V28 A6 6 0 0 1 66 34 H52 L46 39 L44 34 H30 A6 6 0 0 1 24 28 V16 A6 6 0 0 1 30 10 Z" fill="#fff" stroke={C.dark} strokeWidth={2} />
-      <text x={48} y={30} textAnchor="middle" fontSize={18} fontWeight={900} fill={C.dark} fontFamily="'Zen Maru Gothic', sans-serif">
-        ？
-      </text>
-      <path d="M32 82 q4 4 8 0 M56 82 q4 4 8 0" fill="none" stroke={C.ink} strokeWidth={2.4} strokeLinecap="round" />
-    </>
-  ),
   reaction: () => (
     <>
       <Bg fill={C.paper} />
@@ -331,19 +187,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <path d="M8 34 h14 M4 44 h16 M10 54 h12" stroke={C.dark} strokeWidth={2.4} strokeLinecap="round" />
       <Ball x={30} y={44} r={8} />
       <Tap x={76} y={76} color={C.blue} />
-    </>
-  ),
-  stop10: () => (
-    <>
-      <Bg fill={C.p1tint} />
-      <Trail d="M10 84 Q48 -8 86 84" color={C.dark} />
-      <Ball x={18} y={56} r={5} />
-      <rect x={44} y={22} width={8} height={7} rx={2} fill={C.ink} />
-      <circle cx={48} cy={56} r={26} fill="#fff" stroke={C.ink} strokeWidth={3.4} />
-      <text x={48} y={66} textAnchor="middle" fontSize={26} fontWeight={900} fill={C.ink} fontFamily="'Zen Maru Gothic', sans-serif">
-        10
-      </text>
-      <path d="M48 34 v4" stroke={C.ink} strokeWidth={3} strokeLinecap="round" />
     </>
   ),
   nise: () => (
@@ -365,29 +208,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       </text>
     </>
   ),
-  gesture: () => (
-    <>
-      <Bg fill={C.p0tint} />
-      {/* りょうてを ひろげて まねっこ（パドルは もたない）。うでは からだの よこから */}
-      <g stroke={C.dark} strokeWidth={4} strokeLinecap="round" fill="none">
-        <path d="M26 66 Q18 60 13 47" />
-        <path d="M52 66 Q60 60 64 47" />
-      </g>
-      <circle cx={13} cy={45} r={4.2} fill={C.body} stroke={C.dark} strokeWidth={2} />
-      <circle cx={64} cy={45} r={4.2} fill={C.body} stroke={C.dark} strokeWidth={2} />
-      <path d="M5 38 q3 -6 9 -8 M70 30 q6 2 8 8" fill="none" stroke={C.orange} strokeWidth={2.6} strokeLinecap="round" />
-      <MiniPikuru x={39} y={68} h={40} />
-      {/* こえは ださない（「…」の ふきだし） */}
-      <path d="M24 10 H50 A5 5 0 0 1 55 15 V25 A5 5 0 0 1 50 30 H42 L38 35 L36 30 H24 A5 5 0 0 1 19 25 V15 A5 5 0 0 1 24 10 Z" fill="#fff" stroke={C.dark} strokeWidth={2} />
-      {[30, 37, 44].map((x) => (
-        <circle key={x} cx={x} cy={20} r={2.4} fill={C.dark} />
-      ))}
-      <path d="M68 52 H86 A5 5 0 0 1 91 57 V69 A5 5 0 0 1 86 74 H80 L74 80 L74 74 H68 A5 5 0 0 1 63 69 V57 A5 5 0 0 1 68 52 Z" fill="#fff" stroke={C.dark} strokeWidth={2} />
-      <text x={77} y={69} textAnchor="middle" fontSize={14} fontWeight={900} fill={C.orange} fontFamily="'Zen Maru Gothic', sans-serif">
-        ！？
-      </text>
-    </>
-  ),
   ishin: () => (
     <>
       <Bg fill="#ffe3ef" />
@@ -402,32 +222,6 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <path d="M48 52 c-3 -5 -10 -3 -8 3 c1 3 8 8 8 8 c0 0 7 -5 8 -8 c2 -6 -5 -8 -8 -3 Z" fill="#ff6fae" stroke="#c2185b" strokeWidth={1.4} />
       <MiniPikuru x={26} y={70} h={34} tilt={6} />
       <MiniPikuru x={70} y={70} h={34} tilt={-6} />
-    </>
-  ),
-  sagasu: () => (
-    <>
-      <Bg fill="#cfe8a9" />
-      <MiniPikuru x={18} y={30} h={22} tilt={-8} />
-      <MiniPikuru x={78} y={26} h={22} tilt={8} />
-      <MiniPikuru x={26} y={74} h={22} tilt={4} />
-      <MiniPikuru x={74} y={76} h={22} tilt={-4} />
-      {/* むしめがね */}
-      <circle cx={46} cy={46} r={20} fill="rgba(255,255,255,0.55)" stroke={C.ink} strokeWidth={4} />
-      <MiniPikuru x={46} y={47} h={22} />
-      <path d="M60 60 L80 80" stroke={C.ink} strokeWidth={7} strokeLinecap="round" />
-    </>
-  ),
-  sagasu2: () => (
-    <>
-      <SplitBg />
-      <MiniPikuru x={22} y={24} h={18} tilt={180} />
-      <MiniPikuru x={72} y={22} h={18} tilt={172} />
-      <MiniPikuru x={24} y={74} h={18} />
-      <MiniPikuru x={74} y={72} h={18} tilt={6} />
-      <circle cx={48} cy={48} r={14} fill="rgba(255,255,255,0.6)" stroke={C.ink} strokeWidth={3.4} />
-      <MiniPikuru x={48} y={49} h={15} />
-      <Tap x={74} y={72} color={C.orange} />
-      <Tap x={72} y={22} color={C.blue} />
     </>
   ),
 }

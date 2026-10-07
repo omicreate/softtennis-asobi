@@ -60,7 +60,7 @@ describe('きょうの ミッション', () => {
       for (let i = 0; i < def.need + 1; i++) {
         if (def.kind === 'party') recordPlay({ type: 'party' }, DAY)
         else if (def.kind === 'two') recordPlay({ type: 'finish', game: 'rally', two: true }, DAY)
-        else recordPlay({ type: 'finish', game: def.game ?? 'jump', value: def.need, two: false }, DAY)
+        else recordPlay({ type: 'finish', game: def.game ?? 'lift', value: def.need, two: false }, DAY)
       }
     }
     const p = getProgress()
@@ -69,12 +69,12 @@ describe('きょうの ミッション', () => {
     expect(p.stars).toBe(before + 3 + BONUS_STARS)
     expect(p.cleared).toBe(3)
     // もう一度遊んでも増えない
-    recordPlay({ type: 'finish', game: 'jump', value: 999, two: false }, DAY)
+    recordPlay({ type: 'finish', game: 'lift', value: 999, two: false }, DAY)
     expect(getProgress().stars).toBe(before + 3 + BONUS_STARS)
   })
 
   it('日付が変わると、新しいミッションになる', () => {
-    recordPlay({ type: 'finish', game: 'jump', value: 999, two: false }, DAY)
+    recordPlay({ type: 'finish', game: 'lift', value: 999, two: false }, DAY)
     const next = '2026-10-08'
     const t = todayMissions(getProgress(), next)
     expect(t.state.day).toBe(next)
@@ -84,16 +84,16 @@ describe('きょうの ミッション', () => {
 
 describe('スタンプと ごほうび', () => {
   it('はじめた日にスタンプ（同じ日は1つ）と回数', () => {
-    recordStart('jump', DAY)
-    recordStart('jump', DAY)
+    recordStart('lift', DAY)
+    recordStart('lift', DAY)
     recordStart('rally', DAY)
     const p = getProgress()
     expect(p.days).toEqual([DAY])
-    expect(p.plays).toEqual({ jump: 2, rally: 1 })
+    expect(p.plays).toEqual({ lift: 2, rally: 1 })
   })
 
   it('スタンプ7こで きんいろパドルが もらえる', () => {
-    for (let d = 1; d <= 7; d++) recordStart('jump', `2026-10-${String(d).padStart(2, '0')}`)
+    for (let d = 1; d <= 7; d++) recordStart('lift', `2026-10-${String(d).padStart(2, '0')}`)
     expect(getProgress().owned).toContain('design:gold')
   })
 
@@ -141,23 +141,23 @@ describe('じこベストと メダル', () => {
   })
 
   it('記録で メダルが決まる（反応の時間は 小さいほど良い）', () => {
-    expect(medalFor('jump', 10)).toBe(0)
-    expect(medalFor('jump', 50)).toBe(1)
-    expect(medalFor('jump', 999)).toBe(3)
+    expect(medalFor('lift', 3)).toBe(0)
+    expect(medalFor('lift', 5)).toBe(1)
+    expect(medalFor('lift', 999)).toBe(3)
     expect(medalFor('reaction', 900)).toBe(0)
     expect(medalFor('reaction', 450)).toBe(2)
     expect(isBetter('reaction', 400, 500)).toBe(true)
-    expect(isBetter('jump', 40, 50)).toBe(false)
-    expect(nextGoal('jump', 60)).toEqual({ medal: 2, need: 150 })
-    expect(nextGoal('jump', 400)).toBeNull()
+    expect(isBetter('lift', 4, 5)).toBe(false)
+    expect(nextGoal('lift', 6)).toEqual({ medal: 2, need: 15 })
+    expect(nextGoal('lift', 40)).toBeNull()
     expect(recordText('pikuru', pikuruValue('otona'))).toBe('おとなで かった')
   })
 
   it('ひとりで遊んだ記録だけ じこベストに。メダルを とると ほし（きんは2こ）。とびこえたメダルの分も もらえる', () => {
     const before = getProgress().stars
     // じゅんばんモードなど record が無い記録は数えない
-    recordPlay({ type: 'finish', game: 'jump', value: 500, two: false }, DAY)
-    expect(getProgress().best.jump).toBeUndefined()
+    recordPlay({ type: 'finish', game: 'target', value: 9, two: false }, DAY)
+    expect(getProgress().best.target).toBeUndefined()
     const got = recordPlay({ type: 'finish', game: 'lift', value: 16, two: false, record: true }, DAY)
     expect(getProgress().best.lift).toBe(16)
     expect(getProgress().medals.lift).toBe(2)
@@ -174,13 +174,15 @@ describe('じこベストと メダル', () => {
   })
 
   it('メダルを 9こ あつめると チャンピオンの パドル', () => {
-    for (const g of ['lift', 'catch', 'target'] as const) recordPlay({ type: 'finish', game: g, value: 999, two: false, record: true }, DAY)
+    recordPlay({ type: 'finish', game: 'lift', value: 999, two: false, record: true }, DAY)
+    recordPlay({ type: 'finish', game: 'target', value: 999, two: false, record: true }, DAY)
+    recordPlay({ type: 'finish', game: 'reaction', value: 100, two: false, record: true }, DAY)
     expect(getProgress().owned).toContain('design:champion')
   })
 
   it('さいきん はじめたゲームは 新しい順に3つ（じゅんばんモードは入れない）', () => {
-    for (const g of ['jump', 'lift', 'catch', 'jump', 'rally'] as const) recordStart(g, DAY)
+    for (const g of ['lift', 'target', 'reaction', 'lift', 'rally'] as const) recordStart(g, DAY)
     recordStart('party', DAY)
-    expect(getProgress().recent).toEqual(['rally', 'jump', 'catch'])
+    expect(getProgress().recent).toEqual(['rally', 'lift', 'reaction'])
   })
 })

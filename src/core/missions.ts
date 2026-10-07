@@ -20,38 +20,22 @@ export interface MissionDef {
 
 export const EASY: MissionDef[] = [
   { id: 'any-3', text: 'ゲームを 3かい あそぼう', kind: 'any', need: 3 },
-  { id: 'play-jump', text: 'ピクルくん ジャンプで あそぼう', kind: 'play', need: 1, game: 'jump' },
   { id: 'play-lift', text: 'ポンポン リフティングで あそぼう', kind: 'play', need: 1, game: 'lift' },
-  { id: 'play-catch', text: 'ボールキャッチで あそぼう', kind: 'play', need: 1, game: 'catch' },
-  { id: 'play-breakout', text: 'ピクルくずしで あそぼう', kind: 'play', need: 1, game: 'breakout' },
   { id: 'play-target', text: 'ねらってショットで あそぼう', kind: 'play', need: 1, game: 'target' },
   { id: 'play-pikuru', text: 'ピクルくんと ラリーで あそぼう', kind: 'play', need: 1, game: 'pikuru' },
   { id: 'play-reaction', text: 'リアクション ボレーで あそぼう', kind: 'play', need: 1, game: 'reaction' },
-  { id: 'play-stop10', text: 'ピタッと 10びょうで あそぼう', kind: 'play', need: 1, game: 'stop10' },
-  { id: 'play-sagasu', text: 'ピクルくん さがしで あそぼう', kind: 'play', need: 1, game: 'sagasu' },
 ]
 
 export const RECORD: MissionDef[] = [
-  { id: 'jump-50', text: 'ジャンプで 50メートル はしろう', kind: 'value', need: 50, game: 'jump' },
   { id: 'lift-10', text: 'リフティングを 10かい つづけよう', kind: 'value', need: 10, game: 'lift' },
-  { id: 'catch-15', text: 'ボールキャッチで 15てん とろう', kind: 'value', need: 15, game: 'catch' },
-  { id: 'breakout-20', text: 'ピクルくずしで 20てん とろう', kind: 'value', need: 20, game: 'breakout' },
   { id: 'target-3', text: 'ねらってショットで 3こ いれよう', kind: 'value', need: 3, game: 'target' },
 ]
 
 export const TOGETHER: MissionDef[] = [
   { id: 'two-1', text: 'ふたりで あそぶ ゲームを 1かい あそぼう', kind: 'two', need: 1 },
-  { id: 'dink-5', text: 'ディンクで 5かい つなごう', kind: 'value', need: 5, game: 'dink' },
-  { id: 'tug-1', text: 'れんだ つなひきで しょうぶしよう', kind: 'play', need: 1, game: 'tug' },
-  { id: 'air-1', text: 'エアピックルで しょうぶしよう', kind: 'play', need: 1, game: 'air' },
   { id: 'quiz-1', text: 'ピクルくんクイズで あそぼう', kind: 'play', need: 1, game: 'quiz' },
   { id: 'rally-1', text: 'ラリーたいけつで しょうぶしよう', kind: 'play', need: 1, game: 'rally' },
   { id: 'party-1', text: 'じゅんばんモードで あそぼう', kind: 'party', need: 1 },
-  { id: 'linestop-1', text: 'ラインぎわ ストップで しょうぶしよう', kind: 'play', need: 1, game: 'linestop' },
-  { id: 'curling-1', text: 'キッチン カーリングで しょうぶしよう', kind: 'play', need: 1, game: 'curling' },
-  { id: 'serveread-1', text: 'よみあい サーブで しょうぶしよう', kind: 'play', need: 1, game: 'serveread' },
-  { id: 'gesture-1', text: 'ジェスチャー ピックルで あそぼう', kind: 'play', need: 1, game: 'gesture' },
-  { id: 'sagasu2-1', text: 'ピクルくん さがし たいせんで しょうぶしよう', kind: 'play', need: 1, game: 'sagasu2' },
   { id: 'ishin-1', text: 'いしんでんしん ダブルスで あそぼう', kind: 'play', need: 1, game: 'ishin' },
 ]
 

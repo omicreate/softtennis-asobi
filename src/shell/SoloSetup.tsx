@@ -22,7 +22,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
   const [help, setHelp] = useState(false)
   const [picker, setPicker] = useState(false)
   // 自分のパドルが画面に出るゲームだけ（ジャンプ・キャッチ・リアクション・ピタッと では出さない）
-  const usesPaddle = (['lift', 'breakout', 'target', 'pikuru'] as string[]).includes(game.id)
+  const usesPaddle = (['lift', 'target', 'pikuru'] as string[]).includes(game.id)
 
   useEffect(() => {
     speak(game.howto)
@@ -69,18 +69,6 @@ export function SoloSetup({ game }: { game: GameInfo }) {
           </button>
         ))}
       </div>
-
-      {game.id === 'sagasu' && (
-        <div className="solo-options">
-          <div className="seg" role="radiogroup" aria-label="あそびかた">
-            {(['wally', 'diff'] as const).map((m) => (
-              <button key={m} role="radio" aria-checked={settings.sagasuMode === m} onClick={() => setSettings({ sagasuMode: m })} data-testid={`sagasu-mode-${m}`}>
-                {m === 'wally' ? 'さがせ！ピクルくん' : 'まちがいさがし'}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {game.id === 'pikuru' && (
         <div className="solo-options">
