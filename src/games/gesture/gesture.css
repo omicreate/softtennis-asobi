@@ -1,0 +1,144 @@
+/* ジェスチャー ピックル（party.css・nise.css を土台にする） */
+.gesture-safe {
+  background: #fff1e0;
+  border: 2px solid var(--orange);
+  border-radius: var(--r-md);
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 900;
+}
+.gesture-num {
+  font-size: 120px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--pk-line);
+  animation: pop-in 0.4s var(--ease) infinite alternate;
+}
+
+/* やっているところ：画面いっぱいのお題と、大きな「あたり」 */
+.gesture-act {
+  position: relative;
+  flex: 1;
+  min-height: calc(100dvh - 90px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 5px solid var(--pk-line);
+  border-radius: var(--r-lg);
+  padding: 12px;
+}
+.gesture-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gesture-timer {
+  position: relative;
+  flex: 1;
+  height: 30px;
+  background: var(--surface);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.gesture-timer i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--pk-body);
+  transition: width 0.2s linear;
+}
+.gesture-timer i[data-low] {
+  background: var(--orange);
+}
+.gesture-timer span {
+  position: relative;
+  display: block;
+  text-align: center;
+  line-height: 30px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.gesture-got {
+  font-weight: 900;
+  white-space: nowrap;
+}
+.gesture-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  animation: pop-in 0.25s var(--ease);
+}
+.gesture-say {
+  font-size: clamp(36px, 11vw, 64px);
+  font-weight: 900;
+  line-height: 1.2;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.gesture-how {
+  font-size: 17px;
+  color: var(--mute);
+  max-width: 20em;
+}
+.gesture-buttons {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+.gesture-hit {
+  min-height: 96px;
+  font-size: 30px;
+}
+.gesture-pass {
+  min-height: 96px;
+  font-size: 20px;
+}
+.gesture-pause {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  transform: translate(0, -100%);
+}
+.gesture-paused {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 246, 227, 0.92);
+  border-radius: var(--r-lg);
+  font-size: 22px;
+  font-weight: 900;
+}
+.gesture[data-phase] {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
+}
+
+.gesture-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.gesture-list li {
+  background: var(--surface);
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
+  font-size: 15px;
+  color: var(--mute);
+}
+.gesture-list li[data-got] {
+  background: #eef9d0;
+  color: var(--ink, #12302b);
+  font-weight: 900;
+}
+.gesture-list li span {
+  margin-right: 4px;
+}

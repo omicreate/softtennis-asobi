@@ -1,0 +1,106 @@
+/* きねんカードの共有と、おうちの人の確認 */
+.share-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(18, 48, 43, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
+}
+.share-backdrop-fixed {
+  position: fixed;
+}
+.share-sheet {
+  width: min(460px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 3px solid var(--pk-line);
+  padding: 16px;
+  box-shadow: 0 8px 0 rgba(18, 48, 43, 0.25);
+  animation: pop-in 0.2s var(--ease);
+  text-align: center;
+}
+.share-sheet[data-flipped] {
+  transform: rotate(180deg);
+}
+.share-title {
+  font-size: 22px;
+  font-weight: 900;
+}
+.share-img {
+  width: 100%;
+  max-width: 340px;
+  align-self: center;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  /* 画像の長押しで保存できるように */
+  -webkit-touch-callout: default;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+.share-note,
+.share-wait {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mute);
+}
+.share-wait {
+  font-size: 16px;
+  padding: 24px 0;
+}
+.share-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+.gate-title {
+  font-size: 20px;
+  font-weight: 900;
+}
+.gate-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+.gate-q {
+  font-size: 40px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.gate-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.gate-choices .btn {
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+}
+.gate-wrong {
+  color: var(--ng);
+  font-size: 14px;
+}
+
+/* 保存のしかた（端末ごと） */
+.share-hint {
+  font-weight: 700;
+  color: var(--ink, #12302b);
+  background: #fff;
+  border-radius: var(--r-md);
+  padding: 8px 10px;
+}

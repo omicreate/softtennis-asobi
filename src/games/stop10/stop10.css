@@ -1,0 +1,46 @@
+.s10-clock {
+  margin-top: calc(env(safe-area-inset-top, 0px) + 72px);
+  font-size: clamp(56px, 18vw, 96px);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+}
+.s10-clock small {
+  font-size: 20px;
+  margin-left: 4px;
+}
+.s10-clock[data-hidden] {
+  color: var(--mute);
+}
+.s10-sky {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  pointer-events: none;
+}
+.s10-ball {
+  position: absolute;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 34%, #2e5a1c 0 7%, transparent 8%),
+    radial-gradient(circle at 66% 32%, #2e5a1c 0 7%, transparent 8%),
+    radial-gradient(circle at 52% 70%, #2e5a1c 0 7%, transparent 8%),
+    #d4f03c;
+  border: 3px solid #2e5a1c;
+}
+.s10-pikuru {
+  pointer-events: none;
+}
+.s10-msg {
+  min-height: 28px;
+  margin: 8px 0;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: center;
+  pointer-events: none;
+}

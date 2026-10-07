@@ -1,0 +1,117 @@
+/* 開発用：説明動画の1コマ（1080×1920） */
+.guide {
+  width: 1080px;
+  height: 1920px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #fff6e3 0%, #ffe7b8 70%);
+  color: #12302b;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.guide-in {
+  position: absolute;
+  inset: 0;
+}
+.guide-top {
+  position: absolute;
+  top: 90px;
+  left: 50px;
+  right: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+.guide-chip {
+  background: #2e5a1c;
+  color: #fff;
+  font-size: 40px;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 8px 34px;
+}
+.guide-title {
+  margin: 0;
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1.3;
+  white-space: pre-line;
+}
+.guide-sub {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 700;
+  color: #4f6a5f;
+  white-space: pre-line;
+  line-height: 1.4;
+}
+.guide-phone {
+  position: absolute;
+  top: 540px;
+  left: 50%;
+  width: 560px;
+  transform: translateX(-50%);
+}
+.guide-pikuru {
+  position: absolute;
+  left: 18px;
+  bottom: 120px;
+}
+.guide-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 70px;
+  margin: 0;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #4f6a5f;
+}
+.guide-brand {
+  position: absolute;
+  right: 40px;
+  bottom: 24px;
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  color: #2e5a1c;
+  opacity: 0.7;
+}
+.guide-end {
+  position: absolute;
+  inset: 120px 60px 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+.guide-title-big {
+  font-size: 92px;
+}
+.guide-sub-big {
+  font-size: 46px;
+  color: #12302b;
+}
+
+/* 動きは時刻から（CSS のアニメーションは止める） */
+.guide .ia-hi {
+  animation: none;
+  outline-color: rgba(255, 61, 127, var(--hi-o));
+}
+.guide .ia-tap {
+  animation: none;
+  transform: scale(var(--tap-s));
+  opacity: var(--tap-o);
+}
+.guide .ia-sheet,
+.guide .ia-menu,
+.guide .ia-dialog {
+  animation: none;
+  transform: translateY(calc((1 - var(--up)) * 1.5em));
+  opacity: var(--up);
+}

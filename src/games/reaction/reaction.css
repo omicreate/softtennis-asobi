@@ -1,0 +1,103 @@
+.rx,
+.s10 {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle at 50% 45%, #fff6e3 0, #ffe7b8 60%);
+}
+.rx-hud,
+.s10-hud {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 6px);
+  left: 12px;
+  right: 120px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  pointer-events: none;
+}
+.rx-count {
+  font-size: 22px;
+}
+.rx-machine {
+  margin-top: calc(env(safe-area-inset-top, 0px) + 84px);
+  background: #6bb33f;
+  border: 4px solid #2e5a1c;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 900;
+  padding: 6px 18px;
+  pointer-events: none;
+}
+.rx-center {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  pointer-events: none;
+}
+.rx-msg {
+  font-size: 22px;
+  font-weight: 900;
+}
+.rx-dim {
+  color: var(--mute);
+}
+.rx-ball {
+  width: min(46vw, 200px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 34%, #2e5a1c 0 6%, transparent 7%),
+    radial-gradient(circle at 66% 32%, #2e5a1c 0 6%, transparent 7%),
+    radial-gradient(circle at 52% 70%, #2e5a1c 0 6%, transparent 7%),
+    #d4f03c;
+  border: 8px solid #2e5a1c;
+}
+.rx-fake {
+  background:
+    radial-gradient(circle at 34% 34%, #8a3a00 0 6%, transparent 7%),
+    radial-gradient(circle at 66% 32%, #8a3a00 0 6%, transparent 7%),
+    radial-gradient(circle at 52% 70%, #8a3a00 0 6%, transparent 7%),
+    #ff8a3d;
+  border-color: #8a3a00;
+}
+.rx-last {
+  font-size: 44px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.rx-last[data-kind='foul'],
+.rx-last[data-kind='slow'] {
+  color: var(--ng);
+}
+.rx-list {
+  list-style: none;
+  margin: 0 0 calc(env(safe-area-inset-bottom, 0px) + 16px);
+  padding: 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  pointer-events: none;
+}
+.rx-list li {
+  min-width: 72px;
+  text-align: center;
+  background: var(--surface-2);
+  border-radius: var(--r-pill);
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.rx-list li[data-kind='bad'] {
+  color: var(--ng);
+}

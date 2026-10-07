@@ -1,0 +1,408 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.5;
+  /* 分かち書き（スペース区切り）のまとまりで折り返す。入りきらないときだけ途中で折る */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  /* 長押しのメニューや文字の選択を出さない（小さい子がよく長押しする） */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+:focus-visible {
+  outline: 4px solid var(--p1);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- ボタン ---------- */
+.btn {
+  min-height: var(--tap);
+  padding: 12px 24px;
+  border-radius: var(--r-lg);
+  font-weight: 900;
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--surface-2);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  transition: transform 0.1s var(--ease);
+  text-decoration: none;
+}
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.btn-go {
+  background: var(--lime);
+  border: 3px solid var(--pk-line);
+}
+.btn-quiet {
+  background: transparent;
+  box-shadow: none;
+  color: var(--mute);
+}
+.btn-small {
+  min-height: 48px;
+  font-size: 16px;
+  padding: 8px 16px;
+}
+
+/* ---------- 舞台（向かい合って遊ぶ画面） ---------- */
+.stage {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  overflow: hidden;
+  background: var(--bg);
+  touch-action: none;
+}
+.half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+}
+.half-top {
+  top: 0;
+  transform: rotate(180deg);
+}
+.half-bottom {
+  bottom: 0;
+}
+
+/* 舞台のまんなか右の小さなボタン（あそびかた・メニュー） */
+.game-buttons {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 30;
+}
+.game-buttons-corner {
+  top: calc(env(safe-area-inset-top, 0px) + 6px);
+  transform: none;
+}
+.mid-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  z-index: 30;
+}
+
+/* ---------- 知らせ（両方の向きに出す） ---------- */
+.notice {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 20;
+}
+.notice-card {
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  border: 4px solid var(--pk-line);
+  padding: 10px 22px;
+  text-align: center;
+  box-shadow: 0 6px 0 rgba(18, 48, 43, 0.25);
+  animation: pop-in 0.28s var(--ease);
+  max-width: 88%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.notice-card img,
+.notice-card .pikuru-cut {
+  flex: none;
+  margin: -14px 0 -6px;
+}
+.notice-title {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.notice-sub {
+  font-size: 15px;
+  color: var(--mute);
+}
+.notice-big {
+  font-size: 96px;
+  font-weight: 900;
+  color: var(--ink);
+  text-shadow: 0 4px 0 var(--surface-2);
+  animation: pop-in 0.3s var(--ease);
+}
+@keyframes pop-in {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ---------- 点数 ---------- */
+.score-pill {
+  position: absolute;
+  left: 10px;
+  /* 自分の手元の角に出す（舞台のまんなかはネットとキッチンなので空ける） */
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  min-width: 64px;
+  height: 64px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  color: #fff;
+  font-size: 40px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  font-variant-numeric: tabular-nums;
+  z-index: 10;
+}
+.score-pill[data-side='0'] {
+  background: var(--p0);
+}
+.score-pill[data-side='1'] {
+  background: var(--p1);
+}
+
+/* ---------- 結果 ---------- */
+.result {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  z-index: 25;
+  text-align: center;
+}
+.result img,
+.result .pikuru-cut {
+  flex: none;
+}
+.result-title {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.result-sub {
+  font-size: 17px;
+  color: var(--mute);
+}
+.result-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* ---------- メニュー ---------- */
+.menu-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 48, 43, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 40;
+}
+.menu-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+  width: min(320px, 86%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ひとりで遊ぶときの結果（画面いっぱい・向きを回さない） */
+.result-single {
+  background: rgba(255, 231, 184, 0.94);
+}
+
+.mid-btn-help {
+  font-weight: 900;
+  font-size: 24px;
+  background: var(--lime);
+  border: 2px solid var(--pk-line);
+}
+
+/* 背景を抜いたピクルくん（ゲームの中に出す） */
+.pikuru-cut {
+  display: block;
+  width: auto;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 結果画面の ごほうび（ミッション・コレクション） */
+.rewards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+}
+.rewards li {
+  background: var(--lime);
+  border: 2px solid var(--pk-line);
+  border-radius: var(--r-pill);
+  padding: 2px 14px;
+  font-size: 15px;
+  font-weight: 900;
+  animation: pop-in 0.3s var(--ease);
+}
+.result-share {
+  min-width: var(--tap);
+  padding: 12px;
+  font-size: 26px;
+}
+
+/* ほしの数（ホーム・きせかえ） */
+.star-pill {
+  background: var(--lime);
+  border: 3px solid var(--pk-line);
+  border-radius: var(--r-pill);
+  padding: 4px 14px;
+  font-size: 20px;
+  font-weight: 900;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- つづけて遊んだときの「きゅうけい しよう」 ---------- */
+.break-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(18, 48, 43, 0.5);
+}
+.break-single {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.half > .break-card {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+  width: min(340px, calc(100% - 24px));
+}
+.break-card {
+  background: var(--surface);
+  border: 3px solid var(--pk-line);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  max-width: 340px;
+  box-shadow: 0 5px 0 var(--pk-line);
+  animation: pop-in 0.25s var(--ease);
+}
+.break-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+}
+.break-sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.break-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}

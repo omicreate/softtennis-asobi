@@ -1,0 +1,119 @@
+.howto-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(18, 48, 43, 0.5);
+  /* 高さの決まった入れ物にして、ページが画面の高さに収まるようにする（中身だけスクロール） */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
+}
+/* 準備画面などふつうのページから開くときは、画面いっぱいに重ねる */
+.howto-backdrop-fixed {
+  position: fixed;
+}
+.howto-sheet {
+  width: min(560px, 100%);
+  max-height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 3px solid var(--pk-line);
+  padding: 12px 14px 14px;
+  box-shadow: 0 8px 0 rgba(18, 48, 43, 0.25);
+  animation: pop-in 0.2s var(--ease);
+  transition: transform 0.25s var(--ease);
+}
+.howto-sheet[data-flipped] {
+  transform: rotate(180deg);
+}
+.howto-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.howto-pikuru {
+  flex: none;
+  margin: -18px 0 -6px;
+}
+.howto-title {
+  flex: 1;
+  min-width: 0;
+}
+.howto-eyebrow {
+  font-size: 13px;
+  color: var(--mute);
+}
+.howto-title h2 {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.howto-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.howto-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  min-height: 0;
+  padding-right: 4px;
+}
+.howto-body h3 {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--pk-line);
+  margin: 10px 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.howto-body h3::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lime);
+  border: 2px solid var(--pk-line);
+}
+.howto-body ul {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.howto-detail {
+  margin-top: 12px;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: 8px 12px;
+}
+.howto-detail summary {
+  font-weight: 900;
+  cursor: pointer;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.howto-detail ul {
+  font-size: 14px;
+  font-weight: 500;
+}
+.howto-source {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mute);
+}
+.howto-back {
+  width: 100%;
+}

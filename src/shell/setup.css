@@ -1,0 +1,308 @@
+.setup-half {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  /* 舞台のまんなか（上下とも自分から見て上）に帯があるので空けておく */
+  padding: 44px 14px 14px;
+}
+.setup-side-0 {
+  background: linear-gradient(to bottom, rgba(255, 138, 61, 0.08), rgba(255, 138, 61, 0.22));
+}
+.setup-side-1 {
+  background: linear-gradient(to bottom, #eaf3fc, var(--p1-tint));
+}
+.setup-inner {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+.setup-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.side-chip {
+  color: #fff;
+  white-space: nowrap;
+  border-radius: var(--r-pill);
+  padding: 2px 14px;
+  font-size: 15px;
+  font-weight: 900;
+}
+.side-chip-0 {
+  background: var(--p0);
+}
+.side-chip-1 {
+  background: var(--p1);
+}
+.setup-game {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.level-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.level-btn {
+  min-height: 72px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 3px solid transparent;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  align-items: center;
+  text-align: left;
+  padding: 6px 12px;
+}
+.level-btn[aria-checked='true'] {
+  border-color: var(--pk-line);
+  background: var(--lime);
+}
+.level-mark {
+  grid-row: span 2;
+  font-size: 30px;
+}
+.level-label {
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.level-hint {
+  font-size: 12px;
+  color: var(--mute);
+  line-height: 1.2;
+}
+.ready-btn {
+  width: 100%;
+  font-size: 22px;
+}
+.ready-btn.is-ready {
+  background: var(--surface);
+  color: var(--mute);
+  border: 3px dashed var(--mute);
+  box-shadow: none;
+}
+
+/* まんなかの帯（ルールなど）。下の人から読める向き */
+.setup-mid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 6px;
+  z-index: 5;
+}
+.setup-mid .btn-small {
+  min-width: 46px;
+  padding: 8px 10px;
+}
+.target-btn {
+  min-width: 64px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.setup-mid-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-2);
+  border-radius: var(--r-pill);
+  padding: 4px 14px 4px 6px;
+  box-shadow: var(--shadow);
+  font-size: 15px;
+}
+.seg {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow);
+  padding: 3px;
+}
+.seg button {
+  min-height: 42px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.seg button[aria-checked='true'] {
+  background: var(--lime);
+  font-weight: 900;
+}
+
+/* ラリーは帯が2段（ルール／点の数え方と何点先取）なので、上下の人の側を少し空ける */
+.setup-half-wide {
+  padding-top: 72px;
+}
+.setup-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.setup-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.setup-rows .seg button,
+.setup-rows .btn-small {
+  min-height: 36px;
+  font-size: 14px;
+}
+.setup-rows .seg button {
+  padding: 0 9px;
+}
+
+/* ---------- ひとりで遊ぶ前の準備（ふつうの向き） ---------- */
+.solo-setup {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100%;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.solo-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.solo-title {
+  font-size: 24px;
+  font-weight: 900;
+}
+.solo-intro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.solo-intro img {
+  flex: none;
+}
+.solo-intro p {
+  flex: 1;
+  min-width: 0;
+}
+.solo-label {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--mute);
+}
+.solo-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.solo-help {
+  margin-top: auto;
+}
+.solo-start {
+  font-size: 24px;
+}
+
+/* パドルをえらぶ */
+.paddle-btn {
+  margin-left: auto;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+}
+.solo-paddle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 6px 14px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  font-size: 16px;
+  font-weight: 900;
+}
+.solo-paddle-change {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--pk-line);
+  background: var(--lime);
+  border-radius: var(--r-pill);
+  padding: 2px 12px;
+}
+.picker-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(18, 48, 43, 0.45);
+}
+.picker-fixed > div {
+  position: absolute;
+  inset: calc(env(safe-area-inset-top, 0px) + 16px) 12px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  max-width: 520px;
+  margin: 0 auto;
+}
+.picker-fixed .picker {
+  inset: 0;
+}
+
+/* 2人の準備画面：まんなかの帯にかからないように */
+.setup-half .picker {
+  top: 44px;
+}
+
+/* レベルの ちがいが ない ゲーム（よみあい サーブ） */
+.setup-nolevel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.setup-nolevel p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ひとりのゲームを みんなで（じゅんばんモード） */
+.solo-party {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  line-height: 1.3;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.solo-party small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mute);
+}

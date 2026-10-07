@@ -1,0 +1,62 @@
+/* パドルをえらぶ（2人の準備画面ではその人の半分の中に、ひとりのときは画面に重ねて出す） */
+.picker {
+  position: absolute;
+  inset: 8px;
+  z-index: 35;
+  background: var(--surface);
+  border: 3px solid var(--pk-line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 6px 0 rgba(18, 48, 43, 0.25);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  animation: pop-in 0.2s var(--ease);
+}
+.picker-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.picker-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 900;
+}
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 6px;
+}
+.picker-shapes {
+  border-top: 2px dashed var(--line);
+  padding-top: 8px;
+}
+.picker-item {
+  min-height: 72px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 3px solid transparent;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 4px;
+}
+.picker-item[aria-checked='true'] {
+  border-color: var(--pk-line);
+  background: var(--lime);
+}
+.picker-more {
+  font-size: 14px;
+  color: var(--pk-line);
+  text-align: center;
+  padding: 6px;
+}

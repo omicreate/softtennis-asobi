@@ -1,0 +1,53 @@
+/*
+ * ピクルくんとあそぼ デザイントークン
+ * 色はピクルくん仕様（PickleballIQ/ブランド/ピクルくん/ピクルくん仕様.md）に合わせる。
+ * コートの色は動画テンプレート（pb-studio/template/player.html）の紺とキッチンの緑。
+ */
+:root {
+  /* ピクルくん */
+  --pk-body: #6bb33f;
+  --pk-line: #2e5a1c;
+  --lime: #d4f03c;
+  --ink: #12302b;
+  --orange: #ff8a3d;
+  --cream: #ffe7b8;
+
+  /* 地と面 */
+  --bg: var(--cream);
+  --surface: #fff6e3;
+  --surface-2: #ffffff;
+  --mute: #4f6a5f;
+  --line: rgba(18, 48, 43, 0.14);
+
+  /* 2人の色（下＝オレンジ、上＝あお） */
+  --p0: #ff8a3d;
+  --p0-deep: #c4570f;
+  --p1: #3d9be9;
+  --p1-deep: #1764a8;
+  /* 2人の半分の地の色（上の人の青は、クリームに重ねると灰色にくすむので、水色を直接決める） */
+  --p0-tint: #ffdcb8;
+  --p1-tint: #d3e7f8;
+
+  /* コート */
+  --court-out: #24497a;
+  --court: #2f5d9a;
+  --kitchen: #3d8f7a;
+  --court-line: #ffffff;
+  --ball: #d4f03c;
+
+  /* 意味のある色 */
+  --ok: #4caf50;
+  --ng: #e5533d;
+
+  --font: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+  /* 押せる要素の最小の大きさ（小さい子の指でも押せるように大きめ） */
+  --tap: 64px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --shadow: 0 4px 0 rgba(18, 48, 43, 0.18);
+
+  color-scheme: light;
+}

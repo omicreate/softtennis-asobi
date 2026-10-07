@@ -1,0 +1,84 @@
+.parents-gate {
+  margin-top: 10vh;
+  align-self: center;
+}
+.par-card {
+  /* 大人向けの漢字かな交じり文は、ふつうの折り返しにする（分かち書きではないので） */
+  word-break: normal;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.7;
+  display: grid;
+  gap: 8px;
+}
+.par-card h2 {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--pk-line);
+}
+.par-card ul {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+.par-sum b {
+  font-weight: 900;
+  font-size: 18px;
+}
+.par-bars {
+  list-style: none;
+  padding: 0 !important;
+}
+.par-bars li {
+  display: grid;
+  grid-template-columns: 9.5em 1fr 2.5em;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.par-bar-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.par-bar {
+  height: 12px;
+  min-width: 2px;
+  background: var(--pk-body);
+  border-radius: var(--r-pill);
+}
+.par-bar-n {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+.par-note {
+  font-size: 13px;
+  color: var(--mute);
+}
+.par-status {
+  font-weight: 900;
+}
+.par-seg {
+  align-self: start;
+  justify-self: start;
+}
+.par-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.par-url {
+  font-size: 13px;
+  word-break: break-all;
+  -webkit-user-select: all;
+  user-select: all;
+}
+.par-danger {
+  background: var(--ng);
+  color: #fff;
+}

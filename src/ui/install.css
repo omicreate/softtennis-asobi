@@ -1,0 +1,356 @@
+/* 「ホーム画面に入れる方法」の図。大きさは em（スマホの枠の幅で決まる）で そろえる */
+.ia-phone-wrap {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ia-phone-wrap figcaption {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--mute);
+}
+.ia-phone {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 18.5;
+  background: #12302b;
+  border-radius: 2.2em;
+  padding: 0.55em;
+  box-sizing: border-box;
+  box-shadow: 0 0.35em 0 rgba(18, 48, 43, 0.25);
+}
+.ia-notch {
+  position: absolute;
+  top: 0.9em;
+  left: 50%;
+  width: 4.2em;
+  height: 1.1em;
+  transform: translateX(-50%);
+  background: #12302b;
+  border-radius: 1em;
+  z-index: 3;
+}
+.ia-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.7em;
+  overflow: hidden;
+  background: #fff;
+  color: #12302b;
+}
+.ia-col {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ia-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0 0.9em;
+  font-weight: 900;
+  flex: none;
+}
+.ia-bar-inapp,
+.ia-bar-chrome {
+  height: 3.6em;
+  padding-top: 1.4em;
+  background: #f2f2f2;
+  border-bottom: 1px solid #ddd;
+}
+.ia-url {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-weight: 700;
+}
+.ia-url small {
+  font-size: 0.8em;
+  color: #555;
+}
+.ia-bar-chrome .ia-url {
+  text-align: left;
+  background: #fff;
+  border-radius: 1em;
+  padding: 0.2em 0.8em;
+}
+.ia-x {
+  font-size: 1.3em;
+}
+.ia-more {
+  display: inline-block;
+  font-size: 1.4em;
+  min-width: 1.2em;
+  text-align: center;
+}
+.ia-bar-safari {
+  height: 3.4em;
+  justify-content: space-around;
+  background: #f2f2f2;
+  border-top: 1px solid #ddd;
+  font-size: 1.1em;
+  color: #2f6fd6;
+}
+.ia-share {
+  width: 1.1em;
+  height: 1.3em;
+  display: block;
+  color: #2f6fd6;
+}
+.ia-page {
+  flex: 1;
+  min-height: 0;
+  background: #ffe7b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-size: 1em;
+}
+.ia-page .pikuru-cut,
+.ia-page img {
+  height: 4.2em !important;
+  width: auto !important;
+}
+.ia-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4em;
+  width: 70%;
+}
+.ia-tiles i {
+  height: 2.2em;
+  border-radius: 0.6em;
+  background: #fff;
+  box-shadow: 0 0.15em 0 rgba(18, 48, 43, 0.15);
+}
+.ia-dim {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+.ia-dim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.ia-sheet {
+  position: absolute;
+  left: 0.5em;
+  right: 0.5em;
+  bottom: 0.6em;
+  background: #fff;
+  border-radius: 1.1em;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  animation: ia-up 0.3s ease-out;
+}
+.ia-menu {
+  position: absolute;
+  top: 3.8em;
+  right: 0.5em;
+  width: 70%;
+  background: #fff;
+  border-radius: 0.6em;
+  box-shadow: 0 0.3em 1em rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: ia-up 0.3s ease-out;
+}
+.ia-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.85em 1em;
+  border-bottom: 1px solid #eee;
+  font-weight: 700;
+  font-size: 0.95em;
+}
+.ia-row small {
+  font-size: 0.75em;
+  color: #666;
+}
+.ia-plus {
+  margin-left: auto;
+}
+.ia-add {
+  background: #f2f2f7;
+}
+.ia-bar-add {
+  height: 3.6em;
+  padding-top: 1.4em;
+  justify-content: space-between;
+  gap: 0.3em;
+  font-size: 0.85em;
+  white-space: nowrap;
+}
+.ia-bar-add b {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  font-size: 0.9em;
+}
+.ia-cancel,
+.ia-add-btn {
+  color: #2f6fd6;
+  font-weight: 700;
+}
+.ia-add-body {
+  margin: 1em;
+  background: #fff;
+  border-radius: 0.8em;
+  padding: 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+}
+.ia-add-body img {
+  width: 3em;
+  height: 3em;
+  border-radius: 0.7em;
+}
+.ia-add-name {
+  font-weight: 900;
+}
+.ia-dialog {
+  position: absolute;
+  left: 1em;
+  right: 1em;
+  top: 35%;
+  background: #fff;
+  border-radius: 1em;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  animation: ia-up 0.3s ease-out;
+}
+.ia-dialog-app {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-weight: 700;
+  font-size: 0.9em;
+}
+.ia-dialog-app img {
+  width: 2.4em;
+  height: 2.4em;
+  border-radius: 0.6em;
+}
+.ia-dialog-btns {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.2em;
+  font-weight: 700;
+  color: #2f6fd6;
+}
+.ia-install-btn {
+  background: #2f6fd6;
+  color: #fff;
+  border-radius: 1em;
+  padding: 0.3em 0.9em;
+}
+.ia-home {
+  position: absolute;
+  inset: 0;
+  padding: 3em 1em 1em;
+  background: linear-gradient(160deg, #6fb3e8, #b5e0a8);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-content: start;
+  gap: 1.1em 0.6em;
+}
+.ia-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25em;
+}
+.ia-app i,
+.ia-app img {
+  width: 2.8em;
+  height: 2.8em;
+  border-radius: 0.7em;
+  background: rgba(255, 255, 255, 0.55);
+}
+.ia-app small {
+  display: block;
+  width: 2.6em;
+  height: 0.5em;
+  border-radius: 0.3em;
+  background: rgba(255, 255, 255, 0.5);
+}
+.ia-app-pk small {
+  width: auto;
+  height: auto;
+  background: none;
+  color: #fff;
+  font-size: 0.62em;
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+/* 光らせる所とタップの波紋 */
+.ia-spot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.6em;
+}
+.ia-hi {
+  outline: 0.22em solid #ff3d7f;
+  outline-offset: 0.12em;
+  background: rgba(255, 61, 127, 0.12);
+  animation: ia-pulse 0.9s ease-in-out infinite alternate;
+}
+.ia-tap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.6em;
+  height: 2.6em;
+  margin: -1.3em 0 0 -1.3em;
+  border-radius: 50%;
+  background: rgba(255, 61, 127, 0.35);
+  border: 0.15em solid #ff3d7f;
+  animation: ia-tap 0.9s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes ia-pulse {
+  from {
+    outline-color: #ff3d7f;
+  }
+  to {
+    outline-color: rgba(255, 61, 127, 0.4);
+  }
+}
+@keyframes ia-tap {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+@keyframes ia-up {
+  from {
+    transform: translateY(1.5em);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}

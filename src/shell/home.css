@@ -1,0 +1,422 @@
+.home {
+  /* タブレットでは横に広く使う（カードが4〜5列に並ぶ） */
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home-hero {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-pikuru {
+  flex: none;
+  display: block;
+  width: clamp(100px, 30vw, 120px);
+  display: flex;
+  justify-content: center;
+}
+.home-pikuru .pikuru-cut {
+  height: clamp(120px, 36vw, 150px) !important;
+  width: auto !important;
+}
+.home-title {
+  font-size: clamp(26px, 7.4vw, 40px);
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: nowrap;
+  color: var(--pk-line);
+}
+.home-lead {
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--mute);
+}
+
+.game-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* スマホでも2列のタイル（ゲームが多いので、ひと目で見わたせるように） */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.game-list li {
+  display: flex;
+}
+.game-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 150px;
+  padding: 10px 12px 12px;
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+  border: 3px solid var(--pk-line);
+  box-shadow: 0 5px 0 var(--pk-line);
+  text-decoration: none;
+  transition: transform 0.1s var(--ease);
+  position: relative;
+}
+.game-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--pk-line);
+}
+.game-card img {
+  flex: none;
+  width: 56px;
+  height: 56px;
+}
+.game-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.game-tag {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  font-size: 12px;
+  background: var(--lime);
+  border-radius: var(--r-pill);
+  padding: 0 8px;
+}
+.game-title {
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.game-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--mute);
+}
+/* じゅんばんモードは横長のカード */
+.game-card-party {
+  flex-direction: row;
+  align-items: center;
+  min-height: 104px;
+}
+.game-card-party img {
+  width: 72px;
+  height: 72px;
+}
+.game-card-party .game-title {
+  font-size: 22px;
+}
+.game-card-party .game-desc {
+  font-size: 14px;
+}
+
+.home-toggles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.toggle {
+  min-height: 52px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  font-size: 16px;
+}
+.toggle[aria-pressed='false'] {
+  color: var(--mute);
+  background: var(--surface);
+}
+
+.home-howto {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.home-howto summary {
+  font-weight: 900;
+  cursor: pointer;
+  min-height: 32px;
+}
+.home-howto ul {
+  margin: 8px 0 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 6px;
+}
+
+.game-section {
+  display: grid;
+  gap: 10px;
+}
+.game-section-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--pk-line);
+}
+
+.home-dress {
+  margin-top: 8px;
+}
+
+/* きょうの ミッション */
+.mission-card {
+  background: var(--surface-2);
+  border: 3px solid var(--pk-line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 5px 0 var(--pk-line);
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+.mission-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mission-head h2 {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--pk-line);
+}
+.mission-speak {
+  min-height: 40px;
+  padding: 4px 12px;
+}
+.mission-card .star-pill {
+  text-decoration: none;
+  font-size: 18px;
+}
+.mission-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.mission-list li {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.mission-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--pk-line);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 900;
+  background: var(--surface);
+}
+.mission-list li[data-done] .mission-check {
+  background: var(--lime);
+}
+.mission-list li[data-done] .mission-text {
+  color: var(--mute);
+}
+.mission-prog {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mute);
+  white-space: nowrap;
+}
+.mission-list li[data-done] .mission-prog {
+  color: var(--p0-deep);
+  font-weight: 900;
+}
+.mission-bonus {
+  font-size: 13px;
+  color: var(--mute);
+}
+.stamps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-top: 2px dashed var(--line);
+  padding-top: 8px;
+}
+.stamp {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px dashed rgba(18, 48, 43, 0.3);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--mute);
+  background-size: cover;
+  background-position: center;
+}
+.stamp i {
+  font-style: normal;
+}
+.stamp[data-today] {
+  border-color: var(--orange);
+  border-style: solid;
+}
+.stamp[data-on] {
+  border: 2px solid var(--pk-line);
+}
+.stamp-total {
+  margin-left: 6px;
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.stamp-total small {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mute);
+}
+
+.game-card-party {
+  background: linear-gradient(135deg, #fff 60%, rgba(212, 240, 60, 0.6));
+}
+
+.home-parents {
+  align-self: center;
+  font-size: 14px;
+  color: var(--mute);
+  padding: 10px;
+}
+
+.welcome-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(18, 48, 43, 0.5);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.welcome {
+  width: min(340px, 100%);
+  background: var(--surface);
+  border: 3px solid var(--pk-line);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  animation: pop-in 0.3s var(--ease);
+}
+.welcome-title {
+  font-size: 24px;
+  font-weight: 900;
+}
+.welcome-stars {
+  font-size: 34px;
+  font-weight: 900;
+}
+.welcome-sub {
+  font-size: 14px;
+  color: var(--mute);
+}
+.welcome-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* おとなも むちゅう */
+.game-section-lead {
+  font-size: 13px;
+  color: var(--mute);
+  margin-top: -6px;
+}
+.game-card-adult {
+  background: linear-gradient(160deg, #ffffff 55%, rgba(47, 93, 154, 0.16));
+}
+.game-card-adult .game-tag {
+  background: #2f5d9a;
+  color: #fff;
+}
+
+/* カードの上：ゲームの絵（右上に なかま分け） */
+.game-card-top {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2px;
+}
+.game-icon {
+  flex: none;
+  display: block;
+}
+.game-best {
+  margin-top: 2px;
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 900;
+  background: var(--cream);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+}
+.home-hero-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* また あそぶ（さいきん遊んだゲーム） */
+.home-recent {
+  display: grid;
+  gap: 8px;
+}
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.recent-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.3;
+}
+.recent-chip:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+/* みんなで（てわたし）のゲーム */
+.game-list-group {
+  margin-bottom: 10px;
+}
+.game-card-group {
+  background: linear-gradient(160deg, #ffffff 55%, rgba(155, 107, 255, 0.16));
+}
+.game-card-group .game-tag {
+  background: #7a4fe0;
+  color: #fff;
+}
