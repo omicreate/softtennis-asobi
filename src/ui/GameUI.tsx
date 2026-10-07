@@ -53,12 +53,14 @@ export function Notice({ data, single = false }: { data: NoticeData | null; sing
   return <Both>{body}</Both>
 }
 
-export function Scores({ score }: { score: [number, number] }) {
+/** 点数（games があればゲーム数も小さく出す） */
+export function Scores({ score, games }: { score: [number, number]; games?: [number, number] }) {
   return (
     <Both>
       {(side) => (
-        <div className="score-pill" data-side={side} aria-label={`${side === 0 ? 'オレンジ' : 'あお'} ${score[side]}てん`}>
+        <div className="score-pill" data-side={side} aria-label={`${side === 0 ? 'オレンジ' : 'あお'} ${score[side]}てん${games ? `、ゲーム ${games[side]}` : ''}`}>
           {score[side]}
+          {games && <small className="score-games">G{games[side]}</small>}
         </div>
       )}
     </Both>

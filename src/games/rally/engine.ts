@@ -1,11 +1,14 @@
 /**
- * ラリーの進行（サーブ → 打ち合い → 失点 → 次のサーブ）。
- * 「ラリーたいけつ」「ディンクでつなごう」「ピクルくんとラリー」「ねらってショット」で共通に使う。
+ * ラリーの進行（サービス → 打ち合い → 失ポイント → 次のサービス）。
+ * 「ラリーたいけつ」「ホークアイ先生とラリー」「ねらって ストローク」で共通に使う。
  * 描画と音は画面側（RallyGame.tsx）が受け持つ。
+ * ほんかくルールの数え方はソフトテニスの競技規則：1ゲームは4ポイント先取・3-3からデュース（第20条）、
+ * ファイナルゲームは7ポイント先取・6-6からデュース（第20条2）、サービスは1ゲームずつ交互（シングルス 第4条）、
+ * ファイナルゲームは2ポイントごとに交代（第34条2）。サービスは2本まで（第27条2・第29条）。
  */
 import { LEVEL_INFO, other } from '../../core/players'
 import type { Level, Side } from '../../core/players'
-import { COURT, inKitchen, serveHalf, toNet } from './court'
+import { COURT, serveHalf, toNet } from './court'
 import { assistShift, contact, HIT_Z, launch, planShot, powerFromSwing, stepBall } from './physics'
 import type { Ball, Paddle, Vec } from './physics'
 import { judgeBounce, judgeHit } from './rules'
@@ -13,28 +16,23 @@ import type { Fault, RallyState, RuleMode } from './rules'
 import { feedLanding, inZone, makeZone, SHOTS } from './targets'
 import type { Zone } from './targets'
 
-/** versus＝たいけつ（2人／ピクルくん）、dink＝ディンク協力、target＝ねらってショット（ひとりで。上はボールマシン） */
-export type Kind = 'versus' | 'dink' | 'target'
+/** versus＝たいけつ（2人／ホークアイ先生）、target＝ねらって ストローク（ひとりで。上はボールマシン） */
+export type Kind = 'versus' | 'target'
 export type Phase = 'countdown' | 'serve' | 'play' | 'point' | 'over'
-/**
- * 点の数え方（ほんかくルールのとき）
- * sideout：ふつうの試合。点が入るのはサーブ側がラリーに勝ったときだけ。レシーブ側が勝つとサーブ権が移る（PBK-0004・0018）
- * rally：ラリー・スコアリング。毎ラリー勝った側に点が入る（14.A の暫定の別方式。PBK-0035）
- * かんたんルールはいつも rally
- */
-export type Scoring = 'sideout' | 'rally'
+/** ほんかくルールのゲーム数（1・3・5ゲームマッチ。第19条2のショートマッチ） */
+export type Games = 1 | 3 | 5
 
 export interface EngineOptions {
   kind: Kind
   mode: RuleMode
   levels: [Level, Level]
-  /** 何点先取か（たいけつ） */
+  /** 何点先取か（かんたんルールのたいけつ） */
   target: number
-  /** 点の数え方（ほんかくのときだけ使う。省略時はラリー・スコアリング） */
-  scoring?: Scoring
+  /** ほんかくルールのゲーム数（省略時は1ゲーム） */
+  games?: Games
   /** 乱数（テストで結果を決めるため） */
   rand?: () => number
-  /** ピクルくん（コンピューター）が受け持つ側。小さい子向けの吸い寄せは効かせない */
+  /** ホークアイ先生（コンピューター）が受け持つ側。小さい子向けの吸い寄せは効かせない */
   cpu?: Side
 }
 
@@ -43,31 +41,31 @@ export type EngineEvent =
   | { type: 'serve'; server: Side }
   | { type: 'hit'; side: Side; power: number }
   | { type: 'bounce' }
-  /** ラリーが終わった。scored=false はサイドアウト（点は入らず、サーブが winner に移る） */
-  | { type: 'point'; fault: Fault; winner: Side; scored: boolean }
-  | { type: 'dink'; ok: boolean; count: number }
-  | { type: 'dink-end'; count: number; fault: Fault }
+  /** ラリーが終わって点が入った。game＝そのポイントでゲームを取った */
+  | { type: 'point'; fault: Fault; winner: Side; game: boolean }
+  /** ファーストサービスのフォールト（点は動かず、セカンドサービス） */
+  | { type: 'fault'; server: Side }
   /** ねらってショット：ボールマシンが球を送った／打った球の結果 */
   | { type: 'feed'; index: number; zone: Zone }
   | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number }
   | { type: 'over'; winner: Side | null }
 
 /** ねらってショットで外れた理由 */
-export type ShotMiss = 'zone' | 'out' | 'double-bounce' | 'two-bounce'
+export type ShotMiss = 'zone' | 'out' | 'double-bounce'
 
 /** 振る動きを見せる時間（秒） */
 export const SWING_TIME = 0.25
 /** 利き手の向き（右利き）。下の人は上を向いているので右＝x が大きい側 */
 export const hand = (side: Side): 1 | -1 => (side === 0 ? 1 : -1)
 /** ボールマシンの位置（上のベースラインの後ろ） */
-export const MACHINE = { x: COURT.W / 2, y: -0.65, z: 1.0 }
+export const MACHINE = { x: COURT.W / 2, y: -1.9, z: 1.0 }
 
-/** 指の位置から、パドルをネット側へ少し出す（指でパドルが隠れないように） */
-export const FINGER_LEAD = 0.75
+/** 指の位置から、ラケットをネット側へ少し出す（指でラケットが隠れないように） */
+export const FINGER_LEAD = 1.2
 /** 指の速さを測る時間幅（秒） */
 const SWING_WINDOW = 0.09
 /** サーブのときに「ネットへ向けて振った」とみなす速さ（m/s） */
-const SERVE_SWING = 1.8
+const SERVE_SWING = 2.4
 
 interface Sample {
   t: number
@@ -88,7 +86,12 @@ export class RallyEngine {
   readonly opts: EngineOptions
   phase: Phase = 'countdown'
   timer = 3
+  /** いまのゲームのポイント（かんたんは試合の点） */
   score: [number, number] = [0, 0]
+  /** 取ったゲームの数（ほんかく） */
+  gamesWon: [number, number] = [0, 0]
+  /** ファーストサービス（1）か セカンドサービス（2）か */
+  serveNo: 1 | 2 = 1
   server: Side = 0
   winner: Side | null = null
   ball: Ball = { x: COURT.W / 2, y: COURT.L, z: HIT_Z, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
@@ -100,8 +103,6 @@ export class RallyEngine {
     { active: false, x: COURT.W / 2, y: 0, samples: [] },
   ]
   state: RallyState = { lastHitter: 0, shot: 0, bounces: 0, serverX: COURT.W / 2 }
-  /** ディンクの連続回数 */
-  dinkCount = 0
   /** 最後のミス（画面に理由を出す） */
   lastFault: Fault | null = null
   /** 見た目：パドルの先が、体の中心から横にどれだけ出ているか（m）。球が来ると球の方へ伸ばす */
@@ -121,12 +122,6 @@ export class RallyEngine {
   constructor(opts: EngineOptions) {
     this.opts = opts
     this.rand = opts.rand ?? Math.random
-    if (opts.kind === 'dink') {
-      // ディンクはキッチンラインに立って始める
-      const d = COURT.KITCHEN + 0.3 + FINGER_LEAD
-      this.fingers[0].y = COURT.NET_Y + d
-      this.fingers[1].y = COURT.NET_Y - d
-    }
     this.paddles = [
       { x: COURT.W / 2, y: COURT.L - 0.2, vx: 0, vy: 0, width: LEVEL_INFO[opts.levels[0]].paddleWidth },
       { x: COURT.W / 2, y: 0.2, vx: 0, vy: 0, width: LEVEL_INFO[opts.levels[1]].paddleWidth },
@@ -159,14 +154,19 @@ export class RallyEngine {
     return LEVEL_INFO[this.opts.levels[side]]
   }
 
-  /** パドルが動ける範囲（自分の陣地。ほんかくルールのサーブはベースラインの後ろ・決まった側） */
+  /** そのゲームで何ポイント目か（サービスの右・左を決める） */
+  pointInGame(): number {
+    return this.score[0] + this.score[1]
+  }
+
+  /** ラケットが動ける範囲（自分の陣地。ほんかくルールのサービスはベースラインの外・決まった側。第25条） */
   private placePaddle(side: Side, x: number, y: number): Vec {
     const n = COURT.NET_Y
-    let px = clamp(x, -0.9, COURT.W + 0.9)
-    let py = side === 0 ? clamp(y, n + 0.3, COURT.L + 1.5) : clamp(y, -1.5, n - 0.3)
+    let px = clamp(x, -1.4, COURT.W + 1.4)
+    let py = side === 0 ? clamp(y, n + 0.4, COURT.L + 3.0) : clamp(y, -3.0, n - 0.4)
     if (this.phase === 'serve' && side === this.server && this.opts.mode === 'real') {
-      py = side === 0 ? Math.max(py, COURT.L + 0.25) : Math.min(py, -0.25)
-      const half = serveHalf(side, this.score[side])
+      py = side === 0 ? Math.max(py, COURT.L + 0.3) : Math.min(py, -0.3)
+      const half = serveHalf(side, this.pointInGame())
       const mid = COURT.W / 2
       px = half === 'high' ? clamp(px, mid + 0.15, COURT.W - 0.1) : clamp(px, 0.1, mid - 0.15)
     }
@@ -187,8 +187,8 @@ export class RallyEngine {
     const at = feedLanding(this.opts.levels[0], zone, this.rand)
     this.ball = { x: MACHINE.x + (this.rand() - 0.5) * 2, y: MACHINE.y, z: MACHINE.z, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
     launch(this.ball, at, 1.5, this.levelOf(0).ballSpeed)
-    // 3球目ドロップの練習：送った球を「リターン（2球目）」とみなし、下の人の球は3球目になる
-    this.state = { lastHitter: 1, shot: zone.thirdShot ? 1 : 3, bounces: 0, serverX: this.ball.x }
+    // 送った球はラリー中の球とみなす（下の人の球は3球目）
+    this.state = { lastHitter: 1, shot: 2, bounces: 0, serverX: this.ball.x }
     this.phase = 'play'
     ev.push({ type: 'feed', index: this.shotIndex, zone })
   }
@@ -216,8 +216,7 @@ export class RallyEngine {
   private doServe(power: number, swingX: number): void {
     const side = this.server
     const lv = this.levelOf(side)
-    const dink = this.opts.kind === 'dink'
-    const shot = planShot(this.ball, side, dink ? 0 : power, 0, swingX, { keepIn: lv.keepIn || dink, serve: !dink, soft: dink })
+    const shot = planShot(this.ball, side, power, 0, swingX, { keepIn: lv.keepIn, serve: true })
     launch(this.ball, shot.target, shot.T, this.levelOf(other(side)).ballSpeed)
     this.state = { lastHitter: side, shot: 0, bounces: 0, serverX: this.ball.x }
     this.phase = 'play'
@@ -282,7 +281,7 @@ export class RallyEngine {
         const sw = swings[this.server]
         const vNet = sw.y * toNet(this.server)
         const lv = this.levelOf(this.server)
-        const auto = this.opts.kind === 'dink' ? 1.6 : lv.keepIn ? 3 : Infinity
+        const auto = lv.keepIn ? 3 : Infinity
         if (this.serveWait > 0.35 && vNet > SERVE_SWING) {
           this.doServe(powerFromSwing(vNet), sw.x)
           ev.push({ type: 'hit', side: this.server, power: 0.5 })
@@ -337,6 +336,8 @@ export class RallyEngine {
       const prevBall = { x: this.ball.x, y: this.ball.y }
       const bounce = stepBall(this.ball, h)
       if (this.phase !== 'play') continue
+      /** この区切りで打った（打つ直前の跳ねは、打った人の球の跳ねとして数えない） */
+      let hitNow = false
 
       // 打つ
       for (const side of [0, 1] as Side[]) {
@@ -350,32 +351,29 @@ export class RallyEngine {
         const from = { x: pp.x + (p.x - pp.x) * k0, y: pp.y + (p.y - pp.y) * k0 }
         const to: Paddle = { ...p, x: pp.x + (p.x - pp.x) * k1, y: pp.y + (p.y - pp.y) * k1 }
         const lv = this.levelOf(side)
-        const tol = 0.32 + (lv.assist > 0 ? 0.25 : 0)
+        const tol = 0.45 + (lv.assist > 0 ? 0.35 : 0)
         const off = contact(prevBall, this.ball, from, to, side, tol)
         if (off === null) continue
         const target = this.opts.kind === 'target'
-        // ねらってショットは、3球目ドロップの的のときだけ2バウンドルールを見る
-        const fault = judgeHit(this.state, side, to.y, target ? (this.zone?.thirdShot ? 'real' : 'easy') : this.opts.mode)
+        const fault = target ? null : judgeHit(this.state, side, this.opts.mode)
         if (fault) {
-          if (target) this.shotResult(false, 'two-bounce', ev)
-          else this.endRally(fault, ev)
+          this.endRally(fault, ev)
           break
         }
         const sw = swings[side]
-        const dink = this.opts.kind === 'dink'
-        const power = powerFromSwing(sw.y * toNet(side), dink)
-        // ディンクは協力ゲームなので外には出さない（強すぎたら「つよすぎ」になるだけ）
-        const shot = planShot(this.ball, side, power, off, sw.x, { keepIn: lv.keepIn || dink, soft: dink })
+        const power = powerFromSwing(sw.y * toNet(side))
+        const shot = planShot(this.ball, side, power, off, sw.x, { keepIn: lv.keepIn })
         this.ball.z = Math.max(this.ball.z, 0.35)
         launch(this.ball, shot.target, shot.T, this.levelOf(other(side)).ballSpeed)
         this.state = { ...this.state, lastHitter: side, shot: this.state.shot + 1, bounces: 0 }
         this.swingT[side] = SWING_TIME
         this.head[side] = off * (p.width / 2)
+        hitNow = true
         ev.push({ type: 'hit', side, power })
         break
       }
 
-      if (bounce && this.phase === 'play' && this.opts.kind === 'target') {
+      if (bounce && !hitNow && this.phase === 'play' && this.opts.kind === 'target') {
         this.state.bounces = this.ball.bounces
         ev.push({ type: 'bounce' })
         if (this.state.lastHitter === 1) {
@@ -387,59 +385,73 @@ export class RallyEngine {
           const ok = inCourtTop && !!this.zone && inZone(this.zone, bounce)
           this.shotResult(ok, ok ? null : inCourtTop ? 'zone' : 'out', ev)
         }
-      } else if (bounce && this.phase === 'play') {
+      } else if (bounce && !hitNow && this.phase === 'play') {
         this.state.bounces = this.ball.bounces
         ev.push({ type: 'bounce' })
-        const fault = judgeBounce(this.state, bounce, this.opts.kind === 'dink' ? 'easy' : this.opts.mode)
-        if (fault) {
-          this.endRally(fault, ev)
-        } else if (this.opts.kind === 'dink' && this.state.bounces === 1) {
-          // ディンク：相手のキッチンに落ちたら1回。強すぎたら0に戻る
-          const ok = inKitchen(bounce.y)
-          this.dinkCount = ok ? this.dinkCount + 1 : 0
-          ev.push({ type: 'dink', ok, count: this.dinkCount })
-        }
+        const fault = judgeBounce(this.state, bounce, this.opts.mode)
+        if (fault) this.endRally(fault, ev)
       }
     }
   }
 
   private endRally(fault: Fault, ev: EngineEvent[]): void {
-    this.lastFault = fault
-    if (this.opts.kind === 'dink') {
-      this.phase = 'over'
-      ev.push({ type: 'dink-end', count: this.dinkCount, fault })
-      return
+    // ファーストサービスのフォールトは点が動かず、セカンドサービスを打つ（第27条2）
+    if (fault.reason === 'fault') {
+      if (this.serveNo === 1) {
+        this.serveNo = 2
+        this.lastFault = fault
+        this.phase = 'point'
+        this.timer = 1.4
+        ev.push({ type: 'fault', server: this.server })
+        return
+      }
+      fault = { loser: fault.loser, reason: 'double-fault' }
     }
+    this.lastFault = fault
+    this.serveNo = 1
     const winner = other(fault.loser)
-    // サイドアウト方式では、レシーブ側が勝っても点は入らず、サーブ権が移るだけ
-    const scored = !this.sideout() || winner === this.server
-    if (scored) this.score[winner] += 1
-    this.server = winner
+    this.score[winner] += 1
     this.phase = 'point'
     this.timer = 1.8
-    const s = this.score[winner]
-    const lead = s - this.score[fault.loser]
-    // ほんかくは2点差がつくまで（PBK-0005）
-    const won = scored && s >= this.opts.target && (this.opts.mode === 'easy' || lead >= 2)
-    this.winner = won ? winner : null
-    ev.push({ type: 'point', fault, winner, scored })
+    let game = false
+    if (this.opts.mode === 'real' && this.opts.kind === 'versus') {
+      // ゲームの勝ち：4ポイント先取（ファイナルは7）、デュースからは2ポイント差（第20条）
+      const need = this.isFinal() ? 7 : 4
+      const s = this.score[winner]
+      if (s >= need && s - this.score[fault.loser] >= 2) {
+        game = true
+        this.gamesWon[winner] += 1
+        const toWin = Math.ceil((this.opts.games ?? 1) / 2)
+        if (this.gamesWon[winner] >= toWin) this.winner = winner
+        else {
+          this.score = [0, 0]
+          // サービスは1ゲームずつ交互（シングルス 第4条）
+          this.gameServer = other(this.gameServer)
+        }
+      }
+      // ファイナルゲームは2ポイントごとにサービスを交代（第34条2）
+      this.server = this.isFinal() ? (Math.floor(this.pointInGame() / 2) % 2 === 0 ? this.gameServer : other(this.gameServer)) : this.gameServer
+    } else {
+      if (this.score[winner] >= this.opts.target) this.winner = winner
+      // かんたん：サービスは2ポイントずつ交代
+      this.server = Math.floor(this.pointInGame() / 2) % 2 === 0 ? 0 : 1
+    }
+    ev.push({ type: 'point', fault, winner, game })
   }
 
-  /** サイドアウト方式で数えているか */
-  sideout(): boolean {
-    return this.opts.kind === 'versus' && this.opts.mode === 'real' && this.opts.scoring === 'sideout'
+  /** そのゲームの最初にサービスをした人 */
+  private gameServer: Side = 0
+
+  /** ファイナルゲームか（ゲーム数が並んで、最後の1ゲーム。第20条2） */
+  isFinal(): boolean {
+    const g = this.opts.games ?? 1
+    if (this.opts.mode !== 'real' || g === 1) return false
+    const half = (g - 1) / 2
+    return this.gamesWon[0] === half && this.gamesWon[1] === half
   }
 
-  /** スコアのコール。シングルスは「サーバーの点－レシーバーの点」の2つの数字（PBK-0007） */
+  /** スコアのコール。サーバーの点を先に言う */
   scoreCall(): string {
     return `${this.score[this.server]}-${this.score[other(this.server)]}`
-  }
-
-  /** ディンクをもう一度 */
-  restartDink(): void {
-    this.dinkCount = 0
-    this.server = 0
-    this.lastFault = null
-    this.startServe()
   }
 }

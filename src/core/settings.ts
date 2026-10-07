@@ -12,27 +12,19 @@ export interface Settings {
   /** ラリーたいけつのルール（かんたん／ほんかく）と何点先取か */
   rallyRules: 'easy' | 'real'
   rallyTarget: number
-  /** ほんかくルールの点の数え方（サイドアウト方式／ラリー・スコアリング） */
-  rallyScoring: 'sideout' | 'rally'
+  /** ほんかくルールのゲーム数（1・3・5ゲームマッチ） */
+  rallyGames: 1 | 3 | 5
   /** ひとりで遊ぶときのレベル */
   soloLevel: Level
-  /** パドルの見た目（0＝下の人・ひとりのとき、1＝上の人） */
+  /** ラケットの見た目（0＝下の人・ひとりのとき、1＝上の人） */
   paddles: [PaddleLook, PaddleLook]
   /** 遊んだ回数を匿名で送る（おうちの方へ で切りかえ。公開版でだけ送る） */
   counter: boolean
-  /** れんだ つなひきを 2人ずつのチームで遊ぶ */
-  tugTeam: boolean
-  /** よみあい サーブで1人が選ぶ時間（秒） */
-  srTime: number
-  /** よみあい サーブの遊び方（face＝机に置いて向かい合う／pass＝1台を手わたし） */
-  srStyle: 'face' | 'pass'
-  /** ピクルくん さがし（ひとりで）の遊び方（wally＝さがせ！ピクルくん／diff＝まちがいさがし） */
-  sagasuMode: 'wally' | 'diff'
   /** つづけて遊んだら「きゅうけい しよう」と声をかける時間（分。0＝声をかけない） */
   breakMin: number
 }
 
-const defaults: Settings = { sound: true, speak: true, levels: ['kids', 'otona'], rallyRules: 'easy', rallyTarget: 5, rallyScoring: 'sideout', soloLevel: 'kids', paddles: DEFAULT_LOOKS, counter: true, tugTeam: false, srTime: 20, srStyle: 'face', sagasuMode: 'wally', breakMin: 30 }
+const defaults: Settings = { sound: true, speak: true, levels: ['kids', 'otona'], rallyRules: 'easy', rallyTarget: 5, rallyGames: 1, soloLevel: 'kids', paddles: DEFAULT_LOOKS, counter: true, breakMin: 30 }
 
 let current: Settings = { ...defaults, ...load<Partial<Settings>>('settings', {}) }
 const listeners = new Set<() => void>()

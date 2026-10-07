@@ -5,6 +5,7 @@
  * 置く場所は絵ごとに、ヘッドバンド（ライム）の位置から決める（scripts で測った値）。
  * 小物は「ヘッドバンドの幅＝1」の大きさで描くので、どの絵・どの大きさでも同じ見た目になる。
  */
+import artSize from './artSize.json'
 import type { CutArt } from './hawkArt'
 
 export type Slot = 'head' | 'eyes' | 'neck' | 'side' | 'aura'
@@ -27,15 +28,8 @@ export type AccessoryId = keyof typeof ACCESSORIES
 /** 身につけている小物（場所ごとに1つ） */
 export type Wear = Partial<Record<Slot, AccessoryId>>
 
-/** 絵の大きさ（px） */
-export const ART_SIZE: Record<CutArt, [number, number]> = {
-  think: [135, 253],
-  ok: [224, 252],
-  eh: [171, 252],
-  oops: [176, 219],
-  full: [427, 572],
-  run: [395, 572],
-}
+/** 絵の大きさ（px）。scripts/build-art.mjs が原画から測って書く */
+export const ART_SIZE = artSize as Record<CutArt, [number, number]>
 
 interface Anchor {
   /** ヘッドバンドの中心と幅、かたむき（ラジアン） */

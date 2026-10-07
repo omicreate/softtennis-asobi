@@ -1,7 +1,7 @@
 /** ラリーの絵（canvas）。コートは上から見た図で、上下どちらの人にも同じ向きで見せる */
 import { SIDE_COLOR } from '../../core/players'
 import type { Side } from '../../core/players'
-import { COURT, inKitchen, serveHalf, toNet } from './court'
+import { COURT, serveHalf, toNet } from './court'
 import { hand, MACHINE, SWING_TIME } from './engine'
 import type { RallyEngine } from './engine'
 import { predictLanding } from './physics'
@@ -11,14 +11,14 @@ import { drawHawkArt } from '../../ui/hawkArt'
 import type { Face } from '../../ui/Hawk'
 
 /**
- * 本物のパドルの大きさ（m）：全長16インチ・幅8インチ、握り5インチ（よくある形）。
- * ルールは「長さ＋幅が61cm以内、長さ43cm以内」（PBK-0044）。
+ * ソフトテニスのラケットの大きさ（m）：全長68cm・頭の幅24cm、のど＋グリップ37cm（ui/paddleArt.ts と同じ比率）。
+ * ルールは全長720mm以内（第16条）。土台の名残で名前は PADDLE。
  */
-export const PADDLE = { length: 0.406, width: 0.203, grip: 0.127 }
-/** 上から見るとパドルも人も小さすぎて見えないので、同じ倍率で大きく描く（形と比率はそのまま） */
-const VIS = 1.6
-/** ピクルくん（コンピューター）の色 */
-const PICKLE = '#6bb33f'
+export const PADDLE = { length: 0.68, width: 0.24, grip: 0.37 }
+/** 上から見るとラケットも人も小さすぎて見えないので、同じ倍率で大きく描く（形と比率はそのまま） */
+const VIS = 2.2
+/** ホークアイ先生（コンピューター）の色（バンダナの緑） */
+const HAWK = '#1f8a5b'
 
 export interface View {
   scale: number
@@ -26,10 +26,10 @@ export interface View {
   oy: number
 }
 
-/** 画面に見せる範囲（コートの外も少し動けるように余白をとる） */
-const VIEW = { x0: -1.0, x1: COURT.W + 1.0, y0: -1.9, y1: COURT.L + 1.9 }
+/** 画面に見せる範囲（ダブルスの横の帯と、ベースラインの後ろでサービスを打つ所まで） */
+const VIEW = { x0: -COURT.ALLEY - 1.2, x1: COURT.W + COURT.ALLEY + 1.2, y0: -3.2, y1: COURT.L + 3.2 }
 
-/** topExtra：上に空ける分（m）。ねらってショットは、上の案内とボールマシンが重ならないように空ける */
+/** topExtra：上に空ける分（m）。ねらって ストロークは、上の案内とボールマシンが重ならないように空ける */
 export function makeView(w: number, h: number, topExtra = 0): View {
   const y0 = VIEW.y0 - topExtra
   const vw = VIEW.x1 - VIEW.x0
@@ -45,17 +45,16 @@ export function makeView(w: number, h: number, topExtra = 0): View {
 export const toWorld = (v: View, x: number, y: number) => ({ x: (x - v.ox) / v.scale, y: (y - v.oy) / v.scale })
 
 const C = {
-  bg: '#ffe7b8',
-  out: '#24497a',
-  court: '#2f5d9a',
-  kitchen: '#3d8f7a',
-  kitchenHot: '#5fb79f',
+  bg: '#fff3d9',
+  out: '#1f5a42',
+  court: '#2f8a5f',
   line: '#ffffff',
   net: '#12302b',
-  ball: '#d4f03c',
-  ballLine: '#2e5a1c',
+  /** 軟式球（縫い目のないゴムの球。公認球は白と黄。第15条） */
+  ball: '#fff1a8',
+  ballLine: '#b39a3e',
   shadow: 'rgba(0, 0, 0, 0.28)',
-  target: 'rgba(212, 240, 60, 0.22)',
+  target: 'rgba(255, 241, 168, 0.24)',
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -68,9 +67,9 @@ export interface DrawOptions {
   realRules: boolean
   /** ひとりで遊ぶ（上の文字も回さない） */
   solo?: boolean
-  /** ピクルくん（相手・ボールマシンの係）の表情 */
+  /** ホークアイ先生（相手・ボールマシンの係）の表情 */
   senseiFace?: Face
-  /** パドルの見た目（コレクション） */
+  /** ラケットの見た目（コレクション） */
   paddles?: [PaddleLook, PaddleLook]
 }
 
@@ -82,71 +81,59 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
   ctx.fillStyle = C.bg
   ctx.fillRect(0, 0, w, h)
 
-  // まわり・コート・キッチン
+  // まわり・コート（ダブルスの横の帯も描く。判定はシングルスのコート）
   ctx.fillStyle = C.out
   roundRect(ctx, X(VIEW.x0), Y(VIEW.y0), (VIEW.x1 - VIEW.x0) * s, (VIEW.y1 - VIEW.y0) * s, 18)
   ctx.fill()
+  const A = COURT.ALLEY
   ctx.fillStyle = C.court
-  ctx.fillRect(X(0), Y(0), COURT.W * s, COURT.L * s)
+  ctx.fillRect(X(-A), Y(0), (COURT.W + A * 2) * s, COURT.L * s)
 
-  for (const side of [0, 1] as Side[]) {
-    const p = e.paddles[side]
-    // ほんかくルール：パドルがキッチンに入っているとキッチンを明るくして気づかせる
-    const hot = o.realRules && e.phase === 'play' && inKitchen(p.y) && (side === 0 ? p.y > COURT.NET_Y : p.y < COURT.NET_Y)
-    ctx.fillStyle = hot ? C.kitchenHot : C.kitchen
-    const y0 = side === 0 ? COURT.NET_Y : COURT.NET_Y - COURT.KITCHEN
-    ctx.fillRect(X(0), Y(y0), COURT.W * s, COURT.KITCHEN * s)
-  }
-
-  // サーブのとき（ほんかく）：入れるべき対角のサービスコートを光らせる
+  // サービスのとき（ほんかく）：入れるべき対角のサービスコートを光らせる
   if (o.realRules && e.phase === 'serve' && e.opts.kind === 'versus') {
     const server = e.server
-    const half = serveHalf(server, e.score[server])
+    const half = serveHalf(server, e.pointInGame())
     // サーバーが x の大きい側なら、相手コートの x の小さい側
     const xs = half === 'high' ? 0 : COURT.W / 2
-    const ys = server === 0 ? 0 : COURT.NET_Y + COURT.KITCHEN
+    const ys = server === 0 ? COURT.NET_Y - COURT.SERVICE : COURT.NET_Y
     ctx.fillStyle = C.target
-    ctx.fillRect(X(xs), Y(ys), (COURT.W / 2) * s, (COURT.NET_Y - COURT.KITCHEN) * s)
+    ctx.fillRect(X(xs), Y(ys), (COURT.W / 2) * s, COURT.SERVICE * s)
   }
 
-  // ライン
+  // ライン：ダブルスの外のサイドライン・シングルスのサイドライン・ベースライン・サービスライン・サービスセンターライン・センターマーク（第6条）
   ctx.strokeStyle = C.line
   ctx.lineWidth = Math.max(2, 0.06 * s)
-  ctx.strokeRect(X(0), Y(0), COURT.W * s, COURT.L * s)
+  ctx.strokeRect(X(-A), Y(0), (COURT.W + A * 2) * s, COURT.L * s)
   ctx.beginPath()
-  for (const ky of [COURT.NET_Y - COURT.KITCHEN, COURT.NET_Y + COURT.KITCHEN]) {
-    ctx.moveTo(X(0), Y(ky))
-    ctx.lineTo(X(COURT.W), Y(ky))
+  for (const x of [0, COURT.W]) {
+    ctx.moveTo(X(x), Y(0))
+    ctx.lineTo(X(x), Y(COURT.L))
   }
-  ctx.moveTo(X(COURT.W / 2), Y(0))
-  ctx.lineTo(X(COURT.W / 2), Y(COURT.NET_Y - COURT.KITCHEN))
-  ctx.moveTo(X(COURT.W / 2), Y(COURT.NET_Y + COURT.KITCHEN))
-  ctx.lineTo(X(COURT.W / 2), Y(COURT.L))
+  for (const y of [COURT.NET_Y - COURT.SERVICE, COURT.NET_Y + COURT.SERVICE]) {
+    ctx.moveTo(X(0), Y(y))
+    ctx.lineTo(X(COURT.W), Y(y))
+  }
+  ctx.moveTo(X(COURT.W / 2), Y(COURT.NET_Y - COURT.SERVICE))
+  ctx.lineTo(X(COURT.W / 2), Y(COURT.NET_Y + COURT.SERVICE))
+  for (const [y0, y1] of [
+    [0, 0.25],
+    [COURT.L, COURT.L - 0.25],
+  ]) {
+    ctx.moveTo(X(COURT.W / 2), Y(y0))
+    ctx.lineTo(X(COURT.W / 2), Y(y1))
+  }
   ctx.stroke()
 
-  // 「キッチン」の文字（それぞれの人から読める向き）
-  ctx.fillStyle = 'rgba(255,255,255,0.32)'
-  ctx.font = `900 ${Math.round(0.62 * s)}px 'Zen Maru Gothic', sans-serif`
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  for (const side of [0, 1] as Side[]) {
-    const cy = COURT.NET_Y - toNet(side) * (COURT.KITCHEN / 2)
-    ctx.save()
-    ctx.translate(X(COURT.W / 2), Y(cy))
-    if (side === 1 && !o.solo) ctx.rotate(Math.PI)
-    ctx.fillText('キッチン', 0, 0)
-    ctx.restore()
-  }
-
-  // ネット
+  // ネットとネットポスト（ポストは外側で 12.80m の間隔。第10条）
   const ny = Y(COURT.NET_Y)
+  const post = (12.8 - COURT.W) / 2
   ctx.fillStyle = C.net
-  ctx.fillRect(X(-0.35), ny - 0.07 * s, (COURT.W + 0.7) * s, 0.14 * s)
+  ctx.fillRect(X(-post), ny - 0.08 * s, (COURT.W + post * 2) * s, 0.16 * s)
   ctx.fillStyle = '#ffffff'
-  ctx.fillRect(X(-0.35), ny - 0.025 * s, (COURT.W + 0.7) * s, 0.05 * s)
-  for (const px of [-0.35, COURT.W + 0.35]) {
+  ctx.fillRect(X(-post), ny - 0.03 * s, (COURT.W + post * 2) * s, 0.06 * s)
+  for (const px of [-post, COURT.W + post]) {
     ctx.beginPath()
-    ctx.arc(X(px), ny, 0.16 * s, 0, Math.PI * 2)
+    ctx.arc(X(px), ny, 0.18 * s, 0, Math.PI * 2)
     ctx.fillStyle = C.net
     ctx.fill()
   }
@@ -157,18 +144,18 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     const at = predictLanding(b)
     ctx.beginPath()
     ctx.ellipse(X(at.x), Y(at.y), 0.32 * s, 0.32 * s, 0, 0, Math.PI * 2)
-    ctx.strokeStyle = 'rgba(212, 240, 60, 0.55)'
+    ctx.strokeStyle = 'rgba(255, 241, 168, 0.7)'
     ctx.lineWidth = Math.max(2, 0.05 * s)
     ctx.setLineDash([0.12 * s, 0.1 * s])
     ctx.stroke()
     ctx.setLineDash([])
   }
 
-  // ねらってショット：的とボールマシン
+  // ねらって ストローク：的とボールマシン
   if (e.opts.kind === 'target') {
     const z = e.zone
     if (z && e.phase !== 'over') {
-      ctx.fillStyle = 'rgba(212, 240, 60, 0.3)'
+      ctx.fillStyle = 'rgba(255, 241, 168, 0.3)'
       ctx.fillRect(X(z.x0), Y(z.y0), (z.x1 - z.x0) * s, (z.y1 - z.y0) * s)
       ctx.strokeStyle = C.ball
       ctx.lineWidth = Math.max(2, 0.07 * s)
@@ -179,7 +166,7 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     drawMachine(ctx, X, Y, s, o.senseiFace ?? 'think')
   }
 
-  // 選手とパドル（当たり判定の「とどく範囲」もうすく見せる）
+  // 選手とラケット（当たり判定の「とどく範囲」もうすく見せる）
   for (const side of [0, 1] as Side[]) {
     if (e.opts.kind === 'target' && side === 1) continue
     drawPlayer(ctx, X, Y, s, e, side, o.senseiFace ?? 'think', o.paddles?.[side])
@@ -187,7 +174,7 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
 
   // 球（影で高さを見せる）
   if (e.ballVisible) {
-    const r = 0.15
+    const r = 0.2
     const lift = Math.max(0, b.z)
     ctx.beginPath()
     ctx.ellipse(X(b.x + lift * 0.22), Y(b.y + lift * 0.22), r * s, r * 0.8 * s, 0, 0, Math.PI * 2)
@@ -198,32 +185,26 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     ctx.arc(X(b.x), Y(b.y), rr, 0, Math.PI * 2)
     ctx.fillStyle = C.ball
     ctx.fill()
-    ctx.lineWidth = Math.max(1.5, 0.035 * s)
+    ctx.lineWidth = Math.max(1.5, 0.03 * s)
     ctx.strokeStyle = C.ballLine
     ctx.stroke()
-    // 穴（ピックルボールの球は穴あき）
-    ctx.fillStyle = C.ballLine
-    for (const [dx, dy] of [
-      [-0.35, -0.25],
-      [0.3, -0.3],
-      [0.05, 0.35],
-    ]) {
-      ctx.beginPath()
-      ctx.arc(X(b.x) + dx * rr, Y(b.y) + dy * rr, rr * 0.16, 0, Math.PI * 2)
-      ctx.fill()
-    }
+    // つや（軟式球は縫い目のないゴムの球）
+    ctx.beginPath()
+    ctx.arc(X(b.x) - rr * 0.32, Y(b.y) - rr * 0.32, rr * 0.28, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+    ctx.fill()
   }
 }
 
 type Px = (v: number) => number
 
 function drawMachine(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, face: Face) {
-  const w = 1.4
-  const h = 0.7
-  // マシンの係のピクルくん（マシンの右に立つ。打った球が入ると喜ぶ）
-  drawHawkArt(ctx, face, X(MACHINE.x + 1.25), Y(MACHINE.y + h / 2 + 0.05), 1.15 * s)
+  const w = 2.2
+  const h = 1.0
+  // マシンの係のホークアイ先生（マシンの右に立つ。打った球が入ると喜ぶ）
+  drawHawkArt(ctx, face, X(MACHINE.x + 1.9), Y(MACHINE.y + h / 2 + 0.05), 1.7 * s)
   roundRect(ctx, X(MACHINE.x - w / 2), Y(MACHINE.y - h / 2), w * s, h * s, 0.18 * s)
-  ctx.fillStyle = PICKLE
+  ctx.fillStyle = HAWK
   ctx.fill()
   ctx.lineWidth = Math.max(2, 0.05 * s)
   ctx.strokeStyle = '#2e5a1c'
@@ -235,20 +216,20 @@ function drawMachine(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, fac
   ctx.font = `900 ${Math.round(0.3 * s)}px 'Zen Maru Gothic', sans-serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText('ピクルマシン', X(MACHINE.x), Y(MACHINE.y))
+  ctx.fillText('ボールマシン', X(MACHINE.x), Y(MACHINE.y))
 }
 
 /**
- * 選手・腕・パドル。人は上から見た肩と頭、ピクルくん（コンピューター）は原画の絵で描く。
- * パドルの先は、球が来るとその方へ伸びる（engine の head）。打った瞬間は前へ振る（swingT）。
+ * 選手・腕・ラケット。人は上から見た肩と頭、ホークアイ先生（コンピューター）は原画の絵で描く。
+ * ラケットの先は、球が来るとその方へ伸びる（engine の head）。打った瞬間は前へ振る（swingT）。
  * うすい帯が「とどく範囲」＝当たり判定。小さい子のレベルほど広い。
- * パドルはいつも原画と同じ形・比率（ui/paddleArt.ts）。
+ * ラケットはいつも同じ形・比率（ui/paddleArt.ts）。
  */
 function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: RallyEngine, side: Side, face: Face, look?: PaddleLook) {
   const p = e.paddles[side]
   const n = toNet(side)
   const cpu = e.opts.cpu === side
-  const color = cpu ? PICKLE : SIDE_COLOR[side]
+  const color = cpu ? HAWK : SIDE_COLOR[side]
 
   // とどく範囲
   roundRect(ctx, X(p.x - p.width / 2), Y(p.y - 0.14), p.width * s, 0.28 * s, 0.14 * s)
@@ -265,12 +246,12 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
   const bx = p.x
   const by = p.y - n * 0.55
 
-  // パドルの面の中心（振る瞬間は前へ押し出す）
+  // ラケットの頭の中心（振る瞬間は前へ押し出す）
   const u = e.swingT[side] > 0 ? 1 - e.swingT[side] / SWING_TIME : 0
   const punch = u > 0 ? Math.sin(u * Math.PI) * 0.4 : 0
   const hx = p.x + e.head[side]
   const hy = p.y + n * punch
-  // 肩：パドルのある側（フォアかバックか）
+  // 肩：ラケットのある側（フォアかバックか）
   const toward = Math.sign(e.head[side]) || hand(side)
   const sx = bx + toward * 0.2 * VIS
   const sy = by
@@ -290,11 +271,11 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
   ctx.lineTo(X(gx), Y(gy))
   ctx.lineCap = 'round'
   ctx.lineWidth = Math.max(3, 0.08 * VIS * s)
-  ctx.strokeStyle = cpu ? '#2e5a1c' : '#f2c7a0'
+  ctx.strokeStyle = cpu ? '#8a5428' : '#f2c7a0'
   ctx.stroke()
 
   if (cpu) {
-    // ピクルくん（原画）。表情は試合の流れで変わる
+    // ホークアイ先生（原画）。表情は試合の流れで変わる
     drawHawkArt(ctx, face, X(bx), Y(by + 0.32 * VIS), 0.95 * VIS * s)
   } else {
     // 人（上から見た肩と頭）
@@ -312,6 +293,6 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
     ctx.stroke()
   }
 
-  // パドル（原画と同じ形。比率はくずさない）
-  drawPaddleArt(ctx, { x: X(hx), y: Y(hy), faceLen: faceLen * s, angle: Math.atan2(dy, dx), color: cpu ? '#ff8a3d' : color, look: cpu ? undefined : look })
+  // ラケット（比率はくずさない）
+  drawPaddleArt(ctx, { x: X(hx), y: Y(hy), faceLen: faceLen * s, angle: Math.atan2(dy, dx), color: cpu ? '#e4262c' : color, look: cpu ? undefined : look })
 }

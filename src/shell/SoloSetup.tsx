@@ -80,14 +80,14 @@ export function SoloSetup({ game }: { game: GameInfo }) {
             ))}
           </div>
           {settings.rallyRules === 'real' && (
-            <div className="seg" role="radiogroup" aria-label="てんの かぞえかた">
-              {(['sideout', 'rally'] as const).map((m) => (
-                <button key={m} role="radio" aria-checked={settings.rallyScoring === m} onClick={() => setSettings({ rallyScoring: m })}>
-                  {m === 'sideout' ? 'サイドアウト' : 'ラリー'}
-                </button>
-              ))}
-            </div>
-          )}
+                <div className="seg" role="radiogroup" aria-label="ゲームの かず">
+                  {([1, 3, 5] as const).map((g) => (
+                    <button key={g} role="radio" aria-checked={settings.rallyGames === g} onClick={() => setSettings({ rallyGames: g })}>
+                      {g}ゲーム
+                    </button>
+                  ))}
+                </div>
+              )}
           <button
             className="btn btn-small target-btn"
             aria-label={`${settings.rallyTarget}てん とったら かち（おすと かわる）`}

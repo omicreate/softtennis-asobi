@@ -127,10 +127,10 @@ export function Setup({ game }: { game: GameInfo }) {
             </div>
             <div className="setup-row">
               {settings.rallyRules === 'real' && (
-                <div className="seg" role="radiogroup" aria-label="てんの かぞえかた">
-                  {(['sideout', 'rally'] as const).map((m) => (
-                    <button key={m} role="radio" aria-checked={settings.rallyScoring === m} onClick={() => setSettings({ rallyScoring: m })}>
-                      {m === 'sideout' ? 'サイドアウト' : 'ラリー'}
+                <div className="seg" role="radiogroup" aria-label="ゲームの かず">
+                  {([1, 3, 5] as const).map((g) => (
+                    <button key={g} role="radio" aria-checked={settings.rallyGames === g} onClick={() => setSettings({ rallyGames: g })}>
+                      {g}ゲーム
                     </button>
                   ))}
                 </div>

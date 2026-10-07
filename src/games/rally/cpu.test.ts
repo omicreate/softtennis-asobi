@@ -21,10 +21,10 @@ function rng(seed: number) {
   }
 }
 
-/** ピクルくん同士で1ゲーム */
+/** ホークアイ先生どうしで1試合 */
 function cpuVsCpu(level: Level, mode: RuleMode, seed: number, seconds = 900) {
   const rand = rng(seed)
-  const e = new RallyEngine({ kind: 'versus', mode, levels: [level, level], target: 5, scoring: 'sideout', rand, cpu: 1 })
+  const e = new RallyEngine({ kind: 'versus', mode, levels: [level, level], target: 5, games: 1, rand, cpu: 1 })
   const a = new Cpu(0, CPU_SKILL[level], rand)
   const b = new Cpu(1, CPU_SKILL[level], rand)
   const events: EngineEvent[] = []
@@ -36,8 +36,8 @@ function cpuVsCpu(level: Level, mode: RuleMode, seed: number, seconds = 900) {
   return { e, events }
 }
 
-describe('ピクルくん（コンピューター）', () => {
-  it('どのレベルでも、ピクルくん同士で打ち合って1ゲーム終わる', () => {
+describe('ホークアイ先生（コンピューター）', () => {
+  it('どのレベルでも、先生どうしで打ち合って1試合終わる', () => {
     for (const lv of LEVELS) {
       const { e, events } = cpuVsCpu(lv, 'easy', 7)
       expect(e.phase, lv).toBe('over')
@@ -58,29 +58,29 @@ describe('ピクルくん（コンピューター）', () => {
     }
     expect(avg('senshu')).toBeGreaterThan(avg('chibi'))
   })
-  it('ほんかくルールで、2バウンドルール違反やキッチンでのボレーをしない', () => {
+  it('ほんかくルールで、サービスをダイレクトで返さない（第32条(2)）', () => {
     for (const seed of [1, 2, 3, 4]) {
       const { events } = cpuVsCpu('senshu', 'real', seed)
-      for (const x of events) if (x.type === 'point') expect(['two-bounce', 'kitchen-volley']).not.toContain(x.fault.reason)
+      for (const x of events) if (x.type === 'point') expect(x.fault.reason).not.toBe('direct')
     }
   })
   it('アウトになる球は見送る（おとな・せんしゅ）', () => {
     const e = new RallyEngine({ kind: 'versus', mode: 'easy', levels: ['otona', 'senshu'], target: 5 })
     e.phase = 'play'
     e.ballVisible = true
-    e.ball = { x: 3, y: COURT.NET_Y + 3, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
-    e.state = { lastHitter: 0, shot: 3, bounces: 0, serverX: 3 }
+    e.ball = { x: 4, y: COURT.NET_Y + 5, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
+    e.state = { lastHitter: 0, shot: 3, bounces: 0, serverX: 4 }
     // ベースラインより後ろに落ちる球
-    launch(e.ball, { x: 3, y: -1.0 }, 1.2, 1)
-    expect(planHit(e, 1, COURT.NET_Y - 4, true)).toBeNull()
+    launch(e.ball, { x: 4, y: -1.5 }, 1.5, 1)
+    expect(planHit(e, 1, COURT.NET_Y - 7, true)).toBeNull()
     // 入る球なら打つ
-    e.ball = { x: 3, y: COURT.NET_Y + 3, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
-    launch(e.ball, { x: 3, y: 2.0 }, 1.2, 1)
-    expect(planHit(e, 1, COURT.NET_Y - 6.3, true)).not.toBeNull()
+    e.ball = { x: 4, y: COURT.NET_Y + 5, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
+    launch(e.ball, { x: 4, y: 3.0 }, 1.5, 1)
+    expect(planHit(e, 1, COURT.NET_Y - 11, true)).not.toBeNull()
   })
 })
 
-describe('ねらってショット（ひとりで）', () => {
+describe('ねらって ストローク（ひとりで）', () => {
   /** 下の人を、球の x に合わせて少し振るボットにする */
   function practice(level: Level, swing: number, seed = 3) {
     const rand = rng(seed)
@@ -89,8 +89,8 @@ describe('ねらってショット（ひとりで）', () => {
     let push = 0
     for (let t = 0; t < 120 && e.phase !== 'over'; t += 1 / 60) {
       const coming = e.phase === 'play' && e.state.lastHitter === 1
-      push = coming && e.ball.y > COURT.L - 3.5 ? push + swing / 60 : 0
-      e.setFinger(0, true, e.ball.x, COURT.L + 0.6 - push)
+      push = coming && e.ball.y > COURT.L - 5 ? push + swing / 60 : 0
+      e.setFinger(0, true, e.ball.x, COURT.L + 1.0 - push)
       events.push(...e.step(1 / 60))
     }
     return { e, events }
@@ -106,15 +106,15 @@ describe('ねらってショット（ひとりで）', () => {
     const { e } = practice('chibi', 2)
     expect(e.hits).toBeGreaterThanOrEqual(7)
   })
-  it('せんしゅの3球目ドロップは、跳ねる前に打つと2バウンドルール違反', () => {
-    const e = new RallyEngine({ kind: 'target', mode: 'easy', levels: ['senshu', 'senshu'], target: 0, rand: rng(1) })
-    const events: EngineEvent[] = []
-    // ネット際に詰めて、跳ねる前に打つ
-    for (let t = 0; t < 8 && !events.some((x) => x.type === 'shot'); t += 1 / 60) {
-      e.setFinger(0, true, e.ball.x, COURT.NET_Y + 1.6)
-      events.push(...e.step(1 / 60))
+  it('おとな・せんしゅの的は、ソフトテニスのコースの名前（正クロス・逆クロス・右ストレート・左ストレート）', () => {
+    const e = new RallyEngine({ kind: 'target', mode: 'easy', levels: ['senshu', 'senshu'], target: 0, rand: rng(2) })
+    const labels = new Set<string>()
+    for (let t = 0; t < 120 && e.phase !== 'over'; t += 1 / 60) {
+      if (e.zone) labels.add(e.zone.label.split('：')[0].split('（')[0])
+      e.setFinger(0, true, e.ball.x, COURT.L + 1.0)
+      e.step(1 / 60)
     }
-    expect(e.zone?.thirdShot).toBe(true)
-    expect(events.find((x) => x.type === 'shot')).toMatchObject({ ok: false, reason: 'two-bounce' })
+    for (const l of labels) expect(['正クロスへ', '逆クロスへ', '右ストレートへ', '左ストレートへ']).toContain(l)
+    expect(labels.size).toBeGreaterThanOrEqual(2)
   })
 })

@@ -43,14 +43,14 @@ export function GameView({ game, round, props }: { game: GameId; round: number; 
   const settings = useSettings()
   return (
     <>
-      {game === 'rally' && <RallyGame key={round} kind="versus" mode={settings.rallyRules} target={settings.rallyTarget} scoring={settings.rallyScoring} {...props} />}
+      {game === 'rally' && <RallyGame key={round} kind="versus" mode={settings.rallyRules} target={settings.rallyTarget} games={settings.rallyGames} {...props} />}
       {game === 'hayatouch' && <HayaTouch key={round} {...props} />}
       {game === 'quiz' && <Quiz key={round} {...props} />}
       {game === 'lift' && <LiftGame key={round} {...props} />}
       {game === 'target' && <RallyGame key={round} kind="target" mode="easy" target={0} {...props} />}
       {game === 'reaction' && <ReactionGame key={round} {...props} />}
       {game === 'sensei' && (
-        <RallyGame key={round} kind="versus" cpu mode={settings.rallyRules} target={settings.rallyTarget} scoring={settings.rallyScoring} {...props} />
+        <RallyGame key={round} kind="versus" cpu mode={settings.rallyRules} target={settings.rallyTarget} games={settings.rallyGames} {...props} />
       )}
     </>
   )

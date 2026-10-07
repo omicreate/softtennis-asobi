@@ -13,15 +13,18 @@ export const HIT_Z = 0.8
 const BOUNCE_UP = 0.7
 const BOUNCE_FWD = 0.85
 /** 前へ進む速さの下限（m/s） */
-const MIN_FORWARD = 2.2
+const MIN_FORWARD = 3.6
 
-/** ネット側へ打つ深さ（ネットからの距離 m）：ゆっくり当てる＝キッチン、速く振る＝奥 */
-export const DEPTH_SOFT = 1.1
+/** ネット側へ打つ深さ（ネットからの距離 m）：ゆっくり当てる＝ネット前、速く振る＝奥 */
+export const DEPTH_SOFT = 2.6
 /** ベースライン付近から止めて当てたときの深さ */
-export const DEPTH_BLOCK = 4.2
-export const DEPTH_DEEP = 6.0
-/** 強すぎるとここまで飛ぶ（ベースラインはネットから 6.705m） */
-export const DEPTH_OVER = 7.8
+export const DEPTH_BLOCK = 7.2
+export const DEPTH_DEEP = 10.6
+/** 強すぎるとここまで飛ぶ（ベースラインはネットから 11.885m） */
+export const DEPTH_OVER = 13.8
+/** サービスの深さ（ネットからの距離 m）。サービスラインはネットから 6.40m */
+const SERVE_SHORT = 3.2
+const SERVE_LONG = 7.4
 
 export interface Ball {
   x: number
@@ -44,10 +47,8 @@ export interface Vec {
 export interface ShotOptions {
   /** 外に出ないように落とす場所を寄せる（小さい子） */
   keepIn: boolean
-  /** サーブ：対角のサービスコートへ向ける */
+  /** サービス：対角のサービスコートへ向ける */
   serve?: boolean
-  /** ディンクのゲーム：全体に弱めにする */
-  soft?: boolean
 }
 
 export interface Shot {
@@ -64,50 +65,50 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
  * パドルの速さから、強さを決める。
  * vNet：ネットの方向へ動いた速さ（m/s）。止めて当てる＝0、速く振る＝大。
  */
-export function powerFromSwing(vNet: number, soft = false): number {
-  const p = Math.max(0, vNet) / (soft ? 16 : 12)
+export function powerFromSwing(vNet: number): number {
+  const p = Math.max(0, vNet) / 14
   return clamp(p, 0, 1.4)
 }
 
 /**
  * どこに落とすかを決める。
- * offset：パドルのどこに当たったか（-1〜1。端に当たるほど角度がつく）
- * swingX：パドルの横の速さ（m/s。横に振ると球もそちらへ）
+ * offset：ラケットのどこに当たったか（-1〜1。端に当たるほど角度がつく）
+ * swingX：ラケットの横の速さ（m/s。横に振ると球もそちらへ）
  */
 export function planShot(from: Vec, hitter: Side, power: number, offset: number, swingX: number, opts: ShotOptions): Shot {
   const dir = toNet(hitter)
   let p = opts.keepIn ? Math.min(power, 1) : power
-  // 止めて当てたときの深さ：キッチンラインの近くならディンク、後ろからなら中くらいまで返る
-  const back = clamp((Math.abs(from.y - COURT.NET_Y) - COURT.KITCHEN) / (COURT.NET_Y - COURT.KITCHEN), 0, 1)
-  const base = DEPTH_SOFT + (DEPTH_BLOCK - DEPTH_SOFT) * (opts.soft ? back * 0.4 : back)
+  // 止めて当てたときの深さ：ネットの近くなら短く、後ろからなら中くらいまで返る
+  const back = clamp((Math.abs(from.y - COURT.NET_Y) - 2) / (COURT.NET_Y - 2), 0, 1)
+  const base = DEPTH_SOFT + (DEPTH_BLOCK - DEPTH_SOFT) * back
   let depth = p <= 1 ? base + (DEPTH_DEEP - base) * p : DEPTH_DEEP + (DEPTH_OVER - DEPTH_DEEP) * ((p - 1) / 0.4)
 
   let tx: number
   if (opts.serve) {
-    // サーブは対角へ。小さい子でもキッチンには落とさない
-    tx = COURT.W - from.x + offset * 0.8 + swingX * 0.1
-    if (opts.keepIn) depth = Math.max(depth, COURT.KITCHEN + 1.2)
+    // サービスは対角へ。強く振るほど深い（サービスラインをこえるとフォールト）
+    depth = SERVE_SHORT + (SERVE_LONG - SERVE_SHORT) * Math.min(power, 1.4) / 1.4
+    tx = COURT.W - from.x + offset * 1.0 + swingX * 0.12
+    if (opts.keepIn) depth = clamp(depth, SERVE_SHORT, COURT.SERVICE - 0.6)
   } else {
-    tx = from.x + offset * 2.2 + swingX * 0.25
+    tx = from.x + offset * 3.0 + swingX * 0.3
   }
 
   if (opts.keepIn) {
     depth = Math.min(depth, COURT.NET_Y - 0.4)
-    tx = clamp(tx, 0.35, COURT.W - 0.35)
+    tx = clamp(tx, 0.45, COURT.W - 0.45)
     if (opts.serve) {
       // 対角のサービスコートの中に収める
       const mid = COURT.W / 2
-      tx = from.x >= mid ? clamp(tx, 0.35, mid - 0.25) : clamp(tx, mid + 0.25, COURT.W - 0.35)
+      tx = from.x >= mid ? clamp(tx, 0.45, mid - 0.35) : clamp(tx, mid + 0.35, COURT.W - 0.45)
     }
   } else {
-    tx = clamp(tx, -1.2, COURT.W + 1.2)
+    tx = clamp(tx, -1.8, COURT.W + 1.8)
   }
 
   const ty = COURT.NET_Y + dir * depth
-  // 強いほど速く、低く飛ぶ。ディンクはゆっくり山なり
+  // 強いほど速く、低く飛ぶ
   p = Math.min(p, 1)
-  let T = 1.55 - 0.8 * p
-  if (opts.soft) T += 0.25
+  let T = 1.9 - 0.95 * p
   if (opts.serve) T += 0.15
   return { target: { x: tx, y: ty }, T, power }
 }
@@ -171,6 +172,7 @@ export function predictLanding(ball: Ball): Vec {
   return { x: ball.x + ball.vx * t, y: ball.y + ball.vy * t }
 }
 
+/** ラケット（土台の名残で型の名前は Paddle） */
 export interface Paddle {
   x: number
   y: number
@@ -180,15 +182,15 @@ export interface Paddle {
 }
 
 /** 打てる高さ（上から見る絵なので、ほぼ全部届く） */
-export const REACH_Z = 2.2
+export const REACH_Z = 2.6
 
 /**
- * パドルに当たったか。前のフレームと今のフレームの間に、球がパドルの線を横切ったかで見る
- * （速い球でもすり抜けないように）。当たったらパドルのどこに当たったか（-1〜1）を返す。
+ * ラケットに当たったか。前のフレームと今のフレームの間に、球がラケットの線を横切ったかで見る
+ * （速い球でもすり抜けないように）。当たったらラケットのどこに当たったか（-1〜1）を返す。
  */
 export function contact(prev: Vec, ball: Ball, prevPaddle: Vec, paddle: Paddle, side: Side, depthTol: number): number | null {
   if (ball.z > REACH_Z) return null
-  // 自分の陣地にある球だけ打てる（ネットを越えて打てない。PBK-0028）
+  // 自分の陣地にある球だけ打てる（ネットを越えて打つのは反則。第37条）
   if (side === 0 ? ball.y < COURT.NET_Y - 0.05 : ball.y > COURT.NET_Y + 0.05) return null
   const s = toNet(side)
   const rel0 = (prev.y - prevPaddle.y) * s
@@ -200,20 +202,20 @@ export function contact(prev: Vec, ball: Ball, prevPaddle: Vec, paddle: Paddle, 
   return clamp(dx / (paddle.width / 2), -1, 1)
 }
 
-/** 小さい子の手助け：球が来る位置へパドルを寄せる量（m） */
+/** 小さい子の手助け：球が来る位置へラケットを寄せる量（m） */
 export function assistShift(ball: Ball, paddle: Vec, side: Side, strength: number): number {
   if (strength <= 0) return 0
   // 自分へ向かっていない球には寄せない
   const coming = side === 0 ? ball.vy > 0 : ball.vy < 0
   if (!coming) return 0
   const t = (paddle.y - ball.y) / ball.vy
-  if (t <= 0 || t > 2.2) return 0
+  if (t <= 0 || t > 2.6) return 0
   const xPred = ball.x + ball.vx * t
-  const near = 1 - t / 2.2
+  const near = 1 - t / 2.6
   return (xPred - paddle.x) * strength * near
 }
 
-/** サーブが正しいサービスコートに入るか（テスト・表示用） */
+/** サービスが正しいサービスコートに入るか（テスト・表示用） */
 export function serveLandsIn(server: Side, serverX: number, target: Vec): boolean {
   return inServiceCourt(server, serverX, target.x, target.y)
 }

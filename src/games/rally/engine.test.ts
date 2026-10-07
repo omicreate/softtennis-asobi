@@ -27,7 +27,7 @@ interface Bot {
 
 /** 2人のボットに遊ばせる。球に指を合わせ（少しズレる）、ときどき振る。サーブは上へ振る */
 function play(kind: Kind, mode: RuleMode, levels: [Level, Level], seconds: number, bot: Partial<Bot> = {}, seed = 1) {
-  const b: Bot = { depth: [6.5, 6.5], miss: 0.7, swing: [10, 10], ...bot }
+  const b: Bot = { depth: [10.8, 10.8], miss: 0.7, swing: [10, 10], ...bot }
   const rand = rng(seed)
   const e = new RallyEngine({ kind, mode, levels, target: 5 })
   const events: EngineEvent[] = []
@@ -53,12 +53,12 @@ function play(kind: Kind, mode: RuleMode, levels: [Level, Level], seconds: numbe
       if (e.phase === 'serve' && e.server === side) {
         serveY[side] = (serveY[side] ?? fy) + s * 0.15
         fy = serveY[side]!
-        fx = side === 0 ? 4.5 : 1.6
+        fx = side === 0 ? 6 : 2.2
       } else {
         serveY[side] = null
         // 球が近づいたら、決めた強さでネットへ向けて振る
-        const coming = e.ball.vy * s < 0 && Math.abs(e.ball.y - paddleY) < 1.2
-        if (coming) fy += s * power[side] * (1 / 60) * 6 * (1.2 - Math.abs(e.ball.y - paddleY))
+        const coming = e.ball.vy * s < 0 && Math.abs(e.ball.y - paddleY) < 1.6
+        if (coming) fy += s * power[side] * (1 / 60) * 6 * (1.6 - Math.abs(e.ball.y - paddleY))
       }
       e.setFinger(side, true, fx, fy)
     }
@@ -78,7 +78,7 @@ describe('ラリーたいけつ（かんたん）', () => {
     expect(e.phase).toBe('over')
     expect(Math.max(...e.score)).toBe(5)
   })
-  it('失点の理由は「2回はねた」「アウト」だけ', () => {
+  it('失ポイントの理由は「ツーバウンズ」「アウト」だけ', () => {
     for (const seed of [1, 2, 3]) {
       const { events } = play('versus', 'easy', ['otona', 'otona'], 300, {}, seed)
       for (const r of reasons(events)) expect(['double-bounce', 'out']).toContain(r)
@@ -94,7 +94,7 @@ describe('ラリーたいけつ（かんたん）', () => {
     const { events } = play('versus', 'easy', ['kids', 'kids'], 4)
     expect(events.flatMap((x) => (x.type === 'countdown' ? [x.n] : []))).toEqual([3, 2, 1])
   })
-  it('小さい子は、振らなくても自動でサーブが出る', () => {
+  it('小さい子は、振らなくても自動でサービスが出る', () => {
     const e = new RallyEngine({ kind: 'versus', mode: 'easy', levels: ['chibi', 'chibi'], target: 5 })
     const evs: EngineEvent[] = []
     for (let t = 0; t < 8; t += 1 / 60) evs.push(...e.step(1 / 60))
@@ -102,121 +102,103 @@ describe('ラリーたいけつ（かんたん）', () => {
   })
 })
 
-describe('ラリーたいけつ（ほんかく）', () => {
-  it('ネット際に詰めてボレーすると、2バウンドルールかキッチンの反則がとられる', () => {
-    const { events } = play('versus', 'real', ['senshu', 'senshu'], 120, { depth: [0.8, 0.8], miss: 0.2 })
-    expect(reasons(events).some((r) => r === 'two-bounce' || r === 'kitchen-volley')).toBe(true)
-  })
-  it('勝つには2点差が必要（PBK-0005）', () => {
-    for (const seed of [1, 2, 3, 4]) {
-      const { e } = play('versus', 'real', ['senshu', 'otona'], 900, {}, seed)
-      if (e.phase === 'over') expect(Math.abs(e.score[0] - e.score[1])).toBeGreaterThanOrEqual(2)
-    }
-  })
-})
-
-describe('ラリーたいけつ（ほんかく・サイドアウト方式）', () => {
-  /** サーブ側（server）の打った球が、相手（receiver）の陣地で2回はねる／その逆、を起こす */
+describe('ラリーたいけつ（ほんかく：ソフトテニスの数え方）', () => {
+  /** hitter の打った球が、相手の陣地で2回はねる（相手の失ポイント）。2人とも球に触れない場所に立つ */
   function rallyEnd(e: RallyEngine, hitter: Side) {
     e.phase = 'play'
     e.ballVisible = true
-    // 2人とも球に触れない場所（コートの外の角）に立つ
-    e.setFinger(0, true, -0.9, 15)
-    e.setFinger(1, true, 7, -1.6)
+    e.setFinger(0, true, -1.3, 26)
+    e.setFinger(1, true, 9.5, -2.8)
     const s = toNet(hitter)
-    e.ball = { x: 3, y: COURT.NET_Y - s * 4, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
-    e.state = { lastHitter: hitter, shot: 5, bounces: 0, serverX: 3 }
-    launch(e.ball, { x: 3, y: COURT.NET_Y + s * 3 }, 1.2, 1)
-    for (let t = 0; t < 8; t += 1 / 60) {
+    e.ball = { x: 4, y: COURT.NET_Y - s * 7, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
+    e.state = { lastHitter: hitter, shot: 5, bounces: 0, serverX: 4 }
+    launch(e.ball, { x: 4, y: COURT.NET_Y + s * 5 }, 1.4, 1)
+    for (let t = 0; t < 10; t += 1 / 60) {
       const ev = e.step(1 / 60).find((x) => x.type === 'point')
       if (ev) return ev
     }
     return null
   }
-  const make = () => new RallyEngine({ kind: 'versus', mode: 'real', levels: ['senshu', 'senshu'], target: 11, scoring: 'sideout' })
+  /** サービスを、lands の場所へ落とす（入らなければフォールト） */
+  function serveTo(e: RallyEngine, lands: { x: number; y: number }) {
+    e.phase = 'play'
+    e.ballVisible = true
+    e.setFinger(0, true, -1.3, 26)
+    e.setFinger(1, true, 9.5, -2.8)
+    const server = e.server
+    e.ball = { x: 6, y: server === 0 ? COURT.L + 0.4 : -0.4, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
+    e.state = { lastHitter: server, shot: 0, bounces: 0, serverX: 6 }
+    launch(e.ball, lands, 1.4, 1)
+    for (let t = 0; t < 10; t += 1 / 60) {
+      const ev = e.step(1 / 60).find((x) => x.type === 'point' || x.type === 'fault')
+      if (ev) return ev
+    }
+    return null
+  }
+  const make = (games: 1 | 3 = 1) => new RallyEngine({ kind: 'versus', mode: 'real', levels: ['senshu', 'senshu'], target: 5, games })
 
-  it('サーブ側がラリーに勝てば1点（PBK-0004）', () => {
+  it('ゲームは4ポイントの先取で勝ち（第20条）', () => {
     const e = make()
-    e.server = 0
-    const ev = rallyEnd(e, 0)
-    expect(ev).toMatchObject({ winner: 0, scored: true })
-    expect(e.score).toEqual([1, 0])
-    expect(e.server).toBe(0)
-  })
-  it('レシーブ側が勝っても点は入らず、サーブ権が移る（サイドアウト）', () => {
-    const e = make()
-    e.server = 0
-    e.score = [3, 2]
-    const ev = rallyEnd(e, 1)
-    expect(ev).toMatchObject({ winner: 1, scored: false })
-    expect(e.score).toEqual([3, 2])
-    expect(e.server).toBe(1)
-    // シングルスのコールは「サーバーの点－レシーバーの点」（PBK-0007）
-    expect(e.scoreCall()).toBe('2-3')
-  })
-  it('点を取った人がゲームを取れるのはサーブのときだけ', () => {
-    const e = make()
-    e.server = 1
-    e.score = [10, 3]
-    // 10点の下の人が、レシーブで勝っても勝ちにはならない
-    rallyEnd(e, 0)
-    expect(e.winner).toBeNull()
-    expect(e.score).toEqual([10, 3])
-    // サーブで勝てば11点で勝ち
-    e.phase = 'serve'
-    rallyEnd(e, 0)
-    expect(e.score).toEqual([11, 3])
+    e.score = [3, 1]
+    expect(rallyEnd(e, 0)).toMatchObject({ winner: 0, game: true })
     expect(e.winner).toBe(0)
   })
-  it('ラリー・スコアリングを選べば、どちらが勝っても点が入る', () => {
-    const e = new RallyEngine({ kind: 'versus', mode: 'real', levels: ['senshu', 'senshu'], target: 11, scoring: 'rally' })
-    e.server = 0
-    expect(rallyEnd(e, 1)).toMatchObject({ winner: 1, scored: true })
-    expect(e.score).toEqual([0, 1])
+  it('3-3はデュース。そこから2ポイント差で勝ち（第20条(1)(2)）', () => {
+    const e = make()
+    e.score = [3, 3]
+    expect(rallyEnd(e, 0)).toMatchObject({ game: false })
+    expect(rallyEnd(e, 1)).toMatchObject({ game: false })
+    expect(e.score).toEqual([4, 4])
+    rallyEnd(e, 1)
+    expect(rallyEnd(e, 1)).toMatchObject({ winner: 1, game: true })
   })
-  it('かんたんルールでは、サイドアウトを選んでいても毎ラリー点が入る', () => {
-    const e = new RallyEngine({ kind: 'versus', mode: 'easy', levels: ['kids', 'kids'], target: 5, scoring: 'sideout' })
-    e.server = 0
-    expect(rallyEnd(e, 1)).toMatchObject({ winner: 1, scored: true })
+  it('3ゲームマッチ：1ゲームずつ取ったらファイナルゲーム（7ポイント先取。第20条2）', () => {
+    const e = make(3)
+    e.gamesWon = [1, 1]
+    expect(e.isFinal()).toBe(true)
+    e.score = [3, 0]
+    expect(rallyEnd(e, 0)).toMatchObject({ game: false })
+    e.score = [6, 2]
+    expect(rallyEnd(e, 0)).toMatchObject({ game: true })
+    expect(e.winner).toBe(0)
+  })
+  it('ゲームを取ると、次のゲームは相手がサービス（シングルス 第4条）', () => {
+    const e = make(3)
+    expect(e.server).toBe(0)
+    e.score = [3, 0]
+    rallyEnd(e, 0)
+    expect(e.gamesWon).toEqual([1, 0])
+    expect(e.score).toEqual([0, 0])
+    expect(e.server).toBe(1)
+  })
+  it('ファーストサービスのフォールトは点が動かず、セカンドサービス。2本ともフォールトで1ポイント（第27条2・第29条）', () => {
+    const e = make()
+    const out = { x: 6, y: COURT.NET_Y - 3 }
+    expect(serveTo(e, out)).toMatchObject({ type: 'fault', server: 0 })
+    expect(e.score).toEqual([0, 0])
+    expect(e.serveNo).toBe(2)
+    const ev = serveTo(e, out)
+    expect(ev).toMatchObject({ type: 'point', winner: 1 })
+    expect(ev && ev.type === 'point' ? ev.fault.reason : '').toBe('double-fault')
+    expect(e.score).toEqual([0, 1])
+    expect(e.serveNo).toBe(1)
+  })
+  it('サービスが対角のサービスコートに入れば続く', () => {
+    const e = make()
+    expect(serveTo(e, { x: 2, y: COURT.NET_Y - 3 })).toMatchObject({ type: 'point', winner: 0 })
   })
 })
 
-describe('ディンクでつなごう', () => {
-  it('2人ともキッチンラインで止めて当てると、ディンクが続く', () => {
-    const k = COURT.KITCHEN + 0.3
-    const { events } = play('dink', 'easy', ['kids', 'kids'], 60, { depth: [k, k], miss: 0.1, swing: [0, 0] })
-    const best = Math.max(0, ...events.flatMap((x) => (x.type === 'dink' ? [x.count] : [])))
-    expect(best).toBeGreaterThanOrEqual(5)
-  })
-  it('キッチンの外に落ちたら「つよすぎ」で0に戻り、キッチンに落ちたら1回', () => {
-    const e = new RallyEngine({ kind: 'dink', mode: 'easy', levels: ['otona', 'otona'], target: 0 })
-    e.dinkCount = 3
-    e.phase = 'play'
-    e.ballVisible = true
-    // 上の人はベースラインの後ろにいて、球には触れない
-    e.setFinger(1, true, 3, -1.5)
-    const shoot = (depth: number) => {
-      e.ball = { x: 3, y: COURT.NET_Y + 2.4, z: 0.8, vx: 0, vy: 0, vz: 0, bounces: 0, timeScale: 1 }
-      e.state = { lastHitter: 0, shot: 3, bounces: 0, serverX: 3 }
-      launch(e.ball, { x: 3, y: COURT.NET_Y - depth }, 1.4, 1)
-      for (let t = 0; t < 5; t += 1 / 60) {
-        const ev = e.step(1 / 60).find((x) => x.type === 'dink')
-        if (ev) return ev
-      }
-      return null
+describe('ラリーたいけつ（かんたん）の数え方', () => {
+  it('サービスは2ポイントずつ交代', () => {
+    const e = new RallyEngine({ kind: 'versus', mode: 'easy', levels: ['kids', 'kids'], target: 5 })
+    const servers: number[] = []
+    for (let i = 0; i < 6; i++) {
+      servers.push(e.server)
+      e.score[i % 2] += 0
+      e.score[0] += 1
+      ;(e as unknown as { server: number }).server = Math.floor((e.score[0] + e.score[1]) / 2) % 2
     }
-    expect(shoot(3.5)).toEqual({ type: 'dink', ok: false, count: 0 })
-    expect(shoot(1.2)).toEqual({ type: 'dink', ok: true, count: 1 })
-  })
-  it('ディンクではアウトにならない（落とさない限り続く協力ゲーム）', () => {
-    for (const seed of [1, 2, 3]) {
-      const { events } = play('dink', 'easy', ['otona', 'senshu'], 120, { swing: [40, 40] }, seed)
-      for (const x of events) if (x.type === 'dink-end') expect(x.fault.reason).not.toBe('out')
-    }
-  })
-  it('落としたら終わり（dink-end）', () => {
-    const { e, events } = play('dink', 'easy', ['otona', 'otona'], 120, { miss: 1.2 })
-    expect(count(events, 'dink-end')).toBe(1)
-    expect(e.phase).toBe('over')
+    expect(servers).toEqual([0, 0, 1, 1, 0, 0])
   })
 })

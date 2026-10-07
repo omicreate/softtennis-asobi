@@ -40,7 +40,7 @@ const DESIGN_PRICE: Record<DesignId, number | Special> = {
   stripe: 3,
   star: 4,
   heart: 4,
-  pikuru: 5,
+  hawk: 5,
   rainbow: 6,
   gold: 'stamps7',
   ocean: 5,
@@ -64,6 +64,9 @@ const WEAR_PRICE: Record<AccessoryId, number | Special> = {
   aura: 'stamps14',
 }
 
+/** 小物（きせかえ）を出すか */
+export const WEAR_ON = false
+
 function make(kind: ItemKind, key: string, label: string, p: number | Special): Item {
   return typeof p === 'number' ? { id: `${kind}:${key}`, kind, key, label, price: p } : { id: `${kind}:${key}`, kind, key, label, price: 0, special: p }
 }
@@ -71,7 +74,8 @@ function make(kind: ItemKind, key: string, label: string, p: number | Special): 
 export const ITEMS: Item[] = [
   ...(Object.keys(DESIGNS) as DesignId[]).map((k) => make('design', k, DESIGNS[k].label, DESIGN_PRICE[k])),
   ...(Object.keys(SHAPES) as PaddleShape[]).map((k) => make('shape', k, SHAPES[k].label, SHAPE_PRICE[k])),
-  ...(Object.keys(ACCESSORIES) as AccessoryId[]).map((k) => make('wear', k, ACCESSORIES[k].label, WEAR_PRICE[k])),
+  // ホークアイ先生の小物は、表情の原画がそろって置く場所を測ってから出す（いまは出さない）
+  ...(WEAR_ON ? (Object.keys(ACCESSORIES) as AccessoryId[]).map((k) => make('wear', k, ACCESSORIES[k].label, WEAR_PRICE[k])) : []),
 ]
 
 export const itemById = (id: string) => ITEMS.find((i) => i.id === id)
