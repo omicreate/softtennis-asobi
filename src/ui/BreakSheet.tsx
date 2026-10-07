@@ -5,13 +5,13 @@
 import { Both } from '../core/Stage'
 import { PHRASES } from '../core/voiceLines'
 import { speak } from '../core/speak'
-import { PikuruCut } from './pikuruArt'
+import { HawkCut } from './hawkArt'
 import { useEffect } from 'react'
 
 function Body({ onRest, onMore, small = false }: { onRest: () => void; onMore: () => void; small?: boolean }) {
   return (
     <div className="break-card" role="dialog" aria-label="きゅうけい" data-testid="break-sheet">
-      <PikuruCut art="ok" height={small ? 64 : 96} />
+      <HawkCut art="ok" height={small ? 64 : 96} />
       <p className="break-title">たくさん あそんだね！</p>
       <p className="break-sub">ちょっと きゅうけい しよう。とおくを みて、めを やすめよう。おみずも のもうね。</p>
       <div className="break-actions">

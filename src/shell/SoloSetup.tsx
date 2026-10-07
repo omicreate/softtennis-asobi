@@ -9,7 +9,7 @@ import { sfx, unlockAudio } from '../core/sound'
 import { speak } from '../core/speak'
 import { HowToSheet } from '../ui/HowToSheet'
 import { PaddleIcon, PaddlePicker } from '../ui/PaddleIcon'
-import { Pikuru } from '../ui/Pikuru'
+import { Hawk } from '../ui/Hawk'
 import type { GameInfo } from './games'
 import { href } from './route'
 import './setup.css'
@@ -22,7 +22,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
   const [help, setHelp] = useState(false)
   const [picker, setPicker] = useState(false)
   // 自分のパドルが画面に出るゲームだけ（ジャンプ・キャッチ・リアクション・ピタッと では出さない）
-  const usesPaddle = (['lift', 'target', 'pikuru'] as string[]).includes(game.id)
+  const usesPaddle = (['lift', 'target', 'sensei'] as string[]).includes(game.id)
 
   useEffect(() => {
     speak(game.howto)
@@ -39,14 +39,14 @@ export function SoloSetup({ game }: { game: GameInfo }) {
       </header>
 
       <div className="solo-intro">
-        <Pikuru face={game.face} size={88} />
+        <Hawk face={game.face} size={88} />
         <p>{game.howto}</p>
         <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(game.howto)}>
           🗣️
         </button>
       </div>
 
-      <h2 className="solo-label">{game.id === 'pikuru' ? 'レベル（ピクルくんも おなじ つよさ）' : 'レベル'}</h2>
+      <h2 className="solo-label">{game.id === 'sensei' ? 'レベル（ピクルくんも おなじ つよさ）' : 'レベル'}</h2>
       <div className="level-grid" role="radiogroup" aria-label="レベル">
         {LEVELS.map((lv) => (
           <button
@@ -70,7 +70,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
         ))}
       </div>
 
-      {game.id === 'pikuru' && (
+      {game.id === 'sensei' && (
         <div className="solo-options">
           <div className="seg" role="radiogroup" aria-label="ルール">
             {(['easy', 'real'] as const).map((m) => (

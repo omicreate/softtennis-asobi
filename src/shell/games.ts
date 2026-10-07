@@ -1,4 +1,4 @@
-import type { Face } from '../ui/Pikuru'
+import type { Face } from '../ui/Hawk'
 
 export type GameId =
   | 'rally'
@@ -6,7 +6,7 @@ export type GameId =
   | 'quiz'
   | 'lift'
   | 'target'
-  | 'pikuru'
+  | 'sensei'
   | 'reaction'
   | 'nise'
   | 'ishin'
@@ -101,7 +101,7 @@ export const GAMES: GameInfo[] = [
     unit: 'きゅう',
   },
   {
-    id: 'pikuru',
+    id: 'sensei',
     title: 'ピクルくんと ラリー',
     tag: 'ひとりで',
     desc: 'ピクルくんと しょうぶ！',

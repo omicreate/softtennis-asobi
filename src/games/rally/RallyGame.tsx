@@ -17,9 +17,9 @@ import { Half, useStage } from '../../core/Stage'
 import { load, save } from '../../core/storage'
 import { Notice, Result, Scores } from '../../ui/GameUI'
 import type { NoticeData } from '../../ui/GameUI'
-import { Pikuru } from '../../ui/Pikuru'
-import type { Face } from '../../ui/Pikuru'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { Hawk } from '../../ui/Hawk'
+import type { Face } from '../../ui/Hawk'
+import { HawkCut } from '../../ui/hawkArt'
 import { mulberry32 } from '../../core/rng'
 import { usePlay } from '../../shell/playContext'
 import { Cpu, CPU_SKILL } from './cpu'
@@ -64,7 +64,7 @@ export function RallyGame({ kind, levels, mode, target, scoring, cpu = false, pa
     () => new RallyEngine({ kind, mode, levels, target, scoring, cpu: cpu ? 1 : undefined, rand: contest ? mulberry32(contest.seed) : undefined }),
     [kind, mode, levels, target, scoring, cpu, contest],
   )
-  const pikuru = useMemo(() => (cpu ? new Cpu(1, CPU_SKILL[levels[1]]) : null), [cpu, levels])
+  const sensei = useMemo(() => (cpu ? new Cpu(1, CPU_SKILL[levels[1]]) : null), [cpu, levels])
   const view = useMemo(() => makeView(stage.w, stage.h, kind === 'target' ? 1.3 : 0), [stage.w, stage.h, kind])
   const pointers = useRef(new Map<number, Side>())
   const owner = useRef<[number | null, number | null]>([null, null])
@@ -125,7 +125,7 @@ export function RallyGame({ kind, levels, mode, target, scoring, cpu = false, pa
         pkTimer.current -= dt
         if (pkTimer.current <= 0) setPkFace('think')
       }
-      pikuru?.update(engine, dt)
+      sensei?.update(engine, dt)
       for (const ev of engine.step(dt)) {
         switch (ev.type) {
           case 'countdown':
@@ -217,7 +217,7 @@ export function RallyGame({ kind, levels, mode, target, scoring, cpu = false, pa
                 return { ...s, hits: engine.hits, best }
               })
             } else if (cpu) {
-              speak(ev.winner === 0 ? PHRASES.youWin : PHRASES.pikuruWin)
+              speak(ev.winner === 0 ? PHRASES.youWin : PHRASES.senseiWin)
             } else if (ev.winner !== null) {
               speak(ev.winner === 0 ? PHRASES.win0 : PHRASES.win1)
             }
@@ -228,7 +228,7 @@ export function RallyGame({ kind, levels, mode, target, scoring, cpu = false, pa
       if (engine.phase !== phase) setPhase(engine.phase)
     }
     const ctx = canvasRef.current?.getContext('2d')
-    if (ctx) drawRally(ctx, stage.w, stage.h, view, engine, { showLanding, realRules: mode === 'real' && kind === 'versus', solo, pikuruFace: pkFace, paddles: play.paddles })
+    if (ctx) drawRally(ctx, stage.w, stage.h, view, engine, { showLanding, realRules: mode === 'real' && kind === 'versus', solo, senseiFace: pkFace, paddles: play.paddles })
   })
 
   // 指
@@ -292,13 +292,13 @@ export function RallyGame({ kind, levels, mode, target, scoring, cpu = false, pa
       />
       {umpire && (
         <div className="umpire" aria-label="しんぱんの ピクルくん">
-          <PikuruCut art={pkFace} height={Math.round(Math.min(96, stage.w * 0.2))} />
+          <HawkCut art={pkFace} height={Math.round(Math.min(96, stage.w * 0.2))} />
         </div>
       )}
       {kind === 'target' && (
         <>
           <div className="solo-banner" aria-live="polite">
-            <Pikuru face="think" size={40} />
+            <Hawk face="think" size={40} />
             <span>{shots.label || 'ピクルマシンから ボールが くるよ'}</span>
           </div>
           <div className="solo-score">

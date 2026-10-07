@@ -122,7 +122,7 @@
   animation: pop-in 0.25s var(--ease);
 }
 .quiz-explain img,
-.quiz-explain .pikuru-cut {
+.quiz-explain .hawk-cut {
   flex: none;
 }
 .quiz-explain > div {

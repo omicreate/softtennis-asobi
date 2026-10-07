@@ -22,7 +22,7 @@ await page.evaluate(() => {
   box.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#ffe7b8;display:flex;align-items:center;gap:24px;padding:0 48px;font-family:"Zen Maru Gothic",sans-serif;color:#12302b'
   box.innerHTML = `
     <div style="position:absolute;inset:0;background:radial-gradient(circle at 18% 50%, #fff6e3 0, #ffe7b8 60%)"></div>
-    <img src="/pickle-asobi/pikuru/cut-full.png" style="position:relative;height:470px;flex:none">
+    <img src="/pickle-asobi/hawk/cut-full.png" style="position:relative;height:470px;flex:none">
     <div style="position:relative;display:flex;flex-direction:column;gap:18px">
       <div style="font-size:30px;font-weight:900;color:#c4570f">親子・なかまで 1台を かこんで</div>
       <div style="font-size:76px;font-weight:900;line-height:1.05;color:#2e5a1c;white-space:nowrap">ピクルくんとあそぼ</div>

@@ -1,5 +1,5 @@
 /**
- * 背景を抜いたピクルくんの絵（原画から scripts/build-art.mjs で作る：public/pikuru/cut-*.png）。
+ * 背景を抜いたピクルくんの絵（原画から scripts/build-art.mjs で作る：public/hawk/cut-*.png）。
  * ゲームの中（審判・ボールマシン・応援・合図・走る姿など）に出す。
  * コレクションで つけた小物（ui/accessories.ts）も重ねて描く。絵そのものは変えない。
  */
@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
 import { getProgress, useProgress } from '../core/progress'
 import { ART_SIZE, drawWear, setGlow } from './accessories'
 import type { Wear } from './accessories'
-import type { Face } from './Pikuru'
+import type { Face } from './Hawk'
 
 export type CutArt = Face | 'full' | 'run'
 
@@ -20,7 +20,7 @@ const ALT: Record<CutArt, string> = {
   run: 'はしる ピクルくん',
 }
 
-const src = (art: CutArt) => `${import.meta.env.BASE_URL}pikuru/cut-${art}.png`
+const src = (art: CutArt) => `${import.meta.env.BASE_URL}hawk/cut-${art}.png`
 
 const hasWear = (w: Wear) => Object.values(w).some(Boolean)
 
@@ -29,11 +29,11 @@ const hasWear = (w: Wear) => Object.values(w).some(Boolean)
  * 小物をつけていないときは絵（img）、つけているときは小物ごと canvas に描く（大きさは同じ）。
  * wear を渡すとその小物（コレクションの試着など）、渡さないと いま つけている小物。
  */
-export function PikuruCut({ art, height, className, wear }: { art: CutArt; height: number; className?: string; wear?: Wear }) {
+export function HawkCut({ art, height, className, wear }: { art: CutArt; height: number; className?: string; wear?: Wear }) {
   const progress = useProgress()
   const w = wear ?? progress.wear
   if (!hasWear(w)) {
-    return <img className={`pikuru-cut ${className ?? ''}`} src={src(art)} alt={ALT[art]} style={{ height }} draggable={false} />
+    return <img className={`hawk-cut ${className ?? ''}`} src={src(art)} alt={ALT[art]} style={{ height }} draggable={false} />
   }
   return <WornCut art={art} height={height} className={className} wear={w} />
 }
@@ -47,7 +47,7 @@ function WornCut({ art, height, className, wear }: { art: CutArt; height: number
     const c = ref.current
     if (!c) return
     const draw = () => {
-      const img = pikuruImage(art)
+      const img = hawkImage(art)
       const ctx = c.getContext('2d')
       if (!img || !ctx) return
       const dpr = Math.min(window.devicePixelRatio || 1, 2.5)
@@ -75,7 +75,7 @@ function WornCut({ art, height, className, wear }: { art: CutArt; height: number
     return () => img.removeEventListener('load', draw)
   }, [art, height, width, nw, nh, wear])
 
-  return <canvas ref={ref} role="img" aria-label={ALT[art]} className={`pikuru-cut ${className ?? ''}`} style={{ height, width }} />
+  return <canvas ref={ref} role="img" aria-label={ALT[art]} className={`hawk-cut ${className ?? ''}`} style={{ height, width }} />
 }
 
 const cache = new Map<CutArt, HTMLImageElement>()
@@ -91,7 +91,7 @@ function cachedImage(art: CutArt): HTMLImageElement {
 }
 
 /** canvas に描くための絵（読み込みが終わるまでは null） */
-export function pikuruImage(art: CutArt): HTMLImageElement | null {
+export function hawkImage(art: CutArt): HTMLImageElement | null {
   const img = cachedImage(art)
   return img.complete && img.naturalWidth > 0 ? img : null
 }
@@ -104,15 +104,15 @@ export function loadPikuru(art: CutArt): Promise<HTMLImageElement> {
 }
 
 /** 使う絵を前もって読み込む */
-export function preloadPikuru(): void {
-  for (const a of ['think', 'ok', 'eh', 'oops', 'full', 'run'] as CutArt[]) pikuruImage(a)
+export function preloadHawk(): void {
+  for (const a of ['think', 'ok', 'eh', 'oops', 'full', 'run'] as CutArt[]) hawkImage(a)
 }
 
 /**
  * canvas に描く。(x, y) は足もと（下の中央）、h は高さ（px）。
  * wear を省くと、いま つけている小物を重ねる。
  */
-export function drawPikuruArt(
+export function drawHawkArt(
   ctx: CanvasRenderingContext2D,
   art: CutArt,
   x: number,
@@ -122,7 +122,7 @@ export function drawPikuruArt(
   flip = false,
   wear: Wear = getProgress().wear,
 ): boolean {
-  const img = pikuruImage(art)
+  const img = hawkImage(art)
   if (!img) return false
   const [nw, nh] = ART_SIZE[art]
   const w = (h * nw) / nh

@@ -22,7 +22,7 @@ export const EASY: MissionDef[] = [
   { id: 'any-3', text: 'ゲームを 3かい あそぼう', kind: 'any', need: 3 },
   { id: 'play-lift', text: 'ポンポン リフティングで あそぼう', kind: 'play', need: 1, game: 'lift' },
   { id: 'play-target', text: 'ねらってショットで あそぼう', kind: 'play', need: 1, game: 'target' },
-  { id: 'play-pikuru', text: 'ピクルくんと ラリーで あそぼう', kind: 'play', need: 1, game: 'pikuru' },
+  { id: 'play-sensei', text: 'ピクルくんと ラリーで あそぼう', kind: 'play', need: 1, game: 'sensei' },
   { id: 'play-reaction', text: 'リアクション ボレーで あそぼう', kind: 'play', need: 1, game: 'reaction' },
 ]
 

@@ -45,7 +45,7 @@ const shell = [
   "./icon-maskable-192.png",
   "./icon-maskable-512.png",
   "./apple-touch-icon.png",
-  ...list("pikuru/"),
+  ...list("hawk/"),
   ...list("voice/").filter((f) => f.endsWith(".mp3") || f.endsWith(".json")),
   ...assets,
 ];

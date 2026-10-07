@@ -20,7 +20,7 @@ import { BreakSheet } from '../../ui/BreakSheet'
 import { RewardList } from '../../ui/GameUI'
 import { Handoff } from '../../ui/Handoff'
 import { HowToSheet } from '../../ui/HowToSheet'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { HawkCut } from '../../ui/hawkArt'
 import { ShareSheet } from '../../ui/ShareSheet'
 import { dealRound, judgeOutcome, majorityWord, MIN_PLAYERS, pairOf, starsFor, tally, TALK_HINTS, TALK_TIMES, TIE_TIME, VOTE_MODES, wolfWord, wordFor } from './nise'
 import type { NiseRound, Outcome, VoteMode } from './nise'
@@ -251,7 +251,7 @@ export function NiseGame() {
           <h1 className="party-title">にせピクルくんは だれだ？</h1>
         </header>
         <div className="party-intro">
-          <PikuruCut art="think" height={92} />
+          <HawkCut art="think" height={92} />
           <p>ひとりだけ おだいが ちがう「にせピクルくん」が いるよ。はなして、せーので ゆびさし！ にせピクルくんは、じぶんが にせものだと しらないよ。</p>
           <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.niseIntro)}>
             🗣️
@@ -359,7 +359,7 @@ export function NiseGame() {
 
       {phase === 'ready' && (
         <section className="party-card">
-          <PikuruCut art="ok" height={110} />
+          <HawkCut art="ok" height={110} />
           <h2 className="party-game">みんな おだいを みたね！</h2>
           <p className="party-howto">つくえの まんなかに おいて、はなしあい スタート。おだいの ことばは いっちゃ だめだよ。</p>
           <button className="btn btn-go" onClick={() => startTalk(talk, false)} data-testid="nise-talk">
@@ -376,7 +376,7 @@ export function NiseGame() {
             {mmss(left)}
           </div>
           <div className="nise-hint">
-            <PikuruCut art="think" height={80} />
+            <HawkCut art="think" height={80} />
             <div>
               <p className="nise-hint-title">はなす ヒント</p>
               <p className="nise-hint-text">💬 {TALK_HINTS[deck][hint % TALK_HINTS[deck].length]}</p>
@@ -427,7 +427,7 @@ export function NiseGame() {
 
       {phase === 'count' && (
         <section className="party-card nise-count">
-          <PikuruCut art="eh" height={110} />
+          <HawkCut art="eh" height={110} />
           <h2 className="party-game">にせピクルくんは だれ？</h2>
           <p className="party-howto">にせピクルくんだと おもう ひとを、せーので ゆびさそう！</p>
           <button
@@ -510,7 +510,7 @@ export function NiseGame() {
             <p className="nise-drum">は……</p>
           ) : (
             <>
-              <PikuruCut art={pointed === round.wolf ? 'ok' : 'oops'} height={96} />
+              <HawkCut art={pointed === round.wolf ? 'ok' : 'oops'} height={96} />
               <p className="nise-big" data-caught={pointed === round.wolf || undefined}>
                 {pointed === round.wolf ? 'にせピクルくん だった！' : 'ほんものの ピクルくん！'}
               </p>
@@ -590,7 +590,7 @@ export function NiseGame() {
       {phase === 'result' && outcome && (
         <section className="party-card party-wide" data-testid="nise-result">
           <div className="nise-art">
-            <PikuruCut art={outcome.winner === 'minna' ? 'ok' : 'eh'} height={96} />
+            <HawkCut art={outcome.winner === 'minna' ? 'ok' : 'eh'} height={96} />
           </div>
           <h2 className="party-game nise-win" data-winner={outcome.winner}>
             {outcome.how === 'reverse' ? 'ぎゃくてん！ にせピクルくんの かち！' : outcome.winner === 'minna' ? 'みんなの かち！' : 'にせピクルくんの かち！'}

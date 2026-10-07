@@ -20,7 +20,7 @@
   display: flex;
   justify-content: center;
 }
-.home-pikuru .pikuru-cut {
+.home-pikuru .hawk-cut {
   height: clamp(120px, 36vw, 150px) !important;
   width: auto !important;
 }

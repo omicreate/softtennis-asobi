@@ -4,7 +4,7 @@
  * hi＝光らせる所、tap＝タップの波紋を出す
  */
 import type { ReactNode } from 'react'
-import { PikuruCut } from './pikuruArt'
+import { HawkCut } from './hawkArt'
 import './install.css'
 
 export type Hi = 'more' | 'menu' | 'share' | 'addHome' | 'add' | 'cmore' | 'cmenu' | 'install' | 'icon' | null
@@ -37,7 +37,7 @@ export function Phone({ children, width = 220, label }: { children: ReactNode; w
 function AppPage() {
   return (
     <div className="ia-page">
-      <PikuruCut art="full" height={64} />
+      <HawkCut art="full" height={64} />
       <b>ピクルくんと あそぼ</b>
       <div className="ia-tiles">
         {Array.from({ length: 6 }, (_, i) => (

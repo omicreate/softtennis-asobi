@@ -14,7 +14,7 @@ import { PHRASES } from '../../core/voiceLines'
 import { Half } from '../../core/Stage'
 import { Notice, Result, Scores } from '../../ui/GameUI'
 import type { NoticeData } from '../../ui/GameUI'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { HawkCut } from '../../ui/hawkArt'
 import { usePlay } from '../../shell/playContext'
 import { Pic } from './pics'
 import { pickRound } from './pick'
@@ -144,7 +144,7 @@ export function Quiz({ levels, paused, onRestart }: Props) {
           <Half key={side} side={side} className={`quiz-half quiz-side-${side}`}>
             <div className="quiz-card" data-kids={kids || undefined}>
               <div className="quiz-prompt">
-                <PikuruCut art={reveal ? (roundWinner === side ? 'ok' : 'oops') : 'think'} height={58} className="quiz-host" />
+                <HawkCut art={reveal ? (roundWinner === side ? 'ok' : 'oops') : 'think'} height={58} className="quiz-host" />
                 {kids && (
                   <button className="quiz-speak" aria-label="もんだいを よみあげる" onClick={() => speak(speech(a))}>
                     🗣️
@@ -172,7 +172,7 @@ export function Quiz({ levels, paused, onRestart }: Props) {
               </div>
               {reveal && (
                 <div className="quiz-explain">
-                  <PikuruCut art={roundWinner === side ? 'ok' : mine && !mine.correct ? 'oops' : 'eh'} height={64} />
+                  <HawkCut art={roundWinner === side ? 'ok' : mine && !mine.correct ? 'oops' : 'eh'} height={64} />
                   <div>
                     <div className="quiz-explain-head">{roundWinner === side ? 'せいかい！ 1てん' : roundWinner === null ? 'こんどは ひきわけ' : mine?.correct ? 'せいかい！ でも おしい' : 'ざんねん'}</div>
                     <div className="quiz-explain-body">{a.q.explain}</div>

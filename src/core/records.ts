@@ -19,7 +19,7 @@ export const MEDAL_RULES: Partial<Record<GameId, MedalRule>> = {
   lift: { need: [5, 15, 30] },
   target: { need: [3, 6, 9] },
   /** ピクルくんに かった レベル（1 ちびっこ・2 キッズ・3 おとな・4 せんしゅ） */
-  pikuru: { need: [1, 3, 4] },
+  sensei: { need: [1, 3, 4] },
   reaction: { need: [700, 500, 380], low: true },
 }
 
@@ -47,12 +47,12 @@ export function medalFor(game: GameId, value: number | undefined): MedalLevel {
 }
 
 /** ピクルくんと ラリー：かったときの レベルを記録の数にする */
-export const pikuruValue = (level: (typeof LEVELS)[number]) => LEVELS.indexOf(level) + 1
+export const senseiValue = (level: (typeof LEVELS)[number]) => LEVELS.indexOf(level) + 1
 
 /** 記録を文字にする（ホームのカード・きろくの一覧） */
 export function recordText(game: GameId, v: number): string {
   switch (game) {
-    case 'pikuru':
+    case 'sensei':
       return `${LEVEL_INFO[LEVELS[Math.max(0, Math.min(3, v - 1))]].label}で かった`
     case 'reaction':
       return `${(v / 1000).toFixed(3)}びょう`

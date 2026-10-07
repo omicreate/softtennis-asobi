@@ -8,6 +8,6 @@ const ALT: Record<Face, string> = {
   oops: 'ドンマイの ピクルくん',
 }
 
-export function Pikuru({ face, size = 80, className }: { face: Face; size?: number; className?: string }) {
-  return <img className={className} src={`${import.meta.env.BASE_URL}pikuru/${face}.png`} width={size} height={size} alt={ALT[face]} draggable={false} />
+export function Hawk({ face, size = 80, className }: { face: Face; size?: number; className?: string }) {
+  return <img className={className} src={`${import.meta.env.BASE_URL}hawk/${face}.png`} width={size} height={size} alt={ALT[face]} draggable={false} />
 }

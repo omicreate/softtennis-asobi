@@ -64,7 +64,7 @@ export function MissionCard() {
             className="stamp"
             data-on={p.days.includes(w.key) || undefined}
             data-today={w.today || undefined}
-            style={p.days.includes(w.key) ? { backgroundImage: `url(${import.meta.env.BASE_URL}pikuru/ok.png)` } : undefined}
+            style={p.days.includes(w.key) ? { backgroundImage: `url(${import.meta.env.BASE_URL}hawk/ok.png)` } : undefined}
           >
             <i aria-hidden>{p.days.includes(w.key) ? '' : w.label}</i>
           </span>

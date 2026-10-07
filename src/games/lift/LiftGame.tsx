@@ -18,8 +18,8 @@ import { Notice, Result } from '../../ui/GameUI'
 import type { NoticeData } from '../../ui/GameUI'
 import { drawPaddleArt } from '../../ui/paddleArt'
 import type { PaddleLook } from '../../ui/paddleArt'
-import type { Face } from '../../ui/Pikuru'
-import { PikuruCut } from '../../ui/pikuruArt'
+import type { Face } from '../../ui/Hawk'
+import { HawkCut } from '../../ui/hawkArt'
 import { BALL_R, createLift, FIELD_H, FIELD_W, GRAVITY, movePaddle, stepLift } from './lift'
 import type { LiftState } from './lift'
 import './lift.css'
@@ -134,7 +134,7 @@ export function LiftGame({ levels, paused, onRestart }: Props) {
         onContextMenu={(e) => e.preventDefault()}
       />
       <div className="lift-hud">
-        <PikuruCut art={face} height={52} />
+        <HawkCut art={face} height={52} />
         <span className="lift-count" aria-label={`${count}かい`}>
           {count}
           <small>かい</small>

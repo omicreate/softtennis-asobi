@@ -4,7 +4,7 @@ import App from './App'
 import { readGo, watchInstallPrompt } from './core/browser'
 import { countOpen, readSource } from './core/counter'
 import { loadVoices } from './core/speak'
-import { preloadPikuru } from './ui/pikuruArt'
+import { preloadHawk } from './ui/hawkArt'
 // 書体はアプリに同梱する（電波のない場所でも同じ見た目にするため）
 import '@fontsource/zen-maru-gothic/700.css'
 import '@fontsource/zen-maru-gothic/900.css'
@@ -16,7 +16,7 @@ readSource()
 countOpen()
 watchInstallPrompt()
 void loadVoices()
-preloadPikuru()
+preloadHawk()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

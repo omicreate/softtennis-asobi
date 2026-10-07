@@ -19,8 +19,8 @@ import { useWakeLock } from '../../core/wakelock'
 import { GameMenu, RewardList } from '../../ui/GameUI'
 import { Handoff } from '../../ui/Handoff'
 import { HowToSheet } from '../../ui/HowToSheet'
-import { Pikuru } from '../../ui/Pikuru'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { Hawk } from '../../ui/Hawk'
+import { HawkCut } from '../../ui/hawkArt'
 import { ShareSheet } from '../../ui/ShareSheet'
 import { formatValue, gameById, GAMES } from '../games'
 import type { GameId } from '../games'
@@ -247,7 +247,7 @@ export function Party({ fixed }: { fixed?: GameId }) {
             <h1 className="party-title">じゅんばんモード</h1>
           </header>
           <div className="party-intro">
-            <PikuruCut art="ok" height={92} />
+            <HawkCut art="ok" height={92} />
             <p>1だいを じゅんばんに まわして、おなじ ゲームの きろくで しょうぶ！ さいごに ピクルくんが ひょうしょう するよ。</p>
             <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.partyIntro)}>
               🗣️
@@ -369,7 +369,7 @@ export function Party({ fixed }: { fixed?: GameId }) {
           <p className="party-round">
             ラウンド {round + 1} / {run.games.length}
           </p>
-          <Pikuru face={game.face} size={110} />
+          <Hawk face={game.face} size={110} />
           <h2 className="party-game">{game.title}</h2>
           <p className="party-howto">{game.howto}</p>
           <div className="party-actions">
@@ -403,7 +403,7 @@ export function Party({ fixed }: { fixed?: GameId }) {
           <span className="party-chip party-chip-big" style={{ background: player.color }}>
             {player.name}
           </span>
-          <PikuruCut art={isTop(run.scores[round], turn, run.low[round]) ? 'ok' : 'eh'} height={110} />
+          <HawkCut art={isTop(run.scores[round], turn, run.low[round]) ? 'ok' : 'eh'} height={110} />
           <p className="party-value">{formatValue(game, run.scores[round][turn] ?? 0)}</p>
           {isTop(run.scores[round], turn, run.low[round]) && turn > 0 && <p className="party-top">いま トップ！</p>}
           <button className="btn btn-go" onClick={nextAfterTurn} data-testid="party-next">
@@ -530,7 +530,7 @@ function Final({ run, rewards, onAgain, onShare }: { run: Run; rewards: Reward[]
       <h2 className="party-game">ひょうしょうしき</h2>
       {tt && (
         <div className="party-team-win" data-testid="party-team-win">
-          <PikuruCut art="ok" height={84} />
+          <HawkCut art="ok" height={84} />
           <p className="party-game">{tt[0] === tt[1] ? 'ひきわけ！' : `チーム「${TEAMS[tt[0] > tt[1] ? 0 : 1].name}」の かち！`}</p>
           <TeamTotals run={run} upTo={run.scores.length} />
           <p className="party-sub">ひとりずつの けっか</p>
@@ -539,7 +539,7 @@ function Final({ run, rewards, onAgain, onShare }: { run: Run; rewards: Reward[]
       <div className="podium">
         {podium.map((s) => (
           <div key={s.player} className="podium-col" data-rank={s.rank}>
-            {s.rank === 1 && !tt && <PikuruCut art="ok" height={84} />}
+            {s.rank === 1 && !tt && <HawkCut art="ok" height={84} />}
             <span className="party-chip" style={{ background: run.players[s.player].color }}>
               {run.players[s.player].name}
             </span>

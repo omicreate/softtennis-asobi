@@ -13,7 +13,7 @@ import { load, save } from '../../core/storage'
 import { PHRASES } from '../../core/voiceLines'
 import { usePlay } from '../../shell/playContext'
 import { Result } from '../../ui/GameUI'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { HawkCut } from '../../ui/hawkArt'
 import { createRx, secText, stepRx, tapRx, totals, TRIES } from './reaction'
 import type { RxEvent, RxState } from './reaction'
 import './reaction.css'
@@ -97,7 +97,7 @@ export function ReactionGame({ levels, paused, onRestart }: Props) {
   return (
     <div className="rx" onPointerDown={onTap} data-testid="rx-area" data-phase={game.phase}>
       <div className="rx-hud">
-        <PikuruCut art={face} height={52} />
+        <HawkCut art={face} height={52} />
         <span className="rx-count">
           {Math.min(game.results.length + (game.phase === 'over' ? 0 : 1), TRIES)}/{TRIES}
         </span>

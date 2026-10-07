@@ -23,7 +23,7 @@ import { BreakSheet } from '../../ui/BreakSheet'
 import { RewardList } from '../../ui/GameUI'
 import { Handoff } from '../../ui/Handoff'
 import { HowToSheet } from '../../ui/HowToSheet'
-import { PikuruCut } from '../../ui/pikuruArt'
+import { HawkCut } from '../../ui/hawkArt'
 import { ShareSheet } from '../../ui/ShareSheet'
 import { NisePic } from '../nise/pics'
 import { Pic } from '../quiz/pics'
@@ -255,7 +255,7 @@ export function IshinGame() {
           <h1 className="party-title">いしんでんしん ダブルス</h1>
         </header>
         <div className="party-intro">
-          <PikuruCut art="ok" height={92} />
+          <HawkCut art="ok" height={92} />
           <p>おなじ しつもんに、ペアの ふたりが こっそり こたえるよ。おなじ こたえなら「いしんでんしん！」 せいかいは ないよ。</p>
           <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.ishinIntro)}>
             🗣️
@@ -361,7 +361,7 @@ export function IshinGame() {
                     <ChoiceGrid q={q} value={undefined} onPick={(i) => facePick(side, i)} testPrefix={`ishin-face-${side}`} />
                   ) : (
                     <div className="ishin-wait">
-                      <PikuruCut art="think" height={72} />
+                      <HawkCut art="think" height={72} />
                       <p>えらんだ！ あいてを まってね</p>
                       <button className="btn btn-small" onClick={() => facePick(side, undefined)}>
                         えらびなおす
@@ -498,7 +498,7 @@ export function IshinGame() {
       {phase === 'final' && (
         <section className="party-card party-wide" data-testid="ishin-final">
           <div className="nise-art">
-            <PikuruCut art="ok" height={96} />
+            <HawkCut art="ok" height={96} />
           </div>
           {size === 2 ? (
             <>

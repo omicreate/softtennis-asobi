@@ -180,7 +180,7 @@ img {
   gap: 12px;
 }
 .notice-card img,
-.notice-card .pikuru-cut {
+.notice-card .hawk-cut {
   flex: none;
   margin: -14px 0 -6px;
 }
@@ -251,7 +251,7 @@ img {
   text-align: center;
 }
 .result img,
-.result .pikuru-cut {
+.result .hawk-cut {
   flex: none;
 }
 .result-title {
@@ -309,7 +309,7 @@ img {
 }
 
 /* 背景を抜いたピクルくん（ゲームの中に出す） */
-.pikuru-cut {
+.hawk-cut {
   display: block;
   width: auto;
   max-width: none;

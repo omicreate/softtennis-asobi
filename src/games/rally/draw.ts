@@ -7,8 +7,8 @@ import type { RallyEngine } from './engine'
 import { predictLanding } from './physics'
 import { drawPaddleArt } from '../../ui/paddleArt'
 import type { PaddleLook } from '../../ui/paddleArt'
-import { drawPikuruArt } from '../../ui/pikuruArt'
-import type { Face } from '../../ui/Pikuru'
+import { drawHawkArt } from '../../ui/hawkArt'
+import type { Face } from '../../ui/Hawk'
 
 /**
  * 本物のパドルの大きさ（m）：全長16インチ・幅8インチ、握り5インチ（よくある形）。
@@ -69,7 +69,7 @@ export interface DrawOptions {
   /** ひとりで遊ぶ（上の文字も回さない） */
   solo?: boolean
   /** ピクルくん（相手・ボールマシンの係）の表情 */
-  pikuruFace?: Face
+  senseiFace?: Face
   /** パドルの見た目（コレクション） */
   paddles?: [PaddleLook, PaddleLook]
 }
@@ -176,13 +176,13 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
       ctx.strokeRect(X(z.x0), Y(z.y0), (z.x1 - z.x0) * s, (z.y1 - z.y0) * s)
       ctx.setLineDash([])
     }
-    drawMachine(ctx, X, Y, s, o.pikuruFace ?? 'think')
+    drawMachine(ctx, X, Y, s, o.senseiFace ?? 'think')
   }
 
   // 選手とパドル（当たり判定の「とどく範囲」もうすく見せる）
   for (const side of [0, 1] as Side[]) {
     if (e.opts.kind === 'target' && side === 1) continue
-    drawPlayer(ctx, X, Y, s, e, side, o.pikuruFace ?? 'think', o.paddles?.[side])
+    drawPlayer(ctx, X, Y, s, e, side, o.senseiFace ?? 'think', o.paddles?.[side])
   }
 
   // 球（影で高さを見せる）
@@ -221,7 +221,7 @@ function drawMachine(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, fac
   const w = 1.4
   const h = 0.7
   // マシンの係のピクルくん（マシンの右に立つ。打った球が入ると喜ぶ）
-  drawPikuruArt(ctx, face, X(MACHINE.x + 1.25), Y(MACHINE.y + h / 2 + 0.05), 1.15 * s)
+  drawHawkArt(ctx, face, X(MACHINE.x + 1.25), Y(MACHINE.y + h / 2 + 0.05), 1.15 * s)
   roundRect(ctx, X(MACHINE.x - w / 2), Y(MACHINE.y - h / 2), w * s, h * s, 0.18 * s)
   ctx.fillStyle = PICKLE
   ctx.fill()
@@ -295,7 +295,7 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
 
   if (cpu) {
     // ピクルくん（原画）。表情は試合の流れで変わる
-    drawPikuruArt(ctx, face, X(bx), Y(by + 0.32 * VIS), 0.95 * VIS * s)
+    drawHawkArt(ctx, face, X(bx), Y(by + 0.32 * VIS), 0.95 * VIS * s)
   } else {
     // 人（上から見た肩と頭）
     ctx.beginPath()

@@ -4,8 +4,8 @@ import type { AccessoryId, Wear } from '../ui/accessories'
 import { PaddleIcon } from '../ui/PaddleIcon'
 import { DESIGNS, SHAPES } from '../ui/paddleArt'
 import type { DesignId, PaddleShape } from '../ui/paddleArt'
-import { PikuruCut } from '../ui/pikuruArt'
-import type { CutArt } from '../ui/pikuruArt'
+import { HawkCut } from '../ui/hawkArt'
+import type { CutArt } from '../ui/hawkArt'
 
 const ARTS: CutArt[] = ['think', 'ok', 'eh', 'oops', 'full', 'run']
 const SETS: Wear[] = [
@@ -21,7 +21,7 @@ export default function DevWear() {
         <div key={i} style={{ display: 'flex', alignItems: 'flex-end', gap: 6, borderBottom: '1px solid #ddd' }}>
           <span style={{ width: 90, fontSize: 11 }}>{Object.values(w).join(',') || 'なし'}</span>
           {ARTS.map((a) => (
-            <PikuruCut key={a} art={a} height={a === 'full' || a === 'run' ? 110 : 90} wear={w} />
+            <HawkCut key={a} art={a} height={a === 'full' || a === 'run' ? 110 : 90} wear={w} />
           ))}
         </div>
       ))}

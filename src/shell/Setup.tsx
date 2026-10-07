@@ -11,7 +11,7 @@ import { Half, Stage } from '../core/Stage'
 import { HowToSheet } from '../ui/HowToSheet'
 import { PaddleIcon, PaddlePicker } from '../ui/PaddleIcon'
 import type { PaddleLook } from '../ui/paddleArt'
-import { Pikuru } from '../ui/Pikuru'
+import { Hawk } from '../ui/Hawk'
 import type { GameId, GameInfo } from './games'
 import { href } from './route'
 import './setup.css'
@@ -146,7 +146,7 @@ export function Setup({ game }: { game: GameInfo }) {
           </div>
         ) : (
           <div className="setup-mid-note">
-            <Pikuru face={game.face} size={40} />
+            <Hawk face={game.face} size={40} />
             {MID_NOTE[game.id] ?? 'レベルに あわせた もんだいが でるよ'}
           </div>
         )}

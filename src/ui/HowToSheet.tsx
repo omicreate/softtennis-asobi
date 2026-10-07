@@ -7,7 +7,7 @@ import { speak, stopSpeaking } from '../core/speak'
 import { gameById } from '../shell/games'
 import type { GameId } from '../shell/games'
 import { HOWTO, howtoSpeech } from '../shell/howto'
-import { PikuruCut } from './pikuruArt'
+import { HawkCut } from './hawkArt'
 import './howto.css'
 
 export function HowToSheet({
@@ -41,7 +41,7 @@ export function HowToSheet({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="howto-head">
-          <PikuruCut art="think" height={64} className="howto-pikuru" />
+          <HawkCut art="think" height={64} className="howto-pikuru" />
           <div className="howto-title">
             <span className="howto-eyebrow">あそびかた・ルール</span>
             <h2>{info.title}</h2>

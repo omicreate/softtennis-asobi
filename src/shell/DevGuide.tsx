@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { AddHomeArt, ChromeMenuArt, ChromeScreen, HomeScreenArt, InAppMenu, InAppScreen, InstallDialogArt, Phone, SafariScreen, ShareSheetArt } from '../ui/installArt'
-import { PikuruCut } from '../ui/pikuruArt'
+import { HawkCut } from '../ui/hawkArt'
 import { GUIDE_SCENES } from './guideScenes'
 import type { GuideScene } from './guideScenes'
 import './devguide.css'
@@ -88,7 +88,7 @@ export default function DevGuide() {
         {end ? (
           <div className="guide-end">
             <h1 className="guide-title guide-title-big">{sc.title}</h1>
-            <PikuruCut art={sc.id === 'intro' ? 'full' : 'ok'} height={sc.id === 'intro' ? 760 : 620} />
+            <HawkCut art={sc.id === 'intro' ? 'full' : 'ok'} height={sc.id === 'intro' ? 760 : 620} />
             {sc.sub && <p className="guide-sub guide-sub-big">{sc.sub}</p>}
           </div>
         ) : (
@@ -104,7 +104,7 @@ export default function DevGuide() {
               </div>
             )}
             <div className="guide-pikuru">
-              <PikuruCut art={sc.id === 'inapp' ? 'eh' : sc.id === 'home' ? 'ok' : 'think'} height={300} />
+              <HawkCut art={sc.id === 'inapp' ? 'eh' : sc.id === 'home' ? 'ok' : 'think'} height={300} />
             </div>
             {sc.id !== 'home' && <p className="guide-note">※ 表示は アプリ・OS の版で 少しちがいます</p>}
           </>

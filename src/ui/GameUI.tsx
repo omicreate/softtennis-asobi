@@ -6,8 +6,8 @@ import { gameById } from '../shell/games'
 import { Both, Half } from '../core/Stage'
 import type { Side } from '../core/players'
 import { usePlay } from '../shell/playContext'
-import type { Face } from './Pikuru'
-import { PikuruCut } from './pikuruArt'
+import type { Face } from './Hawk'
+import { HawkCut } from './hawkArt'
 
 export interface NoticeData {
   title: string
@@ -32,7 +32,7 @@ export function Notice({ data, single = false }: { data: NoticeData | null; sing
           <div className="notice-big">{data.title}</div>
         ) : (
           <div className="notice-card">
-            {face && <PikuruCut art={face} height={72} />}
+            {face && <HawkCut art={face} height={72} />}
             <div>
               <div className="notice-title">{data.title}</div>
               {data.sub && <div className="notice-sub">{data.sub}</div>}
@@ -124,7 +124,7 @@ export function Result({
   if (single) {
     return (
       <div className="result result-single">
-        <PikuruCut art={face(0)} height={150} />
+        <HawkCut art={face(0)} height={150} />
         <div className="result-title">{title(0)}</div>
         {sub && <div className="result-sub">{sub(0)}</div>}
         {extra}
@@ -145,7 +145,7 @@ export function Result({
     <Both interactive>
       {(side) => (
         <div className="result">
-          <PikuruCut art={face(side)} height={play.rewards.length || extra ? 72 : 120} />
+          <HawkCut art={face(side)} height={play.rewards.length || extra ? 72 : 120} />
           <div className="result-title">{title(side)}</div>
           {sub && <div className="result-sub">{sub(side)}</div>}
           {extra}

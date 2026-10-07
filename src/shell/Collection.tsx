@@ -13,7 +13,7 @@ import { ACCESSORIES, ART_SIZE } from '../ui/accessories'
 import type { AccessoryId } from '../ui/accessories'
 import { PaddleIcon } from '../ui/PaddleIcon'
 import type { DesignId, PaddleShape } from '../ui/paddleArt'
-import { PikuruCut } from '../ui/pikuruArt'
+import { HawkCut } from '../ui/hawkArt'
 import './setup.css'
 import './collection.css'
 
@@ -75,7 +75,7 @@ export function Collection() {
       </header>
 
       <section className="col-preview" aria-label="いまの すがた">
-        <PikuruCut art="full" height={170} />
+        <HawkCut art="full" height={170} />
         <div className="col-preview-paddle">
           <PaddleIcon look={mine} size={96} />
           <span>じぶんの パドル</span>
@@ -155,7 +155,7 @@ function ItemArt({ item, mine, big = false }: { item: Item; mine: { design: Desi
     const h = big ? 120 : 76
     return (
       <span className="col-art" style={{ width: (h * ART_SIZE[art][0]) / ART_SIZE[art][1] }}>
-        <PikuruCut art={art} height={h} wear={{ [ACCESSORIES[id].slot]: id }} />
+        <HawkCut art={art} height={h} wear={{ [ACCESSORIES[id].slot]: id }} />
       </span>
     )
   }

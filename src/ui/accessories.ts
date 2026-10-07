@@ -1,11 +1,11 @@
 /**
- * ピクルくんの きせかえ小物。公式の絵（public/pikuru/cut-*.png）はそのままで、上に重ねて描く。
+ * ピクルくんの きせかえ小物。公式の絵（public/hawk/cut-*.png）はそのままで、上に重ねて描く。
  * ブランドの形と色（体・輪郭・ヘッドバンド・「？」のアホ毛）は隠さない位置に置く。
  *
  * 置く場所は絵ごとに、ヘッドバンド（ライム）の位置から決める（scripts で測った値）。
  * 小物は「ヘッドバンドの幅＝1」の大きさで描くので、どの絵・どの大きさでも同じ見た目になる。
  */
-import type { CutArt } from './pikuruArt'
+import type { CutArt } from './hawkArt'
 
 export type Slot = 'head' | 'eyes' | 'neck' | 'side' | 'aura'
 

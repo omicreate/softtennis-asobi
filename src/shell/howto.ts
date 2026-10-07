@@ -95,7 +95,7 @@ export const HOWTO: Record<GameId, HowTo> = {
       'ボレーとドロップの使い分けの考え方は知識カード（PBK-0048）にもとづいています。',
     ],
   },
-  pikuru: {
+  sensei: {
     play: ['ピクルくんと しょうぶだよ。', ...RALLY_PLAY],
     rules: RALLY_RULES,
     levels: ['ピクルくんも、えらんだ レベルと おなじ つよさに なるよ。ちびっこの ときは、ときどき からぶりしてくれるよ。', ...RALLY_LEVELS],

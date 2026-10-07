@@ -7,7 +7,7 @@ import type { Side } from '../core/players'
 import type { Reward } from '../core/progress'
 import type { PaddleLook } from '../ui/paddleArt'
 import { DEFAULT_LOOKS } from '../ui/paddleArt'
-import type { CutArt } from '../ui/pikuruArt'
+import type { CutArt } from '../ui/hawkArt'
 import type { GameId } from './games'
 
 export interface GameResult {

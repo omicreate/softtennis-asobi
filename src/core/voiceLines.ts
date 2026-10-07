@@ -26,7 +26,7 @@ export const PHRASES = {
   great: 'すごい！ さいこう きろく！',
   nice: 'ナイスショット！',
   youWin: 'やったね！ あなたの かち！',
-  pikuruWin: 'ピクルくんの かち！ また あそぼう',
+  senseiWin: 'ピクルくんの かち！ また あそぼう',
   missions: 'きょうの ミッション',
   missionClear: 'ミッション クリア！',
   newItem: 'あたらしい ごほうびを もらったよ！',

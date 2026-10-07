@@ -7,9 +7,9 @@ import { setSettings, useSettings } from '../core/settings'
 import { unlockAudio } from '../core/sound'
 import { speak } from '../core/speak'
 import { PHRASES } from '../core/voiceLines'
-import { Pikuru } from '../ui/Pikuru'
+import { Hawk } from '../ui/Hawk'
 import { GameIcon } from '../ui/GameIcon'
-import { PikuruCut } from '../ui/pikuruArt'
+import { HawkCut } from '../ui/hawkArt'
 import { gameById, GAMES } from './games'
 import type { GameInfo } from './games'
 import { MissionCard } from './MissionCard'
@@ -70,7 +70,7 @@ export function Home() {
     <main className="home">
       <header className="home-hero">
         <a className="home-pikuru" href="#/collection" aria-label="ピクルくんの きせかえ">
-          <PikuruCut art="full" height={150} />
+          <HawkCut art="full" height={150} />
         </a>
         <div>
           <h1 className="home-title">
@@ -169,7 +169,7 @@ export function Home() {
           ))}
         </ul>
         <a className="game-card game-card-party" href="#/party" data-game="party" onClick={unlockAudio}>
-          <Pikuru face="ok" size={72} />
+          <Hawk face="ok" size={72} />
           <span className="game-text">
             <span className="game-tag">2〜6にん</span>
             <span className="game-title">じゅんばんモード</span>
@@ -194,7 +194,7 @@ export function Home() {
       {welcome && (
         <div className="welcome-backdrop" onClick={() => setWelcome(false)}>
           <div className="welcome" role="dialog" aria-label="はじめての プレゼント" onClick={(e) => e.stopPropagation()}>
-            <PikuruCut art="ok" height={120} />
+            <HawkCut art="ok" height={120} />
             <p className="welcome-title">はじめての プレゼント！</p>
             <p className="welcome-stars">⭐ × {WELCOME_STARS}</p>
             <p className="welcome-sub">ほしで ピクルくんの こものや パドルと こうかん できるよ</p>

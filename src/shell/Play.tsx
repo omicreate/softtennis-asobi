@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { countFinish, countGame } from '../core/counter'
 import { __setPlayed, breakDue, oneMore, tookBreak } from '../core/playtime'
-import { MEDAL_RULES, pikuruValue } from '../core/records'
+import { MEDAL_RULES, senseiValue } from '../core/records'
 import type { Level } from '../core/players'
 import { getProgress, recordPlay, recordStart } from '../core/progress'
 import type { Reward } from '../core/progress'
@@ -49,7 +49,7 @@ export function GameView({ game, round, props }: { game: GameId; round: number; 
       {game === 'lift' && <LiftGame key={round} {...props} />}
       {game === 'target' && <RallyGame key={round} kind="target" mode="easy" target={0} {...props} />}
       {game === 'reaction' && <ReactionGame key={round} {...props} />}
-      {game === 'pikuru' && (
+      {game === 'sensei' && (
         <RallyGame key={round} kind="versus" cpu mode={settings.rallyRules} target={settings.rallyTarget} scoring={settings.rallyScoring} {...props} />
       )}
     </>
@@ -109,7 +109,7 @@ export function Play({ game }: { game: GameId }) {
       rewards,
       finish: (r: GameResult) => {
         // ピクルくんと ラリー：かったときの レベルを記録にする（メダルの目安）
-        const value = game === 'pikuru' ? (r.winner === 0 ? pikuruValue(levels[0]) : undefined) : r.value
+        const value = game === 'sensei' ? (r.winner === 0 ? senseiValue(levels[0]) : undefined) : r.value
         // じこベスト・メダルに数えるのは、ひとりで遊んだとき
         const record = solo && !!MEDAL_RULES[game]
         setRewards(recordPlay({ type: 'finish', game, value, two: !solo, record }))
@@ -125,7 +125,7 @@ export function Play({ game }: { game: GameId }) {
   const card: CardData | null = share
     ? {
         game,
-        challenge: solo && lastValue !== undefined && game !== 'pikuru',
+        challenge: solo && lastValue !== undefined && game !== 'sensei',
         gameTitle: info?.title ?? '',
         title: share.title,
         sub: share.sub,

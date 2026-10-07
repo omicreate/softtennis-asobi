@@ -7,8 +7,8 @@ import { onPublicSite, PUBLIC_URL } from '../core/counter'
 import type { Wear } from './accessories'
 import { drawPaddleArt } from './paddleArt'
 import type { PaddleLook } from './paddleArt'
-import { drawPikuruArt, loadPikuru } from './pikuruArt'
-import type { CutArt } from './pikuruArt'
+import { drawHawkArt, loadPikuru } from './hawkArt'
+import type { CutArt } from './hawkArt'
 
 export interface CardData {
   /** ゲームの id（共有のリンクで、そのゲームの じゅんびの画面を開く）。じゅんばんモードは 'party' */
@@ -170,7 +170,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
     ctx.arc(bx + dx, by + dy, 6, 0, Math.PI * 2)
     ctx.fill()
   }
-  drawPikuruArt(ctx, d.face, 840, 1030, 400, 0, false, d.wear)
+  drawHawkArt(ctx, d.face, 840, 1030, 400, 0, false, d.wear)
 
   // 下：ハッシュタグ（公開URLで開いているときは URL も）
   ctx.textAlign = 'left'

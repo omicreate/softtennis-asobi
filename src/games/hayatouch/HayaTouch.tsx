@@ -15,8 +15,8 @@ import { PHRASES } from '../../core/voiceLines'
 import { Half } from '../../core/Stage'
 import { Notice, Result, Scores } from '../../ui/GameUI'
 import type { NoticeData } from '../../ui/GameUI'
-import type { Face } from '../../ui/Pikuru'
-import { PikuruCut } from '../../ui/pikuruArt'
+import type { Face } from '../../ui/Hawk'
+import { HawkCut } from '../../ui/hawkArt'
 import { usePlay } from '../../shell/playContext'
 import { LineView } from './LineView'
 import { makeLineCase } from './lineJudge'
@@ -222,7 +222,7 @@ const FLASH_FACE: Record<FlashState, Face> = { wait: 'think', feint: 'eh', go: '
 function FlashPad({ state, onPress }: { state: FlashState; onPress: () => void }) {
   return (
     <button className="flash-pad" data-state={state} onPointerDown={onPress} aria-label={FLASH_TEXT[state]}>
-      <PikuruCut art={FLASH_FACE[state]} height={96} className="flash-pikuru" />
+      <HawkCut art={FLASH_FACE[state]} height={96} className="flash-sensei" />
       <span className="flash-ball" aria-hidden>
         <i />
         <i />
@@ -238,7 +238,7 @@ function LinePad({ c, phase, chosen, onAnswer }: { c: LineCase | null; phase: Ph
   if (!c || !show) {
     return (
       <div className="line-pad line-pad-wait">
-        <PikuruCut art={phase === 'result' ? 'ok' : 'think'} height={110} />
+        <HawkCut art={phase === 'result' ? 'ok' : 'think'} height={110} />
         <div className="line-wait-text">ライン ジャッジ</div>
         <div className="line-wait-sub">ボールの あとを みて、イン？ アウト？</div>
       </div>

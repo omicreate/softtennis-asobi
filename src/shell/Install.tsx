@@ -8,7 +8,7 @@ import { canPromptInstall, externalOpenUrl, inAppName, isStandalone, onInstallPr
 import type { Os } from '../core/browser'
 import { sfx } from '../core/sound'
 import { AddHomeArt, ChromeMenuArt, ChromeScreen, HomeScreenArt, InAppMenu, InAppScreen, InstallDialogArt, Phone, SafariScreen, ShareSheetArt } from '../ui/installArt'
-import { PikuruCut } from '../ui/pikuruArt'
+import { HawkCut } from '../ui/hawkArt'
 import './setup.css'
 import './collection.css'
 import './parents.css'
@@ -50,7 +50,7 @@ export function Install() {
 
       {standalone ? (
         <section className="par-card inst-done">
-          <PikuruCut art="ok" height={90} />
+          <HawkCut art="ok" height={90} />
           <p>ホーム画面から開いています。このまま遊べます（電波がなくても遊べます）。</p>
         </section>
       ) : (

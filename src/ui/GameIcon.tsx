@@ -170,7 +170,7 @@ const ICONS: Record<GameId, () => ReactNode> = {
       <Paddle x={42} y={80} len={13} deg={-15} color={C.orange} />
     </>
   ),
-  pikuru: () => (
+  sensei: () => (
     <>
       <Bg fill={C.navy} />
       <Court x={24} y={8} w={48} h={80} />

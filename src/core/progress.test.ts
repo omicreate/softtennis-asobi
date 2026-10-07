@@ -3,7 +3,7 @@ import { GAMES } from '../shell/games'
 import { ITEMS, STARTER_ITEMS, WELCOME_STARS } from './items'
 import { ALL_MISSIONS, BONUS_STARS, dayKey, missionsFor, RECORD } from './missions'
 import { __setProgress, buy, getProgress, medalCount, recordPlay, recordStart, toggleWear, todayMissions } from './progress'
-import { isBetter, MEDAL_GAMES, MEDAL_RULES, medalFor, nextGoal, pikuruValue, recordText } from './records'
+import { isBetter, MEDAL_GAMES, MEDAL_RULES, medalFor, nextGoal, senseiValue, recordText } from './records'
 import type { Progress } from './progress'
 
 const DAY = '2026-10-07'
@@ -150,7 +150,7 @@ describe('じこベストと メダル', () => {
     expect(isBetter('lift', 4, 5)).toBe(false)
     expect(nextGoal('lift', 6)).toEqual({ medal: 2, need: 15 })
     expect(nextGoal('lift', 40)).toBeNull()
-    expect(recordText('pikuru', pikuruValue('otona'))).toBe('おとなで かった')
+    expect(recordText('sensei', senseiValue('otona'))).toBe('おとなで かった')
   })
 
   it('ひとりで遊んだ記録だけ じこベストに。メダルを とると ほし（きんは2こ）。とびこえたメダルの分も もらえる', () => {
