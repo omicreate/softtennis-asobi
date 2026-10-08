@@ -24,6 +24,9 @@ const FACE_BOX = {
   ok: [150, 0, 640],
   think: [190, 230, 680],
   full: [170, 280, 680],
+  // ChatGPT で本人が作った表情（1024×1536・胸から上）
+  eh: [110, 90, 900],
+  oops: [130, 80, 900],
 }
 
 const browser = await chromium.launch()
