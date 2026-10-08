@@ -26,7 +26,7 @@ export function Records() {
         </span>
       </header>
       <p className="rec-lead">
-        ひとりで あそぶ ゲーム（と ディンク）で、じぶんの きろくを のばそう。メダルを とると ほしが もらえるよ（どう・ぎん ⭐1、きん ⭐{MEDAL_STARS[3]}）。
+        ひとりで あそぶ ゲームで、じぶんの きろくを のばそう。メダルを とると ほしが もらえるよ（どう・ぎん ⭐1、きん ⭐{MEDAL_STARS[3]}）。
       </p>
       <ul className="rec-list">
         {MEDAL_GAMES.map((id) => {

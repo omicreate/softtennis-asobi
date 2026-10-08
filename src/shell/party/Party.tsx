@@ -1,6 +1,6 @@
 /**
  * じゅんばんモード（2〜6人）。1台を順番に回して、ひとりで遊ぶゲームの記録で勝負する。
- * ピクルくんが司会：ラウンドのゲームを発表 →「◯◯の ばん！」→ 遊ぶ → ラウンドの結果 → 最後に表彰。
+ * ホークアイ先生が司会：ラウンドのゲームを発表 →「◯◯の ばん！」→ 遊ぶ → ラウンドの結果 → 最後に表彰。
  * 同じラウンドでは全員に同じ障害・同じ球が出る（乱数の種が同じ）。レベルは1人ずつ選べる。
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -248,7 +248,7 @@ export function Party({ fixed }: { fixed?: GameId }) {
           </header>
           <div className="party-intro">
             <HawkCut art="ok" height={92} />
-            <p>1だいを じゅんばんに まわして、おなじ ゲームの きろくで しょうぶ！ さいごに ピクルくんが ひょうしょう するよ。</p>
+            <p>1だいを じゅんばんに まわして、おなじ ゲームの きろくで しょうぶ！ さいごに ホークアイ先生が ひょうしょう するよ。</p>
             <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.partyIntro)}>
               🗣️
             </button>

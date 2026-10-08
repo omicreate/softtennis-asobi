@@ -20,7 +20,7 @@ describe('共有のリンク', () => {
     expect(shareLink()).toBe('https://omicreate.github.io/softtennis-asobi/?src=share')
   })
   it('ひとりの記録には「ちょうせんしてね」をそえる。公開版でないときは URL をつけない', () => {
-    const t = shareText({ gameTitle: 'ピクルくん ジャンプ', title: '120m', game: 'jump', challenge: true })
+    const t = shareText({ gameTitle: 'ホークアイ先生 ジャンプ', title: '120m', game: 'jump', challenge: true })
     expect(t).toContain('ちょうせんしてね')
     expect(t).not.toContain('https://')
   })

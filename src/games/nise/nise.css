@@ -1,4 +1,4 @@
-/* にせピクルくんは だれだ？（じゅんばんモードの party.css を土台にする） */
+/* にせホークアイ先生は だれだ？（じゅんばんモードの party.css を土台にする） */
 .nise .party-title {
   font-size: clamp(20px, 6vw, 26px);
 }
@@ -181,7 +181,7 @@
   font-weight: 900;
 }
 
-/* 横いっぱいのカード（party-wide）でも、ピクルくんの絵は のばさない */
+/* 横いっぱいのカード（party-wide）でも、ホークアイ先生の絵は のばさない */
 .nise-art {
   display: flex;
   justify-content: center;

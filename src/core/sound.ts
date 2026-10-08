@@ -71,7 +71,7 @@ function noise(start: number, dur: number, freq: number, vol = 0.3) {
 }
 
 export const sfx = {
-  /** パドルで打った「ポコッ」（ピックルボールらしい乾いた音） */
+  /** ラケットで打った「ポコッ」（ソフトテニスらしい乾いた音） */
   pop(strength = 0.5) {
     noise(0, 0.05, 1800 + strength * 900, 0.45)
     tone(900 + strength * 300, 0, 0.07, 'triangle', 0.18, 500)

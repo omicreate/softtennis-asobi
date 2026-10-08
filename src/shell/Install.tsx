@@ -54,7 +54,7 @@ export function Install() {
           <p>ホーム画面から開いています。このまま遊べます（電波がなくても遊べます）。</p>
         </section>
       ) : (
-        <p className="inst-lead">ホーム画面に入れると、アプリのように ピクルくんの アイコンから すぐ開けて、電波のない所でも遊べます。</p>
+        <p className="inst-lead">ホーム画面に入れると、アプリのように ホークアイ先生の アイコンから すぐ開けて、電波のない所でも遊べます。</p>
       )}
 
       {app && (
@@ -136,7 +136,7 @@ export function Install() {
             <Phone width={170}>
               <HomeScreenArt hi="icon" />
             </Phone>
-            <p>ホーム画面の ピクルくんから開けます。</p>
+            <p>ホーム画面の ホークアイ先生から開けます。</p>
           </li>
         </ol>
       ) : (
@@ -169,7 +169,7 @@ export function Install() {
             <Phone width={170}>
               <HomeScreenArt hi="icon" />
             </Phone>
-            <p>ホーム画面の ピクルくんから開けます。</p>
+            <p>ホーム画面の ホークアイ先生から開けます。</p>
           </li>
         </ol>
       )}

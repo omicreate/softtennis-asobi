@@ -68,16 +68,16 @@ function MiniPikuru({ x, y, h, tilt = 0 }: { x: number; y: number; h: number; ti
   )
 }
 
-/** 上から見たコート（縦長。x0,y0 から 幅 w・長さ h。キッチンは長さの 0.159 ずつ） */
+/** 上から見たソフトテニスのコート（縦長。x0,y0 から 幅 w・長さ h。サービスラインはネットから長さの 6.40/23.77） */
 function Court({ x, y, w, h, net = true }: { x: number; y: number; w: number; h: number; net?: boolean }) {
-  const k = h * (2.13 / 13.41)
+  const k = h * (6.4 / 23.77)
   const mid = y + h / 2
   return (
     <g>
       <rect x={x} y={y} width={w} height={h} fill={C.court} stroke={C.line} strokeWidth={1.6} />
-      <rect x={x} y={mid - k} width={w} height={k * 2} fill={C.kitchen} stroke={C.line} strokeWidth={1.2} />
-      <line x1={x + w / 2} y1={y} x2={x + w / 2} y2={mid - k} stroke={C.line} strokeWidth={1.2} />
-      <line x1={x + w / 2} y1={mid + k} x2={x + w / 2} y2={y + h} stroke={C.line} strokeWidth={1.2} />
+      <line x1={x} y1={mid - k} x2={x + w} y2={mid - k} stroke={C.line} strokeWidth={1.2} />
+      <line x1={x} y1={mid + k} x2={x + w} y2={mid + k} stroke={C.line} strokeWidth={1.2} />
+      <line x1={x + w / 2} y1={mid - k} x2={x + w / 2} y2={mid + k} stroke={C.line} strokeWidth={1.2} />
       {net && <line x1={x - 4} y1={mid} x2={x + w + 4} y2={mid} stroke={C.ink} strokeWidth={2.6} strokeLinecap="round" />}
     </g>
   )

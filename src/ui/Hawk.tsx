@@ -1,11 +1,11 @@
-/** ピクルくんの4表情（ピクルくん仕様：出題「？」・正解「！」・えっ！？・ドンマイ） */
+/** ホークアイ先生の4表情（ホークアイ先生仕様：出題「？」・正解「！」・えっ！？・ドンマイ） */
 export type Face = 'think' | 'ok' | 'eh' | 'oops'
 
 const ALT: Record<Face, string> = {
-  think: 'かんがえる ピクルくん',
-  ok: 'よろこぶ ピクルくん',
-  eh: 'おどろく ピクルくん',
-  oops: 'ドンマイの ピクルくん',
+  think: 'かんがえる ホークアイ先生',
+  ok: 'よろこぶ ホークアイ先生',
+  eh: 'おどろく ホークアイ先生',
+  oops: 'ドンマイの ホークアイ先生',
 }
 
 export function Hawk({ face, size = 80, className }: { face: Face; size?: number; className?: string }) {

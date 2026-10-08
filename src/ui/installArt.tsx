@@ -38,7 +38,7 @@ function AppPage() {
   return (
     <div className="ia-page">
       <HawkCut art="full" height={64} />
-      <b>ピクルくんと あそぼ</b>
+      <b>ホークアイ先生と あそぼ</b>
       <div className="ia-tiles">
         {Array.from({ length: 6 }, (_, i) => (
           <i key={i} />
@@ -151,7 +151,7 @@ export function AddHomeArt({ hi, tap }: { hi?: Hi; tap?: boolean }) {
       </div>
       <div className="ia-add-body">
         <img src={`${BASE}icon-192.png`} alt="" />
-        <span className="ia-add-name">ピクルあそぼ</span>
+        <span className="ia-add-name">ホークアイあそぼ</span>
       </div>
     </div>
   )
@@ -210,7 +210,7 @@ export function InstallDialogArt({ hi, tap }: { hi?: Hi; tap?: boolean }) {
         <b>アプリを インストール</b>
         <span className="ia-dialog-app">
           <img src={`${BASE}icon-192.png`} alt="" />
-          ピクルくんとあそぼ
+          ホークアイ先生とあそぼ
         </span>
         <span className="ia-dialog-btns">
           <span>キャンセル</span>
@@ -223,7 +223,7 @@ export function InstallDialogArt({ hi, tap }: { hi?: Hi; tap?: boolean }) {
   )
 }
 
-/** ホーム画面（ピクルくんの アイコン） */
+/** ホーム画面（ホークアイ先生の アイコン） */
 export function HomeScreenArt({ hi, tap }: { hi?: Hi; tap?: boolean }) {
   return (
     <div className="ia-home">
@@ -235,7 +235,7 @@ export function HomeScreenArt({ hi, tap }: { hi?: Hi; tap?: boolean }) {
       ))}
       <Spot on={hi === 'icon'} tap={tap} className="ia-app ia-app-pk">
         <img src={`${BASE}icon-192.png`} alt="" />
-        <small>ピクルあそぼ</small>
+        <small>ホークアイあそぼ</small>
       </Spot>
     </div>
   )

@@ -60,7 +60,7 @@ function ParentsBody() {
 
   const shareApp = async () => {
     try {
-      await navigator.share({ title: 'ピクルくんとあそぼ', text: 'スマホやタブレット1台で、親子や友だちと遊べるピックルボールのミニゲーム集', url: PUBLIC_URL })
+      await navigator.share({ title: 'ホークアイ先生とあそぼ', text: 'スマホやタブレット1台で、親子や友だちと遊べるソフトテニスのミニゲーム集', url: PUBLIC_URL })
     } catch {
       // とじただけ
     }
@@ -86,7 +86,7 @@ function ParentsBody() {
         <h2>あそびかた</h2>
         <ul>
           <li>スマホやタブレットを机に置き、2人で向かい合って座ります。手前の人と向こうの人が、それぞれ自分の側の画面を触ります。</li>
-          <li>レベルは1人ずつ選べます。ちびっこ・キッズは球がゆっくりで、パドルも大きくなります。親子でも同じ条件で勝負できます。</li>
+          <li>レベルは1人ずつ選べます。ちびっこ・キッズは球がゆっくりで、ラケットも大きくなります。親子でも同じ条件で勝負できます。</li>
           <li>「じゅんばんモード」は、1台を順番に回して2〜6人で記録を比べる遊び方です。同じラウンドでは、全員に同じ障害・同じ球が出ます。</li>
           <li>机に平らに置くと画面が勝手に回ることがあります。画面の向きを固定（回転ロック）してから遊ぶのがおすすめです。</li>
           <li>
@@ -120,7 +120,7 @@ function ParentsBody() {
 
       <section className="par-card" aria-labelledby="par-break">
         <h2 id="par-break">遊びすぎの声かけ</h2>
-        <p>続けて遊んだ時間が決めた時間をこえると、ゲームの結果が出たときに、ピクルくんが「ちょっと きゅうけい しよう」と声をかけます（ゲームの途中では止めません）。10分以上はなれると、休んだとみなして数え直します。</p>
+        <p>続けて遊んだ時間が決めた時間をこえると、ゲームの結果が出たときに、ホークアイ先生が「ちょっと きゅうけい しよう」と声をかけます（ゲームの途中では止めません）。10分以上はなれると、休んだとみなして数え直します。</p>
         <div className="seg par-seg" role="radiogroup" aria-label="声をかけるまでの時間">
           {BREAK_CHOICES.map((m) => (
             <button key={m} role="radio" aria-checked={settings.breakMin === m} onClick={() => setSettings({ breakMin: m })} data-testid={`break-${m}`}>
@@ -157,7 +157,7 @@ function ParentsBody() {
         <h2 id="par-share">アプリを紹介する</h2>
         {onPublicSite() ? (
           <>
-            <p>お友だちやピックルボール仲間に、このアプリのURLを送れます。</p>
+            <p>お友だちやソフトテニス仲間に、このアプリのURLを送れます。</p>
             <div className="par-actions">
               {canShare && (
                 <button className="btn btn-go" onClick={shareApp}>

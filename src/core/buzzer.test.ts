@@ -46,7 +46,7 @@ describe('レベルの表', () => {
       expect(info.pressDelay).toBeGreaterThanOrEqual(0)
     }
   })
-  it('小さい子ほど、パドルが大きく、球がゆっくりで、早押しの遅れが少ない', () => {
+  it('小さい子ほど、ラケットが大きく、球がゆっくりで、早押しの遅れが少ない', () => {
     for (let i = 1; i < LEVELS.length; i++) {
       const a = LEVEL_INFO[LEVELS[i - 1]]
       const b = LEVEL_INFO[LEVELS[i]]

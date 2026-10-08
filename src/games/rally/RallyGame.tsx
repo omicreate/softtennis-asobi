@@ -1,6 +1,6 @@
 /**
  * ラリーの画面。次の4つで使う：
- *   versus …… ラリーたいけつ（2人）／ピクルくんとラリー（cpu＝上はピクルくん）
+ *   versus …… ラリーたいけつ（2人）／ホークアイ先生とラリー（cpu＝上はホークアイ先生）
  *   target …… ねらって ストローク（ひとりで。上はボールマシン）
  * 2人で遊ぶときは、指を置いた場所（上半分か下半分か）で持ち主を決める。ひとりのときは、どの指も下の人。
  */
@@ -75,19 +75,19 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
   const [gamesWon, setGamesWon] = useState<[number, number]>([0, 0])
   const [shots, setShots] = useState({ index: 0, hits: 0, label: '', best: load<number>(targetBest(levels[0]), 0) })
   const [over, setOver] = useState<{ winner: Side | null } | null>(null)
-  /** ピクルくん（審判・相手・マシンの係）の表情。しばらくすると「かんがえる」に戻る */
+  /** ホークアイ先生（審判・相手・マシンの係）の表情。しばらくすると「かんがえる」に戻る */
   const [pkFace, setPkFace] = useState<Face>('think')
   const pkTimer = useRef(0)
   const react = (face: Face, seconds = 1.8) => {
     setPkFace(face)
     pkTimer.current = seconds
   }
-  /** 審判のピクルくんを出すか（2人で遊ぶラリーとディンク） */
+  /** 審判のホークアイ先生を出すか（2人で遊ぶラリー） */
   const umpire = !solo
 
   const showLanding = levels.some((l) => LEVEL_INFO[l].assist > 0)
-  /** 得点した側の名前（ひとりのときは「あなた」と「ピクルくん」） */
-  const name = (s: Side) => (cpu ? (s === 0 ? 'あなた' : 'ピクルくん') : SIDE_NAME[s])
+  /** 得点した側の名前（ひとりのときは「あなた」と「ホークアイ先生」） */
+  const name = (s: Side) => (cpu ? (s === 0 ? 'あなた' : 'ホークアイ先生') : SIDE_NAME[s])
 
   // 開発中とテスト（Playwright）だけ、進行を外から見られるようにする
   useEffect(() => {

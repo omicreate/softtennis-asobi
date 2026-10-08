@@ -1,5 +1,5 @@
 /**
- * にせピクルくんは だれだ？（3〜6人。1台を手わたし）の画面。
+ * にせホークアイ先生は だれだ？（3〜6人。1台を手わたし）の画面。
  * 準備 → 1人ずつ こっそり お題を見る → 話しあい → せーので ゆびさし → 発表（ばれたら ぎゃくてん チャンス）→ 結果。
  * 名前は入れず、じゅんばんモードと同じ色で呼ぶ。お題は声に出さない（みんなに聞こえてしまうので）。
  */
@@ -103,7 +103,7 @@ export function NiseGame() {
 
   useEffect(() => save('nise-setup', { count, deck, talk, vote }), [count, deck, talk, vote])
   useEffect(() => () => stopSpeaking(), [])
-  // テスト用：だれが にせピクルくんか（開発中だけ）
+  // テスト用：だれが にせホークアイ先生か（開発中だけ）
   useEffect(() => {
     if (import.meta.env.DEV) (window as unknown as { __nise?: NiseRound | null }).__nise = round
   }, [round])
@@ -248,11 +248,11 @@ export function NiseGame() {
           <a className="btn btn-small" href="#/" aria-label="もどる">
             ←
           </a>
-          <h1 className="party-title">にせピクルくんは だれだ？</h1>
+          <h1 className="party-title">にせホークアイ先生は だれだ？</h1>
         </header>
         <div className="party-intro">
           <HawkCut art="think" height={92} />
-          <p>ひとりだけ おだいが ちがう「にせピクルくん」が いるよ。はなして、せーので ゆびさし！ にせピクルくんは、じぶんが にせものだと しらないよ。</p>
+          <p>ひとりだけ おだいが ちがう「にせホークアイ先生」が いるよ。はなして、せーので ゆびさし！ にせホークアイ先生は、じぶんが にせものだと しらないよ。</p>
           <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.niseIntro)}>
             🗣️
           </button>
@@ -428,8 +428,8 @@ export function NiseGame() {
       {phase === 'count' && (
         <section className="party-card nise-count">
           <HawkCut art="eh" height={110} />
-          <h2 className="party-game">にせピクルくんは だれ？</h2>
-          <p className="party-howto">にせピクルくんだと おもう ひとを、せーので ゆびさそう！</p>
+          <h2 className="party-game">にせホークアイ先生は だれ？</h2>
+          <p className="party-howto">にせホークアイ先生だと おもう ひとを、せーので ゆびさそう！</p>
           <button
             className="btn btn-go nise-seno"
             onClick={() => {
@@ -488,7 +488,7 @@ export function NiseGame() {
           <span className="party-chip party-chip-big" style={{ background: players[voter].color }}>
             {players[voter].name}の とうひょう
           </span>
-          <h2 className="party-game">にせピクルくんは だれ？</h2>
+          <h2 className="party-game">にせホークアイ先生は だれ？</h2>
           <div className="nise-color-grid">
             {players.map((q, i) =>
               i === voter ? null : (
@@ -512,12 +512,12 @@ export function NiseGame() {
             <>
               <HawkCut art={pointed === round.wolf ? 'ok' : 'oops'} height={96} />
               <p className="nise-big" data-caught={pointed === round.wolf || undefined}>
-                {pointed === round.wolf ? 'にせピクルくん だった！' : 'ほんものの ピクルくん！'}
+                {pointed === round.wolf ? 'にせホークアイ先生 だった！' : 'ほんものの ホークアイ先生！'}
               </p>
               {counts && <VoteCounts counts={counts} players={players} />}
               {pointed !== round.wolf && (
                 <p className="nise-sub">
-                  にせピクルくんは <b style={{ color: wolf.color }}>{wolf.name}</b> でした
+                  にせホークアイ先生は <b style={{ color: wolf.color }}>{wolf.name}</b> でした
                 </p>
               )}
               {/* ばれたときは、ぎゃくてん チャンスが終わるまで お題を見せない */}
@@ -556,7 +556,7 @@ export function NiseGame() {
               <p className="party-howto">
                 {wolf.name}は、みんなの おだいを こえに だして いってみよう。いえるのは 1かいだけ！
                 <br />
-                あたったら、にせピクルくんの ぎゃくてん かち。
+                あたったら、にせホークアイ先生の ぎゃくてん かち。
               </p>
               <button
                 className="btn btn-go"
@@ -593,7 +593,7 @@ export function NiseGame() {
             <HawkCut art={outcome.winner === 'minna' ? 'ok' : 'eh'} height={96} />
           </div>
           <h2 className="party-game nise-win" data-winner={outcome.winner}>
-            {outcome.how === 'reverse' ? 'ぎゃくてん！ にせピクルくんの かち！' : outcome.winner === 'minna' ? 'みんなの かち！' : 'にせピクルくんの かち！'}
+            {outcome.how === 'reverse' ? 'ぎゃくてん！ にせホークアイ先生の かち！' : outcome.winner === 'minna' ? 'みんなの かち！' : 'にせホークアイ先生の かち！'}
           </h2>
           <Answers round={round} />
           {pair.tip && (
@@ -638,8 +638,8 @@ export function NiseGame() {
           fixed
           card={{
             game: 'nise',
-            gameTitle: 'にせピクルくんは だれだ？',
-            title: outcome.how === 'reverse' ? 'ぎゃくてん！ にせピクルくんの かち' : outcome.winner === 'minna' ? 'みんなで みやぶった！' : 'にせピクルくんの かち！',
+            gameTitle: 'にせホークアイ先生は だれだ？',
+            title: outcome.how === 'reverse' ? 'ぎゃくてん！ にせホークアイ先生の かち' : outcome.winner === 'minna' ? 'みんなで みやぶった！' : 'にせホークアイ先生の かち！',
             sub: `${count}にん・おだい「${DECK_INFO[round.deck].label}」`,
             face: outcome.winner === 'minna' ? 'ok' : 'eh',
             wear: getProgress().wear,
@@ -668,7 +668,7 @@ export function NiseGame() {
   )
 }
 
-/** 答えあわせ：みんなのお題と、にせピクルくんのお題 */
+/** 答えあわせ：みんなのお題と、にせホークアイ先生のお題 */
 function Answers({ round }: { round: NiseRound }) {
   return (
     <div className="nise-answers">
@@ -677,7 +677,7 @@ function Answers({ round }: { round: NiseRound }) {
         <WordCard word={majorityWord(round)} size="small" />
       </div>
       <div>
-        <span className="nise-answers-label">にせピクルくんの おだい</span>
+        <span className="nise-answers-label">にせホークアイ先生の おだい</span>
         <WordCard word={wolfWord(round)} size="small" />
       </div>
     </div>

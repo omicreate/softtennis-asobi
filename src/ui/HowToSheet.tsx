@@ -88,7 +88,7 @@ export function HowToSheet({
                 <li key={t}>{t}</li>
               ))}
             </ul>
-            <p className="howto-source">ルールは USA Pickleball 公式ルールブック（2026年版）にもとづいています。かっこの中の PBK-番号 は、根拠にした知識カードの番号です。</p>
+            <p className="howto-source">ルールは、ソフトテニスハンドブック（2026年版）の競技規則にもとづいています。かっこの中の「第〇条」は、根拠にした条の番号です。</p>
           </details>
         </div>
 

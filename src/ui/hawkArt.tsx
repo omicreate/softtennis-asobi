@@ -1,5 +1,5 @@
 /**
- * 背景を抜いたピクルくんの絵（原画から scripts/build-art.mjs で作る：public/hawk/cut-*.png）。
+ * 背景を抜いたホークアイ先生の絵（原画から scripts/build-art.mjs で作る：public/hawk/cut-*.png）。
  * ゲームの中（審判・ボールマシン・応援・合図・走る姿など）に出す。
  * コレクションで つけた小物（ui/accessories.ts）も重ねて描く。絵そのものは変えない。
  */
@@ -12,12 +12,12 @@ import type { Face } from './Hawk'
 export type CutArt = Face | 'full' | 'run'
 
 const ALT: Record<CutArt, string> = {
-  think: 'かんがえる ピクルくん',
-  ok: 'よろこぶ ピクルくん',
-  eh: 'おどろく ピクルくん',
-  oops: 'ドンマイの ピクルくん',
-  full: 'ピクルくん',
-  run: 'はしる ピクルくん',
+  think: 'かんがえる ホークアイ先生',
+  ok: 'よろこぶ ホークアイ先生',
+  eh: 'おどろく ホークアイ先生',
+  oops: 'ドンマイの ホークアイ先生',
+  full: 'ホークアイ先生',
+  run: 'はしる ホークアイ先生',
 }
 
 const src = (art: CutArt) => `${import.meta.env.BASE_URL}hawk/cut-${art}.png`

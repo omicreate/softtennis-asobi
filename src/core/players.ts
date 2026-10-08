@@ -14,11 +14,11 @@ export interface LevelInfo {
   label: string
   mark: string
   hint: string
-  /** パドルの幅（m）。コートの幅は 6.10m */
+  /** ラケットの幅（m）。コートの幅は 6.10m */
   paddleWidth: number
   /** 自分に向かってくる球の速さ（1＝ふつう）。2026-10-06 本人の試遊で「ちょっと速い」→ 全体を約2割遅くした */
   ballSpeed: number
-  /** パドルを球の方へ吸い寄せる強さ（0〜1） */
+  /** ラケットを球の方へ吸い寄せる強さ（0〜1） */
   assist: number
   /** 強く打っても外に出ないようにする（小さい子はアウトで終わらないように） */
   keepIn: boolean
@@ -75,7 +75,7 @@ export const LEVEL_INFO: Record<Level, LevelInfo> = {
   senshu: {
     label: 'せんしゅ',
     mark: '🏆',
-    hint: 'ピックルボールをしている人',
+    hint: 'ソフトテニスをしている人',
     paddleWidth: 1.1,
     ballSpeed: 0.95,
     assist: 0,

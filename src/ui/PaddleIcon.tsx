@@ -1,4 +1,4 @@
-/** パドルの見本（コレクション・パドルえらび）と、パドルをえらぶ画面 */
+/** ラケットの見本（コレクション・ラケットえらび）と、ラケットをえらぶ画面 */
 import { useEffect, useRef } from 'react'
 import { owns, useProgress } from '../core/progress'
 import { sfx } from '../core/sound'
@@ -6,7 +6,7 @@ import { DESIGNS, drawPaddleArt, SHAPES } from './paddleArt'
 import type { DesignId, PaddleLook, PaddleShape } from './paddleArt'
 import './picker.css'
 
-/** 正方形の中に、パドルをななめ（先が右上）に描く */
+/** 正方形の中に、ラケットをななめ（先が右上）に描く */
 export function PaddleIcon({ look, size = 64, className }: { look: PaddleLook; size?: number; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
@@ -25,7 +25,7 @@ export function PaddleIcon({ look, size = 64, className }: { look: PaddleLook; s
     const shift = (faceLen * shape.grip) / 2
     drawPaddleArt(ctx, { x: size / 2 + Math.cos(a) * shift, y: size / 2 + Math.sin(a) * shift, faceLen, angle: a, look })
   }, [look, size])
-  return <canvas ref={ref} className={className} style={{ width: size, height: size }} role="img" aria-label={`${DESIGNS[look.design].label}の パドル（${SHAPES[look.shape].label}）`} />
+  return <canvas ref={ref} className={className} style={{ width: size, height: size }} role="img" aria-label={`${DESIGNS[look.design].label}の ラケット（${SHAPES[look.shape].label}）`} />
 }
 
 /** 持っている色・もよう と かたち から えらぶ */
@@ -38,10 +38,10 @@ export function PaddlePicker({ value, onChange, onClose }: { value: PaddleLook; 
     onChange(look)
   }
   return (
-    <div className="picker" role="dialog" aria-label="パドルを えらぶ" data-testid="paddle-picker">
+    <div className="picker" role="dialog" aria-label="ラケットを えらぶ" data-testid="paddle-picker">
       <div className="picker-head">
         <PaddleIcon look={value} size={56} />
-        <span className="picker-title">パドルを えらぶ</span>
+        <span className="picker-title">ラケットを えらぶ</span>
         <button className="btn btn-small btn-go" onClick={onClose}>
           OK
         </button>
@@ -65,7 +65,7 @@ export function PaddlePicker({ value, onChange, onClose }: { value: PaddleLook; 
         </div>
       )}
       <a className="picker-more" href="#/collection">
-        ⭐ ほしで あたらしい パドルと こうかん →
+        ⭐ ほしで あたらしい ラケットと こうかん →
       </a>
     </div>
   )

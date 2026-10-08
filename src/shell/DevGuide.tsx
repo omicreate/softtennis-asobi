@@ -109,7 +109,7 @@ export default function DevGuide() {
             {sc.id !== 'home' && <p className="guide-note">※ 表示は アプリ・OS の版で 少しちがいます</p>}
           </>
         )}
-        <p className="guide-brand">ピクルくんとあそぼ</p>
+        <p className="guide-brand">ホークアイ先生とあそぼ</p>
       </div>
     </div>
   )

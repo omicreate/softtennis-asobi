@@ -1,6 +1,6 @@
 /**
- * きせかえ（コレクション）。ほし（⭐）と こうかんして、ピクルくんの小物・パドルの色と もよう・かたちを集める。
- * ここで えらんだパドルは「じぶんの パドル」（ひとりで遊ぶとき・2人のときの下の人）になる。
+ * きせかえ（コレクション）。ほし（⭐）と こうかんして、ホークアイ先生の小物・ラケットの色と もよう・かたちを集める。
+ * ここで えらんだラケットは「じぶんの ラケット」（ひとりで遊ぶとき・2人のときの下の人）になる。
  */
 import { useState } from 'react'
 import { ITEMS, SPECIAL_TEXT } from '../core/items'
@@ -18,9 +18,9 @@ import './setup.css'
 import './collection.css'
 
 const TABS: { kind: ItemKind; label: string }[] = [
-  { kind: 'wear', label: 'ピクルくん' },
-  { kind: 'design', label: 'パドルの いろ' },
-  { kind: 'shape', label: 'パドルの かたち' },
+  { kind: 'wear', label: 'ホークアイ先生' },
+  { kind: 'design', label: 'ラケットの いろ' },
+  { kind: 'shape', label: 'ラケットの かたち' },
 ]
 
 export function Collection() {
@@ -78,7 +78,7 @@ export function Collection() {
         <HawkCut art="full" height={170} />
         <div className="col-preview-paddle">
           <PaddleIcon look={mine} size={96} />
-          <span>じぶんの パドル</span>
+          <span>じぶんの ラケット</span>
         </div>
       </section>
 
@@ -119,7 +119,7 @@ export function Collection() {
 
       {tab === 'shape' && (
         <p className="col-note">
-          パドルの かたちは、ほんものの ルールの おおきさ（ながさ＋はばが 61cm まで・ながさは 43cm まで）に あわせているよ。どの かたちでも、ゲームの つよさは おなじ。
+          ラケットの かたちは、ほんものの ルールの おおきさ（ながさ＋はばが 61cm まで・ながさは 43cm まで）に あわせているよ。どの かたちでも、ゲームの つよさは おなじ。
         </p>
       )}
       {tab !== 'shape' && <p className="col-note">ほしは、きょうの ミッションを クリアすると もらえるよ。ゲームの つよさは かわらないよ。</p>}

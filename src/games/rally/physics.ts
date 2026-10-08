@@ -62,7 +62,7 @@ export interface Shot {
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 /**
- * パドルの速さから、強さを決める。
+ * ラケットの速さから、強さを決める。
  * vNet：ネットの方向へ動いた速さ（m/s）。止めて当てる＝0、速く振る＝大。
  */
 export function powerFromSwing(vNet: number): number {

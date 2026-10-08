@@ -23,7 +23,7 @@ export const EASY: MissionDef[] = [
   { id: 'play-lift', text: 'ボールつきで あそぼう', kind: 'play', need: 1, game: 'lift' },
   { id: 'play-target', text: 'ねらって ストロークで あそぼう', kind: 'play', need: 1, game: 'target' },
   { id: 'play-hawkeye', text: 'ホークアイの めで あそぼう', kind: 'play', need: 1, game: 'hawkeye' },
-  { id: 'play-sensei', text: 'ピクルくんと ラリーで あそぼう', kind: 'play', need: 1, game: 'sensei' },
+  { id: 'play-sensei', text: 'ホークアイ先生と ラリーで あそぼう', kind: 'play', need: 1, game: 'sensei' },
   { id: 'play-reaction', text: 'リアクション ボレーで あそぼう', kind: 'play', need: 1, game: 'reaction' },
 ]
 
@@ -35,7 +35,7 @@ export const RECORD: MissionDef[] = [
 
 export const TOGETHER: MissionDef[] = [
   { id: 'two-1', text: 'ふたりで あそぶ ゲームを 1かい あそぼう', kind: 'two', need: 1 },
-  { id: 'quiz-1', text: 'ピクルくんクイズで あそぼう', kind: 'play', need: 1, game: 'quiz' },
+  { id: 'quiz-1', text: 'ホークアイ先生クイズで あそぼう', kind: 'play', need: 1, game: 'quiz' },
   { id: 'rally-1', text: 'ラリーたいけつで しょうぶしよう', kind: 'play', need: 1, game: 'rally' },
   { id: 'party-1', text: 'じゅんばんモードで あそぼう', kind: 'party', need: 1 },
   { id: 'ishin-1', text: 'いしんでんしん ダブルスで あそぼう', kind: 'play', need: 1, game: 'ishin' },
@@ -62,7 +62,7 @@ export function missionsFor(day: string): MissionDef[] {
   return [a, b, c]
 }
 
-/** record＝じこベスト・メダルに数える（ひとりで遊んだとき・ディンク。じゅんばんモードは数えない） */
+/** record＝じこベスト・メダルに数える（ひとりで遊んだとき。じゅんばんモードは数えない） */
 export type PlayEvent = { type: 'finish'; game: GameId; value?: number; two: boolean; record?: boolean } | { type: 'party' }
 
 /** 1回遊んだあとの進み具合 */

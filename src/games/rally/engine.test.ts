@@ -17,9 +17,9 @@ function rng(seed: number) {
 }
 
 interface Bot {
-  /** パドルを置く深さ（ネットからの距離 m） */
+  /** ラケットを置く深さ（ネットからの距離 m） */
   depth: [number, number]
-  /** 狙いのズレ（パドル幅に対する割合）。大きいほど空振りする */
+  /** 狙いのズレ（ラケット幅に対する割合）。大きいほど空振りする */
   miss: number
   /** 打つときに振る強さの最大（下の人・上の人） */
   swing: [number, number]

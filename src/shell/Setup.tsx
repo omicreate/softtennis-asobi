@@ -18,7 +18,7 @@ import './setup.css'
 
 /** 何点先取か（ラリーポイント制） */
 const TARGETS = [5, 7, 11]
-/** パドルを使うゲーム（パドルをえらぶボタンを出す） */
+/** ラケットを使うゲーム（ラケットをえらぶボタンを出す） */
 const PADDLE_GAMES: GameId[] = ['rally']
 /** まんなかの帯の ひとこと */
 const MID_NOTE: Partial<Record<GameId, string>> = {}
@@ -27,7 +27,7 @@ export function Setup({ game }: { game: GameInfo }) {
   const settings = useSettings()
   const [ready, setReady] = useState<[boolean, boolean]>([false, false])
   const [help, setHelp] = useState(false)
-  /** パドルをえらんでいる人 */
+  /** ラケットをえらんでいる人 */
   const [picker, setPicker] = useState<Side | null>(null)
   const usesPaddle = PADDLE_GAMES.includes(game.id)
 
@@ -81,7 +81,7 @@ export function Setup({ game }: { game: GameInfo }) {
               <span className={`side-chip side-chip-${side}`}>{SIDE_NAME[side]}</span>
               <span className="setup-game">{game.title}</span>
               {usesPaddle && (
-                <button className="paddle-btn" aria-label="パドルを えらぶ" data-testid={`paddle-btn-${side}`} onClick={() => setPicker(side)}>
+                <button className="paddle-btn" aria-label="ラケットを えらぶ" data-testid={`paddle-btn-${side}`} onClick={() => setPicker(side)}>
                   <PaddleIcon look={settings.paddles[side]} size={40} />
                 </button>
               )}

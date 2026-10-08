@@ -18,8 +18,8 @@ export const GUIDE_SCENES: GuideScene[] = [
   {
     id: 'intro',
     title: 'インスタから\nひらいた方へ',
-    sub: '「ピクルくんとあそぼ」を\nホーム画面に入れる方法',
-    say: 'インスタから ピクルくんとあそぼを ひらいた かたへ。ホーム画面に いれる ほうほうを しょうかいするね。',
+    sub: '「ホークアイ先生とあそぼ」を\nホーム画面に入れる方法',
+    say: 'インスタから ホークアイ先生とあそぼを ひらいた かたへ。ホーム画面に いれる ほうほうを しょうかいするね。',
     min: 4,
   },
   {
@@ -54,9 +54,9 @@ export const GUIDE_SCENES: GuideScene[] = [
   },
   {
     id: 'home',
-    title: 'ホーム画面の ピクルくんから\nすぐ遊べる！',
+    title: 'ホーム画面の ホークアイ先生から\nすぐ遊べる！',
     sub: '電波がなくても 遊べます',
-    say: 'これで ホーム画面の ピクルくんから、いつでも すぐ あそべるよ。でんぱが なくても だいじょうぶ。',
+    say: 'これで ホーム画面の ホークアイ先生から、いつでも すぐ あそべるよ。でんぱが なくても だいじょうぶ。',
     min: 4,
   },
   {
@@ -68,9 +68,9 @@ export const GUIDE_SCENES: GuideScene[] = [
   },
   {
     id: 'outro',
-    title: 'ピクルくんとあそぼ',
-    sub: 'omicreate.github.io/softtennis-asobi\n@pickleballiq_jp のプロフィールから',
-    say: 'ピクルくんとあそぼ は、プロフィールの リンクから。いっしょに あそぼうね！',
+    title: 'ホークアイ先生とあそぼ',
+    sub: 'omicreate.github.io/softtennis-asobi\n@softtennis_iq のプロフィールから',
+    say: 'ホークアイ先生とあそぼ は、プロフィールの リンクから。いっしょに あそぼうね！',
     min: 4,
   },
 ]

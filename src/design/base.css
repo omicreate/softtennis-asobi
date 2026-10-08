@@ -215,7 +215,7 @@ img {
 .score-pill {
   position: absolute;
   left: 10px;
-  /* 自分の手元の角に出す（舞台のまんなかはネットとキッチンなので空ける） */
+  /* 自分の手元の角に出す（舞台のまんなかはネットなので空ける） */
   bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
   min-width: 64px;
   height: 64px;
@@ -308,7 +308,7 @@ img {
   border: 2px solid var(--pk-line);
 }
 
-/* 背景を抜いたピクルくん（ゲームの中に出す） */
+/* 背景を抜いたホークアイ先生（ゲームの中に出す） */
 .hawk-cut {
   display: block;
   width: auto;

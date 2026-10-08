@@ -1,6 +1,6 @@
 /**
  * リアクション ボレー（ひとり・ハイスコア）の画面。手に持って遊ぶので画面は回さない。
- * ピクルマシンから球が飛んできたら、画面のどこでもタップ。オレンジの球（フェイント）はさわらない。
+ * ボールマシンから球が飛んできたら、画面のどこでもタップ。オレンジの球（フェイント）はさわらない。
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '../../core/loop'
@@ -103,7 +103,7 @@ export function ReactionGame({ levels, paused, onRestart }: Props) {
         </span>
       </div>
       <div className="rx-machine">
-        <span>ピクルマシン</span>
+        <span>ボールマシン</span>
       </div>
       <div className="rx-center">
         {game.phase === 'ready' && <p className="rx-msg">ボールが きたら すぐ タップ！</p>}

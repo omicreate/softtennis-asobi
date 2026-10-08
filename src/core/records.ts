@@ -1,6 +1,6 @@
 /**
  * ゲームごとの「じこベスト」とメダル（どう・ぎん・きん）。長く遊ぶ目標にする。
- * ひとりで遊んだとき（と、ふたりで協力する ディンク）の記録だけを数える。じゅんばんモードはハンデや時間が
+ * ひとりで遊んだときの記録だけを数える。じゅんばんモードはハンデや時間が
  * ちがうので数えない。目標の数はレベルに関係なく同じ（ミッションと同じ考え方。小さい子はやさしいレベルで届く）。
  */
 import type { GameId } from '../shell/games'
@@ -47,7 +47,7 @@ export function medalFor(game: GameId, value: number | undefined): MedalLevel {
   return m
 }
 
-/** ピクルくんと ラリー：かったときの レベルを記録の数にする */
+/** ホークアイ先生と ラリー：かったときの レベルを記録の数にする */
 export const senseiValue = (level: (typeof LEVELS)[number]) => LEVELS.indexOf(level) + 1
 
 /** 記録を文字にする（ホームのカード・きろくの一覧） */

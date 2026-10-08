@@ -1,6 +1,6 @@
 /**
  * きねんカード（SNS に のせる画像）を作る。1080×1080 の正方形。
- * のせるもの：ゲームの名前・結果・日付・ピクルくん（つけている小物ごと）・パドル。
+ * のせるもの：ゲームの名前・結果・日付・ホークアイ先生（つけている小物ごと）・ラケット。
  * 名前や顔写真など、遊んだ人が分かるものは入れない。
  */
 import { onPublicSite, PUBLIC_URL } from '../core/counter'
@@ -27,7 +27,7 @@ export interface CardData {
 const SIZE = 1080
 const FONT = "'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif"
 
-export const HASHTAGS = '#ピクルくんとあそぼ #ピックルボール'
+export const HASHTAGS = '#ホークアイ先生とあそぼ #ソフトテニス'
 
 /**
  * 共有のリンク：受け取った人が そのゲームを すぐ遊べるように、じゅんびの画面を開く。
@@ -99,7 +99,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   ctx.textBaseline = 'alphabetic'
   ctx.textAlign = 'left'
   ctx.font = `900 50px ${FONT}`
-  const nameW = ctx.measureText('ピクルくんとあそぼ').width
+  const nameW = ctx.measureText('ホークアイ先生とあそぼ').width
   ctx.beginPath()
   ctx.roundRect(56, 52, nameW + 64, 92, 46)
   ctx.fillStyle = '#d8f04a'
@@ -108,7 +108,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   ctx.strokeStyle = '#154d36'
   ctx.stroke()
   ctx.fillStyle = '#154d36'
-  ctx.fillText('ピクルくんとあそぼ', 88, 116)
+  ctx.fillText('ホークアイ先生とあそぼ', 88, 116)
   const date = d.date ?? new Date()
   ctx.textAlign = 'right'
   ctx.fillStyle = '#4f6a5f'
@@ -127,9 +127,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   ctx.lineWidth = 10
   ctx.strokeStyle = '#ffffff'
   ctx.stroke()
-  // キッチンの線（飾り）
-  ctx.fillStyle = 'rgba(61, 143, 122, 0.55)'
-  ctx.fillRect(px + 5, py + ph - 150, pw - 10, 145)
+  // サービスラインの線（飾り）
   ctx.fillStyle = 'rgba(255,255,255,0.85)'
   ctx.fillRect(px + 5, py + ph - 154, pw - 10, 8)
 
@@ -144,11 +142,11 @@ export async function makeCard(d: CardData): Promise<Blob> {
   if (d.sub) {
     ctx.fillStyle = '#fff3d9'
     ctx.font = `700 40px ${FONT}`
-    // 右下のピクルくんに かからない幅で
+    // 右下のホークアイ先生に かからない幅で
     fitText(ctx, d.sub, tx, ty, 560, 40, 28, 2)
   }
 
-  // パドル（左下）とピクルくん（右下）
+  // ラケット（左下）とホークアイ先生（右下）
   drawPaddleArt(ctx, { x: 200, y: 800, faceLen: 190, angle: -Math.PI / 2 - 0.45, look: d.look, color: '#ff8a3d' })
   // 球
   const bx = 380

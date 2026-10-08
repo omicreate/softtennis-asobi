@@ -1,6 +1,6 @@
 /**
  * ひとりで遊ぶ前の準備。手に持って遊ぶので、画面は回さずふつうの向き。
- * レベルを選ぶ（ピクルくんとラリーでは、ピクルくんも同じレベルの強さになる）。
+ * レベルを選ぶ（ホークアイ先生とラリーでは、ホークアイ先生も同じレベルの強さになる）。
  */
 import { useEffect, useState } from 'react'
 import { LEVELS, LEVEL_INFO } from '../core/players'
@@ -21,7 +21,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
   const settings = useSettings()
   const [help, setHelp] = useState(false)
   const [picker, setPicker] = useState(false)
-  // 自分のパドルが画面に出るゲームだけ（ジャンプ・キャッチ・リアクション・ピタッと では出さない）
+  // 自分のラケットが画面に出るゲームだけ（ジャンプ・キャッチ・リアクション・ピタッと では出さない）
   const usesPaddle = (['lift', 'target', 'sensei'] as string[]).includes(game.id)
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
         </button>
       </div>
 
-      <h2 className="solo-label">{game.id === 'sensei' ? 'レベル（ピクルくんも おなじ つよさ）' : 'レベル'}</h2>
+      <h2 className="solo-label">{game.id === 'sensei' ? 'レベル（ホークアイ先生も おなじ つよさ）' : 'レベル'}</h2>
       <div className="level-grid" role="radiogroup" aria-label="レベル">
         {LEVELS.map((lv) => (
           <button
@@ -101,7 +101,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
       {usesPaddle && (
         <button className="solo-paddle" onClick={() => setPicker(true)} data-testid="solo-paddle">
           <PaddleIcon look={settings.paddles[0]} size={48} />
-          <span>じぶんの パドル</span>
+          <span>じぶんの ラケット</span>
           <span className="solo-paddle-change">かえる</span>
         </button>
       )}

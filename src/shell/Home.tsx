@@ -69,12 +69,12 @@ export function Home() {
   return (
     <main className="home">
       <header className="home-hero">
-        <a className="home-pikuru" href="#/collection" aria-label="ピクルくんの きせかえ">
+        <a className="home-pikuru" href="#/collection" aria-label="ホークアイ先生の きせかえ">
           <HawkCut art="full" height={150} />
         </a>
         <div>
           <h1 className="home-title">
-            ピクルくんと
+            ホークアイ先生と
             <br />
             あそぼ
           </h1>
@@ -197,7 +197,7 @@ export function Home() {
             <HawkCut art="ok" height={120} />
             <p className="welcome-title">はじめての プレゼント！</p>
             <p className="welcome-stars">⭐ × {WELCOME_STARS}</p>
-            <p className="welcome-sub">ほしで ピクルくんの こものや パドルと こうかん できるよ</p>
+            <p className="welcome-sub">ほしで ホークアイ先生の こものや ラケットと こうかん できるよ</p>
             <div className="welcome-actions">
               <button
                 className="btn btn-small"

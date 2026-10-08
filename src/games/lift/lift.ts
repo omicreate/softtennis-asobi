@@ -1,9 +1,9 @@
 /**
  * ポンポン リフティング（ひとり）。React に依存しない純粋な計算。
  * 上から見た場（幅100・高さ160）。ボールは高さ（z）を持ち、地面に影が落ちる。
- * ボールが落ちてきた瞬間（z が0になったとき）にパドルの面の上にあれば、ポンと はねる（1回）。
+ * ボールが落ちてきた瞬間（z が0になったとき）にラケットの面の上にあれば、ポンと はねる（1回）。
  * 面の外なら落ちて おしまい。はねるたびに少しずつ速く・遠くへ飛ぶようになる。
- * パドルは上から見た面（原画の形・比率）で、当たり判定もその面の形。
+ * ラケットは上から見た面（原画の形・比率）で、当たり判定もその面の形。
  */
 import type { Level } from '../../core/players'
 import { FACE_RATIO } from '../../ui/paddleArt'
@@ -16,7 +16,7 @@ export const GRAVITY = 160
 export const MAX_COUNT = 99
 
 export interface LiftLevel {
-  /** パドルの面の長さ */
+  /** ラケットの面の長さ */
   paddle: number
   /** はじめの1回の空中の時間（秒） */
   air: number
@@ -50,7 +50,7 @@ export function createLift(level: Level): LiftState {
   const py = FIELD_H * 0.62
   return {
     level,
-    // はじめはパドルの真上から落とす（1回目は かんたんに）
+    // はじめはラケットの真上から落とす（1回目は かんたんに）
     ball: { x: FIELD_W / 2, y: py, z: 40, vx: 0, vy: 0, vz: 0 },
     paddle: { x: FIELD_W / 2, y: py, len, wid: len * FACE_RATIO },
     count: 0,
@@ -59,7 +59,7 @@ export function createLift(level: Level): LiftState {
   }
 }
 
-/** パドルを動かす（面の中心。場の外には出ない） */
+/** ラケットを動かす（面の中心。場の外には出ない） */
 export function movePaddle(s: LiftState, x: number, y: number): void {
   const p = s.paddle
   p.x = clamp(x, p.wid / 2, FIELD_W - p.wid / 2)

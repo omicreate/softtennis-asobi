@@ -10,7 +10,7 @@
   display: block;
   touch-action: none;
 }
-/* 上の帯：ピクルくんと回数（右上の ？・⏸ と重ならないように右をあける） */
+/* 上の帯：ホークアイ先生と回数（右上の ？・⏸ と重ならないように右をあける） */
 .lift-hud,
 .catch-hud {
   position: absolute;

@@ -5,7 +5,7 @@ import type { LiftEvent, LiftState } from './lift'
 
 const DT = 1 / 60
 
-/** パドルをいつもボールの影の下に置く「うまい人」 */
+/** ラケットをいつもボールの影の下に置く「うまい人」 */
 function perfect(s: LiftState) {
   // 落ちる場所を予想してそこへ
   const b = s.ball
@@ -25,7 +25,7 @@ function run(s: LiftState, seconds: number, each?: (s: LiftState) => void, rand 
 }
 
 describe('ポンポン リフティング', () => {
-  it('1回目はパドルの真上から落ちるので、動かさなくても はねる', () => {
+  it('1回目はラケットの真上から落ちるので、動かさなくても はねる', () => {
     const s = createLift('chibi')
     const ev = run(s, 2.6)
     expect(ev.filter((e) => e.type === 'pon').length).toBeGreaterThanOrEqual(1)
@@ -39,10 +39,10 @@ describe('ポンポン リフティング', () => {
     expect(ev.some((e) => e.type === 'drop')).toBe(false)
   })
 
-  it('パドルの外に落ちたら おしまい', () => {
+  it('ラケットの外に落ちたら おしまい', () => {
     const s = createLift('kids')
     run(s, 2.6)
-    // パドルを遠くへ
+    // ラケットを遠くへ
     const ev = run(s, 4, (st) => movePaddle(st, st.ball.x > FIELD_W / 2 ? 5 : FIELD_W - 5, FIELD_H - 5))
     expect(ev.some((e) => e.type === 'drop')).toBe(true)
     expect(ev.find((e) => e.type === 'over')).toBeTruthy()

@@ -105,7 +105,7 @@ export class RallyEngine {
   state: RallyState = { lastHitter: 0, shot: 0, bounces: 0, serverX: COURT.W / 2 }
   /** 最後のミス（画面に理由を出す） */
   lastFault: Fault | null = null
-  /** 見た目：パドルの先が、体の中心から横にどれだけ出ているか（m）。球が来ると球の方へ伸ばす */
+  /** 見た目：ラケットの先が、体の中心から横にどれだけ出ているか（m）。球が来ると球の方へ伸ばす */
   head: [number, number] = [0.35, -0.35]
   /** 見た目：振っている残り時間（秒） */
   swingT: [number, number] = [0, 0]
@@ -227,7 +227,7 @@ export class RallyEngine {
     this.now += dt
     const ev: EngineEvent[] = []
 
-    // パドル：指に合わせる（＋小さい子は球の方へ寄せる）
+    // ラケット：指に合わせる（＋小さい子は球の方へ寄せる）
     const prevPaddles: Vec[] = this.paddles.map((p) => ({ x: p.x, y: p.y }))
     const swings: Vec[] = [this.fingerVelocity(0), this.fingerVelocity(1)]
     for (const side of [0, 1] as Side[]) {
@@ -242,7 +242,7 @@ export class RallyEngine {
       p.x = placed.x
       p.y = placed.y
 
-      // 見た目：球が来るときはパドルの先をその方へ、来ないときは利き手の側に構える
+      // 見た目：球が来るときはラケットの先をその方へ、来ないときは利き手の側に構える
       const half = p.width / 2
       let wantHead = hand(side) * Math.min(0.35, half)
       const coming = this.phase === 'play' && this.state.lastHitter !== side && this.ball.vy * toNet(side) < 0
@@ -329,7 +329,7 @@ export class RallyEngine {
       }
     }
 
-    // 速い球でもパドルをすり抜けないよう、細かく区切って進める
+    // 速い球でもラケットをすり抜けないよう、細かく区切って進める
     const n = Math.max(1, Math.ceil(dt / (1 / 240)))
     const h = dt / n
     for (let i = 1; i <= n; i++) {

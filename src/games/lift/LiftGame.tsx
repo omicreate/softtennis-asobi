@@ -1,6 +1,6 @@
 /**
  * ポンポン リフティング（ひとり）の画面。手に持って遊ぶので画面は回さない。
- * どこを触っても、指の少し上にパドルが来る。ボールの影の所にパドルを動かして受ける。
+ * どこを触っても、指の少し上にラケットが来る。ボールの影の所にラケットを動かして受ける。
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
@@ -32,7 +32,7 @@ interface Props {
 
 const bestKey = (lv: Level) => `lift-best-${lv}`
 const HUD = 64
-/** 指より少し上にパドルを出す（指で隠れないように） */
+/** 指より少し上にラケットを出す（指で隠れないように） */
 const FINGER_OFFSET = 14
 
 export function LiftGame({ levels, paused, onRestart }: Props) {
@@ -203,7 +203,7 @@ function draw(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, s: L
     ctx.setLineDash([])
   }
 
-  // パドル（原画の形。上から見た面。握りは手前）
+  // ラケット（原画の形。上から見た面。握りは手前）
   const p = s.paddle
   drawPaddleArt(ctx, { x: X(p.x), y: Y(p.y), faceLen: p.len * k, angle: -Math.PI / 2, look })
 

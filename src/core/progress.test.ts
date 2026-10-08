@@ -92,7 +92,7 @@ describe('スタンプと ごほうび', () => {
     expect(p.plays).toEqual({ lift: 2, rally: 1 })
   })
 
-  it('スタンプ7こで きんいろパドルが もらえる', () => {
+  it('スタンプ7こで きんいろラケットが もらえる', () => {
     for (let d = 1; d <= 7; d++) recordStart('lift', `2026-10-${String(d).padStart(2, '0')}`)
     expect(getProgress().owned).toContain('design:gold')
   })
@@ -174,7 +174,7 @@ describe('じこベストと メダル', () => {
     expect(medalCount()).toBe(3)
   })
 
-  it('メダルを 9こ あつめると チャンピオンの パドル', () => {
+  it('メダルを 9こ あつめると チャンピオンの ラケット', () => {
     recordPlay({ type: 'finish', game: 'lift', value: 999, two: false, record: true }, DAY)
     recordPlay({ type: 'finish', game: 'target', value: 999, two: false, record: true }, DAY)
     recordPlay({ type: 'finish', game: 'reaction', value: 100, two: false, record: true }, DAY)

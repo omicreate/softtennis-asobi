@@ -72,7 +72,7 @@ export function Play({ game }: { game: GameId }) {
   /** さいごの記録（きねんカードで「この きろくに ちょうせん」を そえるか） */
   const [lastValue, setLastValue] = useState<number | undefined>(undefined)
   const solo = info?.players === 1
-  // レベルはゲームの途中で変わらないように、始めたときの値で固定する（ひとりのときは自分とピクルくんが同じレベル）
+  // レベルはゲームの途中で変わらないように、始めたときの値で固定する（ひとりのときは自分とホークアイ先生が同じレベル）
   const [levels] = useState<[Level, Level]>(() => (solo ? [settings.soloLevel, settings.soloLevel] : [settings.levels[0], settings.levels[1]]))
   const [handheld] = useState(() => HANDHELD.includes(game))
 
@@ -110,7 +110,7 @@ export function Play({ game }: { game: GameId }) {
       paddles: settings.paddles,
       rewards,
       finish: (r: GameResult) => {
-        // ピクルくんと ラリー：かったときの レベルを記録にする（メダルの目安）
+        // ホークアイ先生と ラリー：かったときの レベルを記録にする（メダルの目安）
         const value = game === 'sensei' ? (r.winner === 0 ? senseiValue(levels[0]) : undefined) : r.value
         // じこベスト・メダルに数えるのは、ひとりで遊んだとき
         const record = solo && !!MEDAL_RULES[game]

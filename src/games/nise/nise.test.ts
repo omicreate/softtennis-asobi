@@ -3,7 +3,7 @@ import { mulberry32 } from '../../core/rng'
 import { dealRound, judgeOutcome, majorityWord, starsFor, tally, TALK_HINTS, wolfWord, wordFor } from './nise'
 import { DECKS, WORDS } from './words'
 
-describe('にせピクルくんの お題', () => {
+describe('にせホークアイ先生の お題', () => {
   it('どの組も2つのことばが ちがう。同じ山に同じ組は ない', () => {
     for (const d of DECKS) {
       const seen = new Set<string>()
@@ -60,11 +60,11 @@ describe('にせホークアイ先生の 進めかた', () => {
 
   it('かち・まけと ほし', () => {
     const r = { deck: 'e' as const, pair: 0, majority: 'a' as const, wolf: 2, players: 4 }
-    // ちがう人をさした → にせピクルくんの かち（にせピクルくんに ほし2つ）
+    // ちがう人をさした → にせホークアイ先生の かち（にせホークアイ先生に ほし2つ）
     const missed = judgeOutcome(r, 1)
     expect(missed).toEqual({ winner: 'nise', how: 'missed' })
     expect(starsFor(r, missed)).toEqual([0, 0, 2, 0])
-    // 見やぶった → みんなの かち（にせピクルくん以外に1つずつ）
+    // 見やぶった → みんなの かち（にせホークアイ先生以外に1つずつ）
     const caught = judgeOutcome(r, 2, false)
     expect(caught).toEqual({ winner: 'minna', how: 'caught' })
     expect(starsFor(r, caught)).toEqual([1, 1, 0, 1])

@@ -1,13 +1,13 @@
 /**
- * にせピクルくんは だれだ？（ピクルくん人狼。ワードウルフ型）。React に依存しない純粋な計算。
+ * にせホークアイ先生は だれだ？（ホークアイ先生人狼。ワードウルフ型）。React に依存しない純粋な計算。
  *
  * 1回の流れ：
- *   ① 1台を手わたしで回し、1人ずつ こっそり お題を見る。1人だけ（にせピクルくん）お題がちがう。
- *      にせピクルくんは、自分が にせものだと知らない（画面の形は全員同じ）
+ *   ① 1台を手わたしで回し、1人ずつ こっそり お題を見る。1人だけ（にせホークアイ先生）お題がちがう。
+ *      にせホークアイ先生は、自分が にせものだと知らない（画面の形は全員同じ）
  *   ② 決めた時間、お題のことを話す（お題の ことばそのものは言わない）
- *   ③ 「せーの」で、にせピクルくんだと思う人を ゆびさす。いちばん多く さされた人を画面で選ぶ（同じ数なら、少し話してもう一度）
+ *   ③ 「せーの」で、にせホークアイ先生だと思う人を ゆびさす。いちばん多く さされた人を画面で選ぶ（同じ数なら、少し話してもう一度）
  *      ゆびさしの代わりに、1台を回して1人ずつ こっそり とうひょうもできる（人を指ささない・まわりにつられない）
- *   ④ 発表。さされた人が にせピクルくんなら「ぎゃくてん チャンス」：みんなのお題を声に出して言い当てたら、にせピクルくんの逆転勝ち
+ *   ④ 発表。さされた人が にせホークアイ先生なら「ぎゃくてん チャンス」：みんなのお題を声に出して言い当てたら、にせホークアイ先生の逆転勝ち
  *      （あっているかは、答えを見て みんなで決める。選択肢にすると、自分のお題と似たものを選ぶだけで当たってしまう）
  */
 import { WORDS } from './words'
@@ -19,7 +19,7 @@ export interface NiseRound {
   pair: number
   /** みんな（多い方）のお題が a か b か */
   majority: 'a' | 'b'
-  /** にせピクルくんの人の番号（0から） */
+  /** にせホークアイ先生の人の番号（0から） */
   wolf: number
   players: number
 }
@@ -40,7 +40,7 @@ export const TALK_TIMES = [60, 120, 180]
 export const TIE_TIME = 30
 export const MIN_PLAYERS = 3
 
-/** お題と にせピクルくんを決める。同じ遊びの間は、出し切るまで同じ組を出さない */
+/** お題と にせホークアイ先生を決める。同じ遊びの間は、出し切るまで同じ組を出さない */
 export function dealRound(deck: Deck, players: number, rand: () => number = Math.random, used: Set<string> = new Set()): NiseRound {
   const pairs = WORDS[deck]
   const key = (i: number) => `${deck}:${i}`
@@ -60,7 +60,7 @@ export const wolfWord = (r: NiseRound): Word => pairOf(r)[r.majority === 'a' ? '
 /** その人に見せるお題 */
 export const wordFor = (r: NiseRound, player: number): Word => (player === r.wolf ? wolfWord(r) : majorityWord(r))
 
-/** 勝ち負け。guessedRight は、ばれた にせピクルくんが みんなのお題を言い当てたか（みんなで決める） */
+/** 勝ち負け。guessedRight は、ばれた にせホークアイ先生が みんなのお題を言い当てたか（みんなで決める） */
 export function judgeOutcome(r: NiseRound, pointed: number, guessedRight = false): Outcome {
   if (pointed !== r.wolf) return { winner: 'nise', how: 'missed' }
   if (guessedRight) return { winner: 'nise', how: 'reverse' }
@@ -76,7 +76,7 @@ export function tally(votes: number[], players: number): { counts: number[]; top
   return { counts, top: tops.length === 1 ? tops[0] : null }
 }
 
-/** もらえる ほし：みんなの かち＝にせピクルくん以外に1つずつ、にせピクルくんの かち＝にせピクルくんに2つ */
+/** もらえる ほし：みんなの かち＝にせホークアイ先生以外に1つずつ、にせホークアイ先生の かち＝にせホークアイ先生に2つ */
 export function starsFor(r: NiseRound, o: Outcome): number[] {
   return Array.from({ length: r.players }, (_, i) => (o.winner === 'nise' ? (i === r.wolf ? 2 : 0) : i === r.wolf ? 0 : 1))
 }
