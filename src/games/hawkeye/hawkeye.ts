@@ -95,6 +95,9 @@ function ourPair(rand: () => number): Player[] {
 
 const FORMATION_NAME = { gankou: '雁行陣', 'double-front': 'ダブル前衛', 'double-back': 'ダブル後衛' } as const
 
+/** ちびっこ・キッズには、前衛・後衛に読みがなをそえる */
+const pos = (level: Level, word: '前衛' | '後衛') => (level === 'chibi' || level === 'kids' ? `${word}（${word === '前衛' ? 'ぜんえい' : 'こうえい'}）` : word)
+
 export function makeQuestion(level: Level, i: number, rand: () => number = Math.random): Question {
   const kinds = KINDS[level]
   const kind = kinds[Math.floor(rand() * kinds.length)]
@@ -157,7 +160,7 @@ export function makeQuestion(level: Level, i: number, rand: () => number = Math.
         kind,
         players: [...opp, ...ours],
         ball: null,
-        prompt: 'あいての 前衛は どこに いた？',
+        prompt: `あいての ${pos(level, '前衛')}は どこに いた？`,
         choices: ids.map((id, k) => ({ id, label: names[k] })),
         cols: 3,
         answer: ids[zone],
@@ -171,7 +174,7 @@ export function makeQuestion(level: Level, i: number, rand: () => number = Math.
         kind,
         players: [...opp, ...ours],
         ball: null,
-        prompt: 'あいての 後衛は どっちに いた？',
+        prompt: `あいての ${pos(level, '後衛')}は どっちに いた？`,
         choices: [
           { id: 'left', label: 'ひだり' },
           { id: 'right', label: 'みぎ' },
