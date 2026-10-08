@@ -79,6 +79,8 @@ npm run test:e2e   # スマホ・タブレットの大きさで2人同時のタ�
 npm run build      # dist/ に出力（sw.js に事前キャッシュの一覧を埋め込む）
 ```
 
+依存を足す・上げるときは `npx npm@10 install`（CI と同じ npm 10）で package-lock.json を更新する。lock がずれていると公開の CI が `npm ci` で止まる。
+
 ルールドリルの問題を取りこみ直す：`node scripts/import-drill.mjs`（元はソフトテニスIQの `src/tools/drill/questions.ts`。問題は元の方で直す）
 
 ## 声（ElevenLabs）
