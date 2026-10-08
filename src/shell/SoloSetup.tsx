@@ -21,7 +21,7 @@ export function SoloSetup({ game }: { game: GameInfo }) {
   const settings = useSettings()
   const [help, setHelp] = useState(false)
   const [picker, setPicker] = useState(false)
-  // 自分のラケットが画面に出るゲームだけ（ジャンプ・キャッチ・リアクション・ピタッと では出さない）
+  // 自分のラケットが画面に出るゲームだけ（ホークアイの め・リアクション では出さない）
   const usesPaddle = (['lift', 'target', 'sensei'] as string[]).includes(game.id)
 
   useEffect(() => {
