@@ -69,7 +69,7 @@ export const GUIDE_SCENES: GuideScene[] = [
   {
     id: 'outro',
     title: 'ピクルくんとあそぼ',
-    sub: 'omicreate.github.io/pickle-asobi\n@pickleballiq_jp のプロフィールから',
+    sub: 'omicreate.github.io/softtennis-asobi\n@pickleballiq_jp のプロフィールから',
     say: 'ピクルくんとあそぼ は、プロフィールの リンクから。いっしょに あそぼうね！',
     min: 4,
   },

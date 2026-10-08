@@ -1,7 +1,7 @@
 // Service Worker（オフライン対応）
 // キャッシュ名のバージョンと事前キャッシュ一覧は scripts/build-sw.mjs がビルド後に埋め込みます。
 // ビルド成果物（assets/ 配下）はハッシュ付きファイル名なので、一覧をここに埋め込んで事前キャッシュします。
-const CACHE_PREFIX = "pickle-asobi-";
+const CACHE_PREFIX = "softtennis-asobi-";
 const CACHE_NAME = `${CACHE_PREFIX}__VERSION__`;
 const APP_SHELL = __PRECACHE__;
 

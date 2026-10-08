@@ -43,7 +43,7 @@ export function cleanSrc(v: string | null | undefined): string {
   return v && /^[A-Za-z0-9_-]{1,40}$/.test(v) ? v : ''
 }
 
-const SRC_KEY = 'pickle-asobi:src'
+const SRC_KEY = 'softtennis-asobi:src'
 let src = ''
 
 /**
@@ -78,7 +78,7 @@ function standalone(): boolean {
 /** 送り先の URL（送らないときは null） */
 export function countUrl(ev: CountEvent, game = ''): string | null {
   if (counterStatus() !== 'on') return null
-  const q = new URLSearchParams({ app: 'pickle-asobi', ev, v: APP_VERSION })
+  const q = new URLSearchParams({ app: 'softtennis-asobi', ev, v: APP_VERSION })
   if (game) q.set('game', game)
   if (src) q.set('src', src)
   if (ev === 'open') q.set('pwa', standalone() ? '1' : '0')

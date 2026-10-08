@@ -1,18 +1,38 @@
 {
-  "name": "ピクルくんとあそぼ",
-  "short_name": "ピクルあそぼ",
-  "description": "スマホやタブレット1台で、親子や友だちと向かい合って遊べるピックルボールのミニゲーム集。",
+  "name": "ホークアイ先生とあそぼ",
+  "short_name": "ホークアイあそぼ",
+  "description": "スマホやタブレット1台で、親子や部活の仲間と向かい合って遊べるソフトテニスのミニゲーム集。",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "portrait",
-  "background_color": "#ffe7b8",
-  "theme_color": "#ffe7b8",
+  "background_color": "#fff3d9",
+  "theme_color": "#fff3d9",
   "lang": "ja",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

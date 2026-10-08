@@ -34,9 +34,9 @@ export type PicId =
   | 'janken'
 
 const INK = '#12302b'
-const LIME = '#d4f03c'
-const LINE = '#2e5a1c'
-const COURT = '#2f5d9a'
+const LIME = '#d8f04a'
+const LINE = '#154d36'
+const COURT = '#2f8a5f'
 const KITCHEN = '#3d8f7a'
 
 const ball = (cx: number, cy: number, r: number) => (

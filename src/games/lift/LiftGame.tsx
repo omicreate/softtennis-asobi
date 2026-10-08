@@ -164,12 +164,12 @@ function draw(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, s: L
   const k = v.scale
   const X = (x: number) => v.ox + x * k
   const Y = (y: number) => v.oy + y * k
-  ctx.fillStyle = '#ffe7b8'
+  ctx.fillStyle = '#fff3d9'
   ctx.fillRect(0, 0, w, h)
   // 場（コートの色と線）
   ctx.beginPath()
   ctx.roundRect(X(0), Y(0), FIELD_W * k, FIELD_H * k, 14)
-  ctx.fillStyle = '#2f5d9a'
+  ctx.fillStyle = '#2f8a5f'
   ctx.fill()
   ctx.fillStyle = '#3d8f7a'
   ctx.fillRect(X(0), Y(0), FIELD_W * k, FIELD_H * 0.22 * k)
@@ -220,12 +220,12 @@ function draw(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, s: L
   const by = Y(b.y) - b.z * k * 0.9
   ctx.beginPath()
   ctx.arc(bx, by, r, 0, Math.PI * 2)
-  ctx.fillStyle = '#d4f03c'
+  ctx.fillStyle = '#d8f04a'
   ctx.fill()
   ctx.lineWidth = Math.max(1.5, r * 0.14)
-  ctx.strokeStyle = '#2e5a1c'
+  ctx.strokeStyle = '#154d36'
   ctx.stroke()
-  ctx.fillStyle = '#2e5a1c'
+  ctx.fillStyle = '#154d36'
   for (const [dx, dy] of [
     [-0.35, -0.25],
     [0.3, -0.3],

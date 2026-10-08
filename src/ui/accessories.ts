@@ -53,7 +53,7 @@ const ANCHORS: Record<CutArt, Anchor> = {
 }
 
 const INK = '#12302b'
-const LINE = '#2e5a1c'
+const LINE = '#154d36'
 
 /** ヘッドバンドに沿った向きで、中心から (u, v) だけずらした点（ヘッドバンドの幅＝1） */
 function onBand(a: Anchor, u: number, v: number): [number, number] {
@@ -125,7 +125,7 @@ function partyHat(ctx: CanvasRenderingContext2D) {
   ctx.fill()
   ctx.save()
   ctx.clip()
-  ctx.fillStyle = '#d4f03c'
+  ctx.fillStyle = '#d8f04a'
   for (const y of [-0.08, -0.22, -0.36]) {
     ctx.beginPath()
     ctx.moveTo(-0.3, y)

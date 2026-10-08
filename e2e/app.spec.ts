@@ -22,8 +22,8 @@ async function open(page: Page, hash: string, levels: [Level, Level] = ['kids', 
       // 同じテストの中でページを開き直しても、記録はそのまま
       if (sessionStorage.getItem('seeded')) return
       sessionStorage.setItem('seeded', '1')
-      localStorage.setItem('pickle-asobi:settings', JSON.stringify({ sound: false, speak: false, levels: lv, rallyRules: 'easy', rallyTarget: 5, soloLevel: 'kids' }))
-      localStorage.setItem('pickle-asobi:progress', JSON.stringify(pr))
+      localStorage.setItem('softtennis-asobi:settings', JSON.stringify({ sound: false, speak: false, levels: lv, rallyRules: 'easy', rallyTarget: 5, soloLevel: 'kids' }))
+      localStorage.setItem('softtennis-asobi:progress', JSON.stringify(pr))
     },
     [levels, progress] as const,
   )
@@ -265,7 +265,7 @@ test('2人の準備画面で、それぞれパドルを えらべる', async ({ 
   const picker = page.getByTestId('paddle-picker')
   await picker.getByRole('radio', { name: /みずたま/ }).click()
   await picker.getByRole('button', { name: 'OK' }).click()
-  const paddles = await page.evaluate(() => JSON.parse(localStorage.getItem('pickle-asobi:settings') ?? '{}').paddles)
+  const paddles = await page.evaluate(() => JSON.parse(localStorage.getItem('softtennis-asobi:settings') ?? '{}').paddles)
   expect(paddles[1].design).toBe('dots')
   expect(paddles[0].design).toBe('orange')
 })

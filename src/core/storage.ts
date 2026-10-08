@@ -1,5 +1,5 @@
 // 端末の中だけに保存する（ベスト記録・設定）。プライベートブラウズなどで使えなくても遊べるようにする
-const PREFIX = 'pickle-asobi:'
+const PREFIX = 'softtennis-asobi:'
 
 export function load<T>(key: string, fallback: T): T {
   try {

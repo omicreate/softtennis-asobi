@@ -25,9 +25,9 @@ describe('どのブラウザで開いているか', () => {
   })
 
   it('ふつうのブラウザで開くリンク：Android は Chrome の intent（# は intent の前に1つだけ）、iPhone は x-safari', () => {
-    const url = 'https://omicreate.github.io/pickle-asobi/?src=pb_ig_bio&go=install'
+    const url = 'https://omicreate.github.io/softtennis-asobi/?src=pb_ig_bio&go=install'
     const a = externalOpenUrl('android', url)!
-    expect(a.startsWith('intent://omicreate.github.io/pickle-asobi/?src=pb_ig_bio&go=install#Intent;')).toBe(true)
+    expect(a.startsWith('intent://omicreate.github.io/softtennis-asobi/?src=pb_ig_bio&go=install#Intent;')).toBe(true)
     expect(a.split('#')).toHaveLength(2)
     expect(a).toContain('package=com.android.chrome')
     expect(a).toContain(`S.browser_fallback_url=${encodeURIComponent(url)}`)

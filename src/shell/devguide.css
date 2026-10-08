@@ -4,7 +4,7 @@
   height: 1920px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 35%, #fff6e3 0%, #ffe7b8 70%);
+  background: radial-gradient(circle at 50% 35%, #fff6e3 0%, #fff3d9 70%);
   color: #12302b;
   font-family: 'Zen Maru Gothic', sans-serif;
   word-break: keep-all;
@@ -26,7 +26,7 @@
   text-align: center;
 }
 .guide-chip {
-  background: #2e5a1c;
+  background: #154d36;
   color: #fff;
   font-size: 40px;
   font-weight: 900;
@@ -78,7 +78,7 @@
   margin: 0;
   font-size: 26px;
   font-weight: 900;
-  color: #2e5a1c;
+  color: #154d36;
   opacity: 0.7;
 }
 .guide-end {

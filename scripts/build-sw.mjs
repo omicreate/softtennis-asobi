@@ -23,7 +23,7 @@ walk(new URL("src/", root));
 const css = list("assets/").filter((f) => f.endsWith(".css")).map((f) => readFileSync(new URL(f.slice(2), dist), "utf8")).join("\n");
 const neededFonts = new Set();
 for (const [, body] of css.matchAll(/@font-face\{([^}]*)\}/g)) {
-  const file = body.match(/url\(\/pickle-asobi\/(assets\/[^)]+\.woff2)\)/)?.[1];
+  const file = body.match(/url\(\/softtennis-asobi\/(assets\/[^)]+\.woff2)\)/)?.[1];
   const range = body.match(/unicode-range:([^;}]*)/)?.[1];
   if (!file || !range) continue;
   const hit = range.split(",").some((part) => {

@@ -1,16 +1,17 @@
 /*
- * ピクルくんとあそぼ デザイントークン
- * 色はピクルくん仕様（PickleballIQ/ブランド/ピクルくん/ピクルくん仕様.md）に合わせる。
- * コートの色は動画テンプレート（pb-studio/template/player.html）の紺とキッチンの緑。
+ * ホークアイ先生とあそぼ デザイントークン
+ * 色はホークアイ先生の原画（バンダナの緑・羽のクリーム・隈取りの赤）と、ソフトテニスIQの動画のコートの緑・ボールの黄緑。
+ * 変数の名前（--pk-…）は土台にしたピクルくんとあそぼの名残。
  */
 :root {
-  /* ピクルくん */
-  --pk-body: #6bb33f;
-  --pk-line: #2e5a1c;
-  --lime: #d4f03c;
+  /* ホークアイ先生（--pk-body＝バンダナの緑、--pk-line＝濃い緑の線） */
+  --pk-body: #1f8a5b;
+  --pk-line: #154d36;
+  --lime: #d8f04a;
   --ink: #12302b;
   --orange: #ff8a3d;
-  --cream: #ffe7b8;
+  --cream: #fff3d9;
+  --hawk-red: #e4262c;
 
   /* 地と面 */
   --bg: var(--cream);
@@ -28,12 +29,12 @@
   --p0-tint: #ffdcb8;
   --p1-tint: #d3e7f8;
 
-  /* コート */
-  --court-out: #24497a;
-  --court: #2f5d9a;
-  --kitchen: #3d8f7a;
+  /* コート（ソフトテニスIQの動画と同じ緑） */
+  --court-out: #1f5a42;
+  --court: #2f8a5f;
+  --kitchen: #2a7656;
   --court-line: #ffffff;
-  --ball: #d4f03c;
+  --ball: #d8f04a;
 
   /* 意味のある色 */
   --ok: #4caf50;

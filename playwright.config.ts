@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test'
 // 開発時だけ見える window.__rally（ラリーの進行）を使うので、vite preview ではなく vite で起動する
 const port = 4176
 const host = ['127', '0', '0', '1'].join('.')
-const base = `http://${host}:${port}/pickle-asobi/`
+const base = `http://${host}:${port}/softtennis-asobi/`
 
 export default defineConfig({
   testDir: './e2e',

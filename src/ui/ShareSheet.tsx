@@ -44,7 +44,7 @@ export function ShareSheet({ card, onClose, flipped = false, fixed = false }: { 
 
   useEffect(() => () => void (url && URL.revokeObjectURL(url)), [url])
 
-  const file = blob ? new File([blob], 'pickle-asobi.png', { type: 'image/png' }) : null
+  const file = blob ? new File([blob], 'softtennis-asobi.png', { type: 'image/png' }) : null
   const canShare = !!file && typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })
   /** iPhone・iPad は 共有の画面から「画像を保存」（写真に入る） */
   const saveByShare = os === 'ios' && canShare
@@ -103,7 +103,7 @@ export function ShareSheet({ card, onClose, flipped = false, fixed = false }: { 
                 </button>
               )}
               {saveByDownload && (
-                <a className="btn" href={url} download="pickle-asobi.png" onClick={() => countShare(card.game ?? '')} data-testid="share-save">
+                <a className="btn" href={url} download="softtennis-asobi.png" onClick={() => countShare(card.game ?? '')} data-testid="share-save">
                   画像を保存
                 </a>
               )}

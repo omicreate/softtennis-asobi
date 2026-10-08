@@ -21,8 +21,8 @@ function counterCsp(): Plugin {
 }
 
 export default defineConfig({
-  // GitHub Pages（https://omicreate.github.io/pickle-asobi/）配信のためのベースパス
-  base: '/pickle-asobi/',
+  // GitHub Pages（https://omicreate.github.io/softtennis-asobi/）配信のためのベースパス
+  base: '/softtennis-asobi/',
   plugins: [react(), counterCsp()],
   build: {
     // 小さい書体ファイルを data: URI にしない（CSP の font-src 'self' で読めなくなるため。ファイルのまま配る）

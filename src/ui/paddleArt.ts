@@ -65,7 +65,7 @@ export const DESIGNS = {
   gold: { label: 'きんいろ', base: '#f5c400', pattern: 'gold' },
   ocean: { label: 'うみ', base: '#3d9be9', pattern: 'stripe', accent: '#ffffff' },
   sakura: { label: 'さくら', base: '#ffc2d9', pattern: 'heart', accent: '#ff5d8f' },
-  yozora: { label: 'よぞら', base: '#24497a', pattern: 'star', accent: '#ffd84d' },
+  yozora: { label: 'よぞら', base: '#1f5a42', pattern: 'star', accent: '#ffd84d' },
   champion: { label: 'チャンピオン', base: '#12302b', pattern: 'star', accent: '#f5c400' },
 } satisfies Record<string, Design>
 

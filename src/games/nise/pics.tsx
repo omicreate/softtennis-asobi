@@ -22,7 +22,7 @@ export type NisePicId =
 
 const INK = '#12302b'
 const LEAF = '#4caf50'
-const DARK = '#2e5a1c'
+const DARK = '#154d36'
 
 const eyes = (y: number, gap = 12) => (
   <g fill={INK}>

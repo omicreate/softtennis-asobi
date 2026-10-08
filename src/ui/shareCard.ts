@@ -86,7 +86,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   const ctx = c.getContext('2d')!
 
   // 地
-  ctx.fillStyle = '#ffe7b8'
+  ctx.fillStyle = '#fff3d9'
   ctx.fillRect(0, 0, SIZE, SIZE)
   ctx.fillStyle = 'rgba(255, 138, 61, 0.12)'
   for (let i = 0; i < 9; i++) {
@@ -102,12 +102,12 @@ export async function makeCard(d: CardData): Promise<Blob> {
   const nameW = ctx.measureText('ピクルくんとあそぼ').width
   ctx.beginPath()
   ctx.roundRect(56, 52, nameW + 64, 92, 46)
-  ctx.fillStyle = '#d4f03c'
+  ctx.fillStyle = '#d8f04a'
   ctx.fill()
   ctx.lineWidth = 6
-  ctx.strokeStyle = '#2e5a1c'
+  ctx.strokeStyle = '#154d36'
   ctx.stroke()
-  ctx.fillStyle = '#2e5a1c'
+  ctx.fillStyle = '#154d36'
   ctx.fillText('ピクルくんとあそぼ', 88, 116)
   const date = d.date ?? new Date()
   ctx.textAlign = 'right'
@@ -122,7 +122,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   const ph = 560
   ctx.beginPath()
   ctx.roundRect(px, py, pw, ph, 44)
-  ctx.fillStyle = '#2f5d9a'
+  ctx.fillStyle = '#2f8a5f'
   ctx.fill()
   ctx.lineWidth = 10
   ctx.strokeStyle = '#ffffff'
@@ -134,7 +134,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   ctx.fillRect(px + 5, py + ph - 154, pw - 10, 8)
 
   ctx.textAlign = 'left'
-  ctx.fillStyle = '#d4f03c'
+  ctx.fillStyle = '#d8f04a'
   const tx = px + 52
   let ty = py + 100
   ty += fitText(ctx, d.gameTitle, tx, ty, pw - 104, 58, 38, 1) + 34
@@ -142,7 +142,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   const titleH = fitText(ctx, d.title, tx, ty + 30, pw - 104, 104, 56, 2)
   ty += titleH + 46
   if (d.sub) {
-    ctx.fillStyle = '#ffe7b8'
+    ctx.fillStyle = '#fff3d9'
     ctx.font = `700 40px ${FONT}`
     // 右下のピクルくんに かからない幅で
     fitText(ctx, d.sub, tx, ty, 560, 40, 28, 2)
@@ -155,12 +155,12 @@ export async function makeCard(d: CardData): Promise<Blob> {
   const by = 860
   ctx.beginPath()
   ctx.arc(bx, by, 38, 0, Math.PI * 2)
-  ctx.fillStyle = '#d4f03c'
+  ctx.fillStyle = '#d8f04a'
   ctx.fill()
   ctx.lineWidth = 6
-  ctx.strokeStyle = '#2e5a1c'
+  ctx.strokeStyle = '#154d36'
   ctx.stroke()
-  ctx.fillStyle = '#2e5a1c'
+  ctx.fillStyle = '#154d36'
   for (const [dx, dy] of [
     [-13, -9],
     [11, -11],
@@ -179,7 +179,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
     ctx.fillStyle = '#4f6a5f'
     ctx.fillText(PUBLIC_URL.replace(/^https:\/\//, ''), 60, 1004)
   }
-  ctx.fillStyle = '#2e5a1c'
+  ctx.fillStyle = '#154d36'
   ctx.font = `700 34px ${FONT}`
   ctx.fillText(HASHTAGS, 60, 1050)
 

@@ -4,7 +4,7 @@
 子ども同士・親子・選手同士で遊べるよう、**レベルは1人ずつ選ぶ**（ちびっこ／キッズ／おとな／せんしゅ）。
 アプリストアには出さず、Web ページを「ホーム画面に追加」して使う（PWA・オフライン可）。
 
-- 公開先：https://omicreate.github.io/pickle-asobi/ （`main` に push すると、GitHub Actions がテストを通してから公開する）
+- 公開先：https://omicreate.github.io/softtennis-asobi/ （`main` に push すると、GitHub Actions がテストを通してから公開する）
 - 大人向けの「ピックルボールIQ」アプリとは別。共通なのはピクルくんと色だけ
 - 企画・レビュー・改善バックログ：Vault の `PickleballIQ/アプリ/ピクルくんとあそぼ.md`
 
@@ -66,13 +66,13 @@
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/pickle-asobi/
+npm run dev        # http://localhost:5173/softtennis-asobi/
 npm test           # ルール・物理・早押し・問題のテスト（Vitest）
 npm run test:e2e   # スマホ・タブレットの大きさで2人同時のタッチなど（Playwright）
 npm run build      # dist/ に出力（sw.js に事前キャッシュの一覧を埋め込む）
 ```
 
-実機で試すとき：`npx vite --host` で起動して、同じ Wi-Fi のスマホ・タブレットから `http://<PCのIP>:5173/pickle-asobi/` を開く。
+実機で試すとき：`npx vite --host` で起動して、同じ Wi-Fi のスマホ・タブレットから `http://<PCのIP>:5173/softtennis-asobi/` を開く。
 
 ## 声（ElevenLabs）
 

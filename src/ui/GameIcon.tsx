@@ -7,17 +7,17 @@ import type { ReactNode } from 'react'
 import type { GameId } from '../shell/games'
 
 const C = {
-  navy: '#24497a',
-  court: '#2f5d9a',
+  navy: '#1f5a42',
+  court: '#2f8a5f',
   kitchen: '#3d8f7a',
   line: '#ffffff',
-  ball: '#d4f03c',
-  dark: '#2e5a1c',
+  ball: '#d8f04a',
+  dark: '#154d36',
   ink: '#12302b',
-  body: '#6bb33f',
+  body: '#1f8a5b',
   orange: '#ff8a3d',
   blue: '#3d9be9',
-  cream: '#ffe7b8',
+  cream: '#fff3d9',
   paper: '#fff6e3',
   p0tint: '#ffdcb8',
   p1tint: '#d3e7f8',

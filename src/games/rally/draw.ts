@@ -207,10 +207,10 @@ function drawMachine(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, fac
   ctx.fillStyle = HAWK
   ctx.fill()
   ctx.lineWidth = Math.max(2, 0.05 * s)
-  ctx.strokeStyle = '#2e5a1c'
+  ctx.strokeStyle = '#154d36'
   ctx.stroke()
   // 球の出口
-  ctx.fillStyle = '#2e5a1c'
+  ctx.fillStyle = '#154d36'
   ctx.fillRect(X(MACHINE.x - 0.16), Y(MACHINE.y + h / 2 - 0.02), 0.32 * s, 0.28 * s)
   ctx.fillStyle = '#ffffff'
   ctx.font = `900 ${Math.round(0.3 * s)}px 'Zen Maru Gothic', sans-serif`
