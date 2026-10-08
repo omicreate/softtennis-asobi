@@ -25,13 +25,15 @@ describe('にせピクルくんの お題', () => {
     }
   })
 
-  it('ピックル用語は、答えあわせの「ちがい」に根拠（PBK）がある', () => {
-    for (const p of WORDS.pickle) expect(p.tip, `${p.a.text}/${p.b.text}`).toMatch(/PBK-\d{4}/)
+  it('ソフテニ用語は、どれも答えあわせの「ちがい」がある。ルールの用語には条番号がある', () => {
+    for (const p of WORDS.soft) expect(p.tip, `${p.a.text}/${p.b.text}`).toBeTruthy()
+    const rule = ['ツーバウンズ', 'フォールト', 'ファーストサービス', 'デュース', 'ネットタッチ', 'ゲーム', 'サービスライン']
+    for (const p of WORDS.soft.filter((x) => rule.includes(x.a.text))) expect(p.tip, p.a.text).toMatch(/第\d+条/)
   })
 })
 
-describe('にせピクルくんの 進めかた', () => {
-  it('1人だけ（にせピクルくん）お題がちがう', () => {
+describe('にせホークアイ先生の 進めかた', () => {
+  it('1人だけ（にせホークアイ先生）お題がちがう', () => {
     const rand = mulberry32(7)
     for (let n = 3; n <= 6; n++) {
       for (let k = 0; k < 20; k++) {

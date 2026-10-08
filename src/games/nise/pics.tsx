@@ -1,9 +1,9 @@
-/** にせピクルくんの「え」のお題（100×100 の SVG）。ボールとパドル・ラケットはクイズの絵を使う */
+/** にせホークアイ先生の「え」のお題（100×100 の SVG）。ボールとパドル・ラケットはクイズの絵を使う */
 import type { ReactNode } from 'react'
 import { Pic } from '../quiz/pics'
 
 export type NisePicId =
-  | 'pb-ball'
+  | 'st-ball'
   | 'tennis-ball'
   | 'paddle'
   | 'racket'
@@ -31,7 +31,7 @@ const eyes = (y: number, gap = 12) => (
   </g>
 )
 
-const DRAW: Record<Exclude<NisePicId, 'pb-ball' | 'tennis-ball' | 'paddle' | 'racket'>, ReactNode> = {
+const DRAW: Record<Exclude<NisePicId, 'st-ball' | 'tennis-ball' | 'paddle' | 'racket'>, ReactNode> = {
   apple: (
     <g>
       <path d="M50 30 C30 18 12 34 16 56 C20 80 38 92 50 84 C62 92 80 80 84 56 C88 34 70 18 50 30 Z" fill="#e53935" stroke="#9b1c1c" strokeWidth={3} />
@@ -172,7 +172,7 @@ const DRAW: Record<Exclude<NisePicId, 'pb-ball' | 'tennis-ball' | 'paddle' | 'ra
 }
 
 export function NisePic({ id, size = 160 }: { id: NisePicId; size?: number }) {
-  if (id === 'pb-ball' || id === 'tennis-ball' || id === 'paddle' || id === 'racket') {
+  if (id === 'st-ball' || id === 'tennis-ball' || id === 'paddle' || id === 'racket') {
     return (
       <span className="nise-pic" style={{ width: size, height: size }}>
         <Pic id={id} />

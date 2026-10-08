@@ -2,15 +2,14 @@
 import type { ReactNode } from 'react'
 
 export type PicId =
-  | 'pb-ball'
+  | 'st-ball'
+  | 'zone-front'
+  | 'zone-back'
   | 'tennis-ball'
   | 'soccer-ball'
   | 'paddle'
   | 'racket'
   | 'bat'
-  | 'zone-kitchen'
-  | 'zone-middle'
-  | 'zone-back'
   | 'mark-ng'
   | 'mark-ok'
   | 'mark-again'
@@ -23,6 +22,7 @@ export type PicId =
   | 'num-1'
   | 'num-2'
   | 'num-3'
+  | 'num-4'
   | 'num-11'
   | 'num-100'
   | 'bounce-1'
@@ -30,36 +30,31 @@ export type PicId =
   | 'roll'
   | 'serve-diag'
   | 'serve-straight'
-  | 'serve-kitchen'
+  | 'serve-long'
   | 'janken'
 
 const INK = '#12302b'
 const LIME = '#d8f04a'
 const LINE = '#154d36'
 const COURT = '#2f8a5f'
-const KITCHEN = '#3d8f7a'
 
+/** 軟式球（縫い目のないゴムの球。公認球は白と黄。第15条） */
 const ball = (cx: number, cy: number, r: number) => (
   <g>
-    <circle cx={cx} cy={cy} r={r} fill={LIME} stroke={LINE} strokeWidth={r * 0.12} />
-    <circle cx={cx - r * 0.35} cy={cy - r * 0.3} r={r * 0.15} fill={LINE} />
-    <circle cx={cx + r * 0.35} cy={cy - r * 0.25} r={r * 0.15} fill={LINE} />
-    <circle cx={cx} cy={cy + r * 0.38} r={r * 0.15} fill={LINE} />
+    <circle cx={cx} cy={cy} r={r} fill="#fff1a8" stroke="#b39a3e" strokeWidth={r * 0.1} />
+    <circle cx={cx - r * 0.32} cy={cy - r * 0.32} r={r * 0.28} fill="rgba(255,255,255,0.8)" />
   </g>
 )
 
-/** 上から見たコート（縦長）。hi＝光らせる場所 */
-const court = (hi: 'kitchen' | 'middle' | 'back' | null, extra?: ReactNode) => (
+/**
+ * 上から見たソフトテニスのコート（縦長）。ネットは y=50、サービスラインはネットから 6.40m（y=25・75）。
+ */
+const court = (extra?: ReactNode) => (
   <g>
-    <rect x={22} y={4} width={56} height={92} rx={3} fill={COURT} stroke="#fff" strokeWidth={2} />
-    <rect x={22} y={35} width={56} height={30} fill={KITCHEN} />
-    <line x1={22} y1={35} x2={78} y2={35} stroke="#fff" strokeWidth={2} />
-    <line x1={22} y1={65} x2={78} y2={65} stroke="#fff" strokeWidth={2} />
-    <line x1={50} y1={4} x2={50} y2={35} stroke="#fff" strokeWidth={2} />
-    <line x1={50} y1={65} x2={50} y2={96} stroke="#fff" strokeWidth={2} />
-    {hi === 'kitchen' && <rect x={22} y={50} width={56} height={15} fill={LIME} opacity={0.85} />}
-    {hi === 'middle' && <rect x={22} y={65} width={56} height={16} fill={LIME} opacity={0.85} />}
-    {hi === 'back' && <rect x={22} y={81} width={56} height={15} fill={LIME} opacity={0.85} />}
+    <rect x={22} y={4} width={56} height={92} rx={2} fill={COURT} stroke="#fff" strokeWidth={2} />
+    <line x1={22} y1={25} x2={78} y2={25} stroke="#fff" strokeWidth={2} />
+    <line x1={22} y1={75} x2={78} y2={75} stroke="#fff" strokeWidth={2} />
+    <line x1={50} y1={25} x2={50} y2={75} stroke="#fff" strokeWidth={2} />
     <rect x={16} y={48} width={68} height={4} fill={INK} />
     {extra}
   </g>
@@ -83,7 +78,10 @@ const arrow = (x1: number, y1: number, x2: number, y2: number, color = '#ff8a3d'
 )
 
 const PICS: Record<PicId, ReactNode> = {
-  'pb-ball': ball(50, 50, 34),
+  'st-ball': ball(50, 50, 34),
+  // コートの前（ネットからサービスラインまで）・後ろ（サービスラインより奥）。手前の陣地を光らせる
+  'zone-front': court(<rect x={22} y={52} width={56} height={23} fill={LIME} opacity={0.85} />),
+  'zone-back': court(<rect x={22} y={75} width={56} height={21} fill={LIME} opacity={0.85} />),
   'tennis-ball': (
     <g>
       <circle cx={50} cy={50} r={34} fill="#c8e64a" stroke="#8aa52a" strokeWidth={3} />
@@ -124,9 +122,6 @@ const PICS: Record<PicId, ReactNode> = {
       <rect x={42} y={86} width={16} height={6} rx={3} fill="#8a5a1d" />
     </g>
   ),
-  'zone-kitchen': court('kitchen'),
-  'zone-middle': court('middle'),
-  'zone-back': court('back'),
   'mark-ok': <circle cx={50} cy={50} r={30} fill="none" stroke="#4caf50" strokeWidth={10} />,
   'mark-ng': (
     <g stroke="#e5533d" strokeWidth={11} strokeLinecap="round">
@@ -201,6 +196,7 @@ const PICS: Record<PicId, ReactNode> = {
   'num-1': num('1'),
   'num-2': num('2'),
   'num-3': num('3'),
+  'num-4': num('4'),
   'num-11': num('11'),
   'num-100': num('100'),
   'bounce-1': (
@@ -224,9 +220,10 @@ const PICS: Record<PicId, ReactNode> = {
       {ball(78, 76, 11)}
     </g>
   ),
-  'serve-diag': court(null, arrow(64, 88, 36, 16)),
-  'serve-straight': court(null, arrow(64, 88, 64, 16)),
-  'serve-kitchen': court(null, arrow(64, 88, 50, 42)),
+  // 右側のベースラインの外から：対角のサービスコート／まっすぐ／サービスラインの奥
+  'serve-diag': court(arrow(66, 94, 36, 34)),
+  'serve-straight': court(arrow(66, 94, 66, 34)),
+  'serve-long': court(arrow(66, 94, 36, 12)),
   janken: (
     <g>
       <circle cx={50} cy={52} r={30} fill="#ffd9b0" stroke="#c4570f" strokeWidth={3} />

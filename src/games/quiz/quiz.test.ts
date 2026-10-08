@@ -17,8 +17,11 @@ describe('クイズの問題', () => {
       expect(new Set(q.choices.map((c) => c.text)).size).toBe(q.choices.length)
     }
   })
-  it('どの問題にも根拠（知識カード PBK か公式ルールブックの条文）がある', () => {
-    for (const q of QUESTIONS) expect(q.source).toMatch(/PBK-\d{4}|公式ルールブック \d/)
+  it('どの問題にも根拠（ルールブックの条番号・別表など）がある', () => {
+    for (const q of QUESTIONS) expect(q.source, q.id).toMatch(/第\d+条|別表|お知らせ|用語の意義|審判規則/)
+  })
+  it('大人向けは、ルールドリルの問題をすべて取りこんでいる', () => {
+    expect(QUESTIONS.filter((x) => x.level === 'player').length).toBeGreaterThanOrEqual(100)
   })
   it('こども向けの問題は、どの選択肢にも絵がある（文字が読めなくても選べる）', () => {
     for (const q of QUESTIONS.filter((x) => x.level === 'kids')) {

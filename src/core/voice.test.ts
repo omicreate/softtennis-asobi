@@ -13,7 +13,7 @@ describe('声の一覧', () => {
   })
   it('こども向けクイズの問題・選択肢・説明は全部ある（読み上げで使う）', () => {
     const lines = allVoiceLines()
-    expect(lines).toContain('ピックルボールの ボールは どれ？')
-    expect(lines).toContain('あなの あいた ボール')
+    expect(lines).toContain('ソフトテニスの ボールは どれ？')
+    expect(lines).toContain('しろい ゴムの ボール')
   })
 })

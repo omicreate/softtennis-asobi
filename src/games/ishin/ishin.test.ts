@@ -20,9 +20,9 @@ describe('いしんでんしん ダブルスの しつもん', () => {
     for (const q of questionsFor('e')) for (const c of q.choices) expect(c.pic || c.qpic || c.swatch, `${q.id}/${c.text}`).toBeTruthy()
   })
 
-  it('まめちしきには根拠（PBK）がある', () => {
-    for (const q of I_QUESTIONS) if (q.tip) expect(q.tip, q.id).toMatch(/PBK-\d{4}/)
-    expect(questionsFor('doubles').filter((q) => q.tip).length).toBeGreaterThanOrEqual(10)
+  it('まめちしきには根拠（ルールブックの条番号）がある。作戦の正解は書かない', () => {
+    for (const q of I_QUESTIONS) if (q.tip) expect(q.tip, q.id).toMatch(/第\d+条/)
+    expect(questionsFor('doubles').length).toBeGreaterThanOrEqual(10)
   })
 })
 
