@@ -25,7 +25,7 @@ describe('コート（競技規則 第5条・第6条、シングルス 第2条�
     expect(serveHalf(1, 0)).toBe('low')
     expect(serveHalf(1, 3)).toBe('high')
   })
-  it('サービスは対角線上のサービスコートへ（サービスライン・センターラインはイン）', () => {
+  it('サービスは対角線上のサービスコートへ（サービスライン・サービスセンターラインはイン）', () => {
     // 下の人が右（x 大）から → 上の陣地の x 小さい側
     expect(inServiceCourt(0, 6, 2, N - 3)).toBe(true)
     expect(inServiceCourt(0, 6, COURT.W / 2, N - 3)).toBe(true)

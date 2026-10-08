@@ -49,6 +49,6 @@ export function inServiceCourt(server: Side, serverX: number, x: number, y: numb
   if (sideOf(y) !== receiver || !inCourt(x, y)) return false
   if (Math.abs(y - COURT.NET_Y) > COURT.SERVICE + EPS) return false
   const mid = COURT.W / 2
-  // 対角：サーバーが x の大きい側なら、相手コートの x の小さい側へ（センターラインはイン）
+  // 対角：サーバーが x の大きい側なら、相手コートの x の小さい側へ（サービスセンターラインはイン）
   return serverX >= mid ? x <= mid + EPS : x >= mid - EPS
 }

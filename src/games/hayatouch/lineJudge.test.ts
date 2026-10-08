@@ -28,7 +28,7 @@ describe('ラインジャッジのお題', () => {
           expect(c.answer).toBe('in')
           break
         case 'center-serve':
-          // 対角のサービスコート（センターラインを含む）に入ればイン。となりのサービスコートはフォールト（第26条・第27条）
+          // 対角のサービスコート（サービスセンターラインを含む）に入ればイン。となりのサービスコートはフォールト（第26条・第27条）
           expect(c.answer).toBe(touch ? 'in' : 'out')
           expect([c.a, c.b].sort()).toEqual(['other-service', 'target'])
           break
@@ -48,7 +48,7 @@ describe('ラインジャッジのお題', () => {
     expect(touchesLine(c.center)).toBe(false)
     expect(c.center - 3.3 - 5).toBeGreaterThanOrEqual(1.2 - 1e-9)
   })
-  it('おとな向けには、まぎらわしいお題（ラリー中のサービスライン・センターライン）は出さない', () => {
+  it('おとな向けには、まぎらわしいお題（ラリー中のサービスライン・サービスセンターライン）は出さない', () => {
     for (let i = 0; i < 500; i++) {
       const c = makeLineCase(false)
       expect(['service-rally', 'center-serve']).not.toContain(c.kind)
