@@ -1,14 +1,24 @@
 # ホークアイ先生とあそぼ
 
+**Hawkeye-sensei to Asobo** ("Play with Hawkeye-sensei") — soft tennis party games for one phone or tablet.
+Two players face each other across the screen, play solo, or pass the device around. Each player picks their own level, so kids and adults can play together. Rules follow the official Soft Tennis Handbook 2026, with article numbers in the code.
+
+- **Play:** https://omicreate.github.io/softtennis-asobi/ (Japanese, free, no install, works offline)
+- **Stack:** React + TypeScript + Vite, PWA. Tests run on every push before deploying to GitHub Pages.
+- **Soft tennis** is a racket sport played with a soft rubber ball, born in Japan.
+
+*The rest of this README is in Japanese.*
+
+---
+
 スマホやタブレット1台で遊ぶソフトテニスのミニゲーム集。案内役は、ソフトテニスIQの公式キャラクター「ホークアイ先生」（鷹）。
 遊び方は3つ：**むかいあう**（机に置いて2人で上下から同時に）、**ひとりで**、**てわたし**（1台を順番に回す。にせホークアイ先生・いしんでんしん・じゅんばんモード）。
 子ども同士・親子・部員同士で遊べるよう、**レベルは1人ずつ選ぶ**（ちびっこ／キッズ／おとな／せんしゅ）。
 アプリストアには出さず、Web ページを「ホーム画面に追加」して使う（PWA・オフライン可）。
 
 - 公開先：https://omicreate.github.io/softtennis-asobi/ （`main` に push すると、GitHub Actions がテストを通してから公開する）
-- 土台はピックルボールの「ピクルくんとあそぼ」（`../pickle-asobi`）。しくみ（舞台・レベル・ミッション・メダル・きねんカード・集計）は同じで、キャラ・道具・コート・ルール・問題をソフトテニスにした
-- 部員・大人向けの「ソフトテニスIQ」（`../stiq-apps/softtennis-iq`）とは別アプリ。おうちの方へ から案内する
-- 企画・レビュー・進み具合：Vault の `SoftTennisIQ/アプリ/ホークアイ先生とあそぼ.md`
+- 土台はピックルボールの「ピクルくんとあそぼ」（[pickle-asobi](https://github.com/omicreate/pickle-asobi)）。しくみ（舞台・レベル・ミッション・メダル・きねんカード・集計）は同じで、キャラ・道具・コート・ルール・問題をソフトテニスにした
+- 部員・大人向けの「ソフトテニスIQ」（[softtennis-iq](https://github.com/omicreate/softtennis-iq)）とは別アプリ。おうちの方へ から案内する
 
 ## ゲーム（v0.1・10本）
 
@@ -55,7 +65,7 @@
 - **きねんカード**：結果画面の 📸 から、名前の入らない画像（1080×1080）を作って端末の共有画面で送る。作る前に保護者の確認（かけ算）を出す（`src/ui/ShareSheet.tsx`・`shareCard.ts`）
 - **じこベストと メダル**：ひとりで遊ぶ5本に、どう・ぎん・きん の目標。じゅんばんモードの記録は数えない（`src/core/records.ts`、画面は `#/records`）
 - **遊びすぎの声かけ**：続けて遊んだ時間が決めた時間をこえると、結果が出たときに「ちょっと きゅうけい しよう」（`src/core/playtime.ts`）
-- **遊ばれた回数の集計（匿名）**：公開版でだけ、できごととゲーム名・リンクの印（`?src=`）・ホーム画面から開いたか・アプリの版を送る。名前・点数・端末ID・Cookie は送らない。送り先は `site.config.json` の `counterUrl`＝ソフトテニスIQの数値シートの GAS（`../stiq-metrics`、リンク遷移と同じ受け口 URL）。`app=softtennis-asobi` の行はシートの asobi_events に入り、タブ「ミニゲーム」でゲーム別に数える。ゲームを足したら stiq-metrics の CONFIG.ASOBI.GAMES にも足す（`src/core/counter.ts`）
+- **遊ばれた回数の集計（匿名）**：公開版でだけ、できごととゲーム名・リンクの印（`?src=`）・ホーム画面から開いたか・アプリの版を送る。名前・点数・端末ID・Cookie は送らない。送り先は `site.config.json` の `counterUrl`＝ソフトテニスIQの数値シートの GAS（別リポジトリ stiq-metrics、リンク遷移と同じ受け口 URL）。`app=softtennis-asobi` の行はシートの asobi_events に入り、タブ「ミニゲーム」でゲーム別に数える。ゲームを足したら stiq-metrics の CONFIG.ASOBI.GAMES にも足す（`src/core/counter.ts`）
 - **リンクの印**：Instagram のプロフィール `?src=st_ig_bio`、ソフトテニスIQから `?src=st_iq_cross`、きねんカード `?src=share`
 - **おうちの方へ**（`#/parents`、保護者の確認つき）：遊び方・この端末の記録・集計の説明とオンオフ・アプリの紹介・記録を消す
 
