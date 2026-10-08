@@ -221,7 +221,8 @@ function drawMachine(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, fac
 
 /**
  * 選手・腕・ラケット。人は上から見た肩と頭、ホークアイ先生（コンピューター）は原画の絵で描く。
- * ラケットの先は、球が来るとその方へ伸びる（engine の head）。打った瞬間は前へ振る（swingT）。
+ * 手は体の横（ラケットのある側）でグリップエンドを握る。ラケットは 構え→テイクバック→インパクト→フォロースルー と回す
+ * （球が来る側＝engine の head の向きでフォアかバックか、swingT で振り）。
  * うすい帯が「とどく範囲」＝当たり判定。小さい子のレベルほど広い。
  * ラケットはいつも同じ形・比率（ui/paddleArt.ts）。
  */
@@ -243,27 +244,46 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
   ctx.globalAlpha = 1
   ctx.setLineDash([])
 
-  const bx = p.x
-  const by = p.y - n * 0.55
-
-  // ラケットの頭の中心（振る瞬間は前へ押し出す）
-  const u = e.swingT[side] > 0 ? 1 - e.swingT[side] / SWING_TIME : 0
-  const punch = u > 0 ? Math.sin(u * Math.PI) * 0.4 : 0
-  const hx = p.x + e.head[side]
-  const hy = p.y + n * punch
-  // 肩：ラケットのある側（フォアかバックか）
+  // フォアかバックか：ラケットのある側（球の来る側）。何もないときは利き手の側（フォア）
   const toward = Math.sign(e.head[side]) || hand(side)
-  const sx = bx + toward * 0.2 * VIS
-  const sy = by
-  let dx = hx - sx
-  let dy = hy - sy
-  const d = Math.hypot(dx, dy) || 1
-  dx /= d
-  dy /= d
+  // ラケットの向き（グリップから頭へ）。上から見たストロークの流れ：
+  //   構え（頭は前・少し外）→ テイクバック（横から後ろへ引く）→ インパクト（横・ネットと平行に近い）
+  //   → フォロースルー（前を通って反対側へ）
+  const ready = Math.atan2(n, toward * 0.35)
+  const takeBack = Math.atan2(-n * 0.5, toward)
+  const impact = Math.atan2(n * 0.15, toward)
+  const finish = Math.atan2(n * 0.7, -toward * 0.7)
+  const u = e.swingT[side] > 0 ? 1 - e.swingT[side] / SWING_TIME : 0
+  const b = e.ball
+  const coming = e.phase === 'play' && e.state.lastHitter !== side && b.vy * n < 0
+  const tHit = coming ? (p.y - b.y) / b.vy : Infinity
+  /** 打つ動きにどれだけ入っているか（0＝構え、1＝テイクバックの終わり〜振り） */
+  let k = 0
+  let angle: number
+  if (u > 0) {
+    angle = lerpAngle(impact, finish, u)
+    k = 1
+  } else if (tHit > 0 && tHit < 0.7) {
+    k = 1 - tHit / 0.7
+    angle = lerpAngle(ready, takeBack, k)
+  } else angle = ready
   const faceLen = (PADDLE.length - PADDLE.grip) * VIS
   const gripLen = PADDLE.grip * VIS
-  const gx = hx - dx * (faceLen / 2 + gripLen)
-  const gy = hy - dy * (faceLen / 2 + gripLen)
+  const handOut = 0.34 * VIS
+  // 打つときは、体ごと球の横に入る（ラケットの頭が、球の来る所＝head に届くように）
+  const reachX = handOut + (gripLen + faceLen / 2) * Math.cos(Math.atan2(0.15, 1))
+  const bx = p.x + k * (e.head[side] - toward * reachX)
+  const by = p.y - n * 0.55
+  // 肩と、グリップを握る手（体の横、少し前）
+  const sx = bx + toward * 0.2 * VIS
+  const sy = by
+  const gx = bx + toward * handOut
+  const gy = by + n * 0.14 * VIS
+  const dx = Math.cos(angle)
+  const dy = Math.sin(angle)
+  // 頭の中心：手（グリップエンド）から、のど＋グリップ と 頭の半分だけ先
+  const hx = gx + dx * (gripLen + faceLen / 2)
+  const hy = gy + dy * (gripLen + faceLen / 2)
 
   // 腕
   ctx.beginPath()
@@ -294,5 +314,13 @@ function drawPlayer(ctx: CanvasRenderingContext2D, X: Px, Y: Px, s: number, e: R
   }
 
   // ラケット（比率はくずさない）
-  drawPaddleArt(ctx, { x: X(hx), y: Y(hy), faceLen: faceLen * s, angle: Math.atan2(dy, dx), color: cpu ? '#e4262c' : color, look: cpu ? undefined : look })
+  drawPaddleArt(ctx, { x: X(hx), y: Y(hy), faceLen: faceLen * s, angle, color: cpu ? '#e4262c' : color, look: cpu ? undefined : look })
+}
+
+/** 角度 a から b へ、近い回り方で t（0〜1）だけ進めた角度 */
+export function lerpAngle(a: number, b: number, t: number): number {
+  let d = b - a
+  while (d > Math.PI) d -= Math.PI * 2
+  while (d < -Math.PI) d += Math.PI * 2
+  return a + d * Math.min(1, Math.max(0, t))
 }

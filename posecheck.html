@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ラケットの持ち方の確認（開発用）</title>
+<style>body{margin:0;background:#fff3d9;font-family:sans-serif}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c" width="780" height="500"></canvas>
+<script type="module">
+import { drawRally, makeView } from '/src/games/rally/draw.ts'
+import { COURT } from '/src/games/rally/court.ts'
+import { SWING_TIME } from '/src/games/rally/engine.ts'
+
+const c = document.getElementById('c')
+const ctx = c.getContext('2d')
+// 4つの形 × フォア／バック。1枚に下の人（上向き）を描く
+const poses = [
+  { label: '構え', swing: 0, coming: false },
+  { label: 'テイクバック', swing: 0, coming: true, near: true },
+  { label: 'インパクト', swing: SWING_TIME * 0.98, coming: false },
+  { label: 'フォロースルー', swing: SWING_TIME * 0.05, coming: false },
+]
+const W = 195, H = 250
+let i = 0
+for (const back of [false, true]) {
+  for (const p of poses) {
+    const off = document.createElement('canvas')
+    off.width = W; off.height = H
+    const g = off.getContext('2d')
+    const view = makeView(W, H * 6, 0)
+    // 下の人のまわりだけを大きく見せる
+    const y = COURT.L - 2
+    const fake = {
+      phase: 'play', opts: { kind: 'versus' }, ballVisible: p.coming,
+      ball: { x: 4 + (back ? -1.2 : 1.2), y: y - (p.near ? 0.4 : 3), z: 1, vx: 0, vy: p.coming ? 9 : 0, vz: 0, bounces: 1, timeScale: 1 },
+      paddles: [{ x: 4, y, vx: 0, vy: 0, width: 2 }, { x: 4, y: 2, vx: 0, vy: 0, width: 2 }],
+      head: [back ? -0.6 : 0.6, 0], swingT: [p.swing, 0],
+      state: { lastHitter: 1, shot: 3, bounces: 1, serverX: 4 }, server: 0, pointInGame: () => 0, zone: null,
+    }
+    const v = { scale: 26, ox: W / 2 - 4 * 26, oy: H * 0.62 - y * 26 }
+    drawRally(g, W, H, v, fake, { showLanding: false, realRules: false })
+    ctx.drawImage(off, (i % 4) * W, Math.floor(i / 4) * H)
+    ctx.fillStyle = '#12302b'; ctx.font = 'bold 15px sans-serif'
+    ctx.fillText(`${back ? 'バック' : 'フォア'}：${p.label}`, (i % 4) * W + 12, Math.floor(i / 4) * H + 28)
+    i++
+  }
+}
+</script>
+</body>
+</html>

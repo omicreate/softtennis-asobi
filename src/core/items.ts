@@ -43,9 +43,10 @@ const DESIGN_PRICE: Record<DesignId, number | Special> = {
   hawk: 5,
   rainbow: 6,
   gold: 'stamps7',
-  ocean: 5,
-  sakura: 5,
-  yozora: 6,
+  // 小物を止めているあいだ、とくべつな ごほうびはラケットの色にする
+  ocean: 'missions10',
+  sakura: 'party',
+  yozora: 'stamps14',
   champion: 'medals9',
 }
 

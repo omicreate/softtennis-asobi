@@ -102,11 +102,12 @@ describe('スタンプと ごほうび', () => {
     expect(buy('design:lime')).toBe('ok')
     expect(getProgress().stars).toBe(1)
     expect(buy('design:lime')).toBe('owned')
-    expect(buy('wear:sunglasses')).toBe('short')
-    expect(buy('wear:crown')).toBe('special')
+    expect(buy('design:rainbow')).toBe('short')
+    expect(buy('design:sakura')).toBe('special')
   })
 
-  it('小物は同じ場所に1つだけ。持っていない物はつけられない', () => {
+  // ホークアイ先生の小物は、原画の置き場所を測るまで止めている（items.ts の WEAR_ON）
+  it.skip('小物は同じ場所に1つだけ。持っていない物はつけられない', () => {
     __setProgress({ ...fresh(), owned: [...STARTER_ITEMS, 'wear:glasses', 'wear:sunglasses'] })
     toggleWear('glasses')
     expect(getProgress().wear).toEqual({ eyes: 'glasses' })
