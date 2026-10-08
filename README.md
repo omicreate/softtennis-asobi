@@ -110,3 +110,10 @@ npm run voice            # まだ無いセリフだけ作る
 
 - ホームの上に「おうちの方へ：いま Instagram の中で開いています」と出し、`#/install`（ホーム画面に入れる方法）へ案内する（`src/core/browser.ts`）
 - 説明動画（縦 1080×1920）：開発サーバーを起動して `node scripts/build-guide-video.mjs`（台本 `src/shell/guideScenes.ts`、画面 `#/dev/guide`）
+
+## License / 権利
+
+- **Code:** MIT — see [LICENSE](LICENSE).
+- **Characters, artwork, audio, questions and other content:** © 2026 omicreate, all rights reserved — see [NOTICE.md](NOTICE.md).
+
+コードは MIT ライセンスで自由に使えます。キャラクター・絵・音声・問題などの中身は対象外です（[NOTICE.md](NOTICE.md)）。
