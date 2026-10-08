@@ -50,23 +50,16 @@
 .rx-dim {
   color: var(--mute);
 }
+/* 軟式球（縫い目も穴もない ゴムの球。第15条）。フェイントは オレンジの球 */
 .rx-ball {
   width: min(46vw, 200px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 34% 34%, #154d36 0 6%, transparent 7%),
-    radial-gradient(circle at 66% 32%, #154d36 0 6%, transparent 7%),
-    radial-gradient(circle at 52% 70%, #154d36 0 6%, transparent 7%),
-    #d8f04a;
+  background: radial-gradient(circle at 34% 32%, rgba(255, 255, 255, 0.9) 0 13%, transparent 14%), #fff1a8;
   border: 8px solid #154d36;
 }
 .rx-fake {
-  background:
-    radial-gradient(circle at 34% 34%, #8a3a00 0 6%, transparent 7%),
-    radial-gradient(circle at 66% 32%, #8a3a00 0 6%, transparent 7%),
-    radial-gradient(circle at 52% 70%, #8a3a00 0 6%, transparent 7%),
-    #ff8a3d;
+  background: radial-gradient(circle at 34% 32%, rgba(255, 255, 255, 0.7) 0 13%, transparent 14%), #ff8a3d;
   border-color: #8a3a00;
 }
 .rx-last {

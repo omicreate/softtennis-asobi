@@ -6,6 +6,7 @@
 import { onPublicSite, PUBLIC_URL } from '../core/counter'
 import type { Wear } from './accessories'
 import { drawPaddleArt } from './paddleArt'
+import { drawSoftBall } from './softBall'
 import type { PaddleLook } from './paddleArt'
 import { drawHawkArt, loadPikuru } from './hawkArt'
 import type { CutArt } from './hawkArt'
@@ -149,25 +150,7 @@ export async function makeCard(d: CardData): Promise<Blob> {
   // ラケット（左下）とホークアイ先生（右下）
   drawPaddleArt(ctx, { x: 200, y: 800, faceLen: 190, angle: -Math.PI / 2 - 0.45, look: d.look, color: '#ff8a3d' })
   // 球
-  const bx = 380
-  const by = 860
-  ctx.beginPath()
-  ctx.arc(bx, by, 38, 0, Math.PI * 2)
-  ctx.fillStyle = '#d8f04a'
-  ctx.fill()
-  ctx.lineWidth = 6
-  ctx.strokeStyle = '#154d36'
-  ctx.stroke()
-  ctx.fillStyle = '#154d36'
-  for (const [dx, dy] of [
-    [-13, -9],
-    [11, -11],
-    [2, 14],
-  ]) {
-    ctx.beginPath()
-    ctx.arc(bx + dx, by + dy, 6, 0, Math.PI * 2)
-    ctx.fill()
-  }
+  drawSoftBall(ctx, 380, 860, 38)
   drawHawkArt(ctx, d.face, 840, 1030, 400, 0, false, d.wear)
 
   // 下：ハッシュタグ（公開URLで開いているときは URL も）

@@ -20,8 +20,10 @@ import './install.css'
 /** ゲーム名：単語の途中で折り返さないよう、区切ってよい所（| の所）でだけ折り返す */
 function CardTitle({ g }: { g: GameInfo }) {
   const parts = (g.wrap ?? g.title).split('|')
+  // 「ホークアイ先生と」のように1かたまりが長い名前は、カードの幅に収まるよう字を小さくする
+  const long = Math.max(...parts.map((p) => p.length)) >= 8
   return (
-    <span className="game-title">
+    <span className={long ? 'game-title game-title-long' : 'game-title'}>
       {parts.map((p, i) => (
         <span key={i}>
           {p}

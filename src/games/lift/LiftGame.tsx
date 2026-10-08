@@ -20,6 +20,7 @@ import { drawPaddleArt } from '../../ui/paddleArt'
 import type { PaddleLook } from '../../ui/paddleArt'
 import type { Face } from '../../ui/Hawk'
 import { HawkCut } from '../../ui/hawkArt'
+import { drawSoftBall } from '../../ui/softBall'
 import { BALL_R, createLift, FIELD_H, FIELD_W, GRAVITY, movePaddle, stepLift } from './lift'
 import type { LiftState } from './lift'
 import './lift.css'
@@ -218,21 +219,5 @@ function draw(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, s: L
   const r = BALL_R * k * (1 + b.z / 45)
   const bx = X(b.x)
   const by = Y(b.y) - b.z * k * 0.9
-  ctx.beginPath()
-  ctx.arc(bx, by, r, 0, Math.PI * 2)
-  ctx.fillStyle = '#d8f04a'
-  ctx.fill()
-  ctx.lineWidth = Math.max(1.5, r * 0.14)
-  ctx.strokeStyle = '#154d36'
-  ctx.stroke()
-  ctx.fillStyle = '#154d36'
-  for (const [dx, dy] of [
-    [-0.35, -0.25],
-    [0.3, -0.3],
-    [0.05, 0.38],
-  ]) {
-    ctx.beginPath()
-    ctx.arc(bx + dx * r, by + dy * r, r * 0.16, 0, Math.PI * 2)
-    ctx.fill()
-  }
+  drawSoftBall(ctx, bx, by, r)
 }
