@@ -7,7 +7,7 @@ const FILL: Record<Region, string> = {
   service: '#2f8a5f',
   target: '#2f8a5f',
   'other-service': '#1f5a42',
-  kitchen: '#3d8f7a',
+  back: '#2a7656',
   out: '#183152',
 }
 
@@ -30,14 +30,9 @@ export function LineView({ c }: { c: LineCase }) {
       </text>
       {/* 球のあと（影＋球） */}
       <circle cx={c.center + 0.5} cy={cy + 0.6} r={BALL_R} fill="rgba(0,0,0,0.3)" />
-      <circle cx={c.center} cy={cy} r={BALL_R} fill="#d8f04a" stroke="#154d36" strokeWidth={0.45} />
-      {[
-        [-1.2, -1.1],
-        [1.1, -1.2],
-        [0.1, 1.3],
-      ].map(([dx, dy], i) => (
-        <circle key={i} cx={c.center + dx} cy={cy + dy} r={0.55} fill="#154d36" />
-      ))}
+      {/* 軟式球（縫い目のないゴムの球） */}
+      <circle cx={c.center} cy={cy} r={BALL_R} fill="#fff1a8" stroke="#b39a3e" strokeWidth={0.4} />
+      <circle cx={c.center - 1.1} cy={cy - 1.1} r={0.9} fill="rgba(255,255,255,0.75)" />
     </svg>
   )
 }

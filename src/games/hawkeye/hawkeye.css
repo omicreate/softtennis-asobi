@@ -1,0 +1,131 @@
+/* ホークアイの め：上にコート、下に質問と答え */
+.he {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle at 50% 40%, var(--surface) 0, var(--cream) 60%);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.he-hud {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 6px);
+  left: 12px;
+  right: 120px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  pointer-events: none;
+}
+.he-count {
+  font-size: 22px;
+}
+.he-score {
+  font-size: 16px;
+  color: var(--mute);
+}
+.he-court-wrap {
+  position: relative;
+  margin-top: calc(env(safe-area-inset-top, 0px) + 68px);
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.he-court {
+  height: 100%;
+  max-height: 62vh;
+  width: auto;
+  max-width: 92%;
+  display: block;
+}
+.he-side-label {
+  font-size: 0.75px;
+  font-weight: 900;
+  fill: #ffffff;
+}
+.he-role {
+  font-size: 0.9px;
+  font-weight: 900;
+  fill: #12302b;
+}
+.he-timer {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 4px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(18, 48, 43, 0.15);
+  overflow: hidden;
+}
+.he-timer i {
+  display: block;
+  height: 100%;
+  background: var(--pk-body);
+  transform-origin: left;
+}
+.he-hidden {
+  position: absolute;
+  margin: 0;
+  background: rgba(255, 243, 217, 0.92);
+  border-radius: var(--r-md);
+  padding: 8px 16px;
+  font-weight: 900;
+  font-size: 20px;
+}
+.he-panel {
+  width: 100%;
+  max-width: 520px;
+  padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+}
+.he-prompt {
+  margin: 0;
+  text-align: center;
+  font-weight: 900;
+  font-size: 22px;
+}
+.he-look {
+  color: var(--pk-body);
+}
+.he-choices {
+  display: grid;
+  gap: 8px;
+}
+.he-choice {
+  min-height: var(--tap);
+  border-radius: var(--r-md);
+  border: 3px solid var(--pk-line);
+  background: var(--surface-2);
+  font: inherit;
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.he-choice.is-right {
+  background: var(--lime);
+}
+.he-choice.is-wrong {
+  background: #ffd6cf;
+  border-color: var(--ng);
+}
+.he-choice.is-dim {
+  opacity: 0.45;
+}
+.he-explain {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}

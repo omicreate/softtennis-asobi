@@ -12,9 +12,9 @@ describe('あそびかた・ルールのページ', () => {
       expect(h.detail.length, g.id).toBeGreaterThan(0)
     }
   })
-  it('公式ルールにかかわるゲームは、くわしいルールに根拠（PBK）を書いている', () => {
+  it('ルールにかかわるゲームは、くわしいルールに根拠（競技規則の条番号）を書いている', () => {
     for (const id of ['rally', 'sensei', 'hayatouch', 'target'] as const) {
-      expect(HOWTO[id].detail.join(' '), id).toMatch(/PBK-\d{4}/)
+      expect(HOWTO[id].detail.join(' '), id).toMatch(/第\d+条/)
     }
   })
   it('読み上げる文に、絵文字は入れない（声にしたときに変な音にならないように）', () => {

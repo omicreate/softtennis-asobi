@@ -18,7 +18,8 @@ export interface MedalRule {
 export const MEDAL_RULES: Partial<Record<GameId, MedalRule>> = {
   lift: { need: [5, 15, 30] },
   target: { need: [3, 6, 9] },
-  /** ピクルくんに かった レベル（1 ちびっこ・2 キッズ・3 おとな・4 せんしゅ） */
+  hawkeye: { need: [4, 7, 9] },
+  /** ホークアイ先生に かった レベル（1 ちびっこ・2 キッズ・3 おとな・4 せんしゅ） */
   sensei: { need: [1, 3, 4] },
   reaction: { need: [700, 500, 380], low: true },
 }
@@ -58,6 +59,8 @@ export function recordText(game: GameId, v: number): string {
       return `${(v / 1000).toFixed(3)}びょう`
     case 'lift':
       return `${v}かい`
+    case 'hawkeye':
+      return `${v}もん`
     case 'target':
       return `${v}きゅう`
     default:

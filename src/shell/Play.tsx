@@ -11,6 +11,7 @@ import { stopSpeaking } from '../core/speak'
 import { Stage } from '../core/Stage'
 import { usePlayClock } from '../core/usePlayClock'
 import { useWakeLock } from '../core/wakelock'
+import { HawkeyeGame } from '../games/hawkeye/HawkeyeGame'
 import { HayaTouch } from '../games/hayatouch/HayaTouch'
 import { LiftGame } from '../games/lift/LiftGame'
 import { Quiz } from '../games/quiz/Quiz'
@@ -36,7 +37,7 @@ export interface GameProps {
 if (import.meta.env.DEV) (window as unknown as { __setPlayed?: (s: number) => void }).__setPlayed = __setPlayed
 
 /** 手に持って遊ぶゲーム（画面を回さない） */
-export const HANDHELD: GameId[] = ['lift', 'reaction']
+export const HANDHELD: GameId[] = ['lift', 'reaction', 'hawkeye']
 
 /** ゲームの中身だけ（じゅんばんモードからも使う） */
 export function GameView({ game, round, props }: { game: GameId; round: number; props: GameProps }) {
@@ -49,6 +50,7 @@ export function GameView({ game, round, props }: { game: GameId; round: number; 
       {game === 'lift' && <LiftGame key={round} {...props} />}
       {game === 'target' && <RallyGame key={round} kind="target" mode="easy" target={0} {...props} />}
       {game === 'reaction' && <ReactionGame key={round} {...props} />}
+      {game === 'hawkeye' && <HawkeyeGame key={round} {...props} />}
       {game === 'sensei' && (
         <RallyGame key={round} kind="versus" cpu mode={settings.rallyRules} target={settings.rallyTarget} games={settings.rallyGames} {...props} />
       )}

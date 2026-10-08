@@ -1,21 +1,22 @@
 /**
  * ラインジャッジのお題（純粋関数）。ラインの近くに落ちた球のあとを拡大して見せ、イン／アウトを答える。
- * 根拠：USA Pickleball 公式ルールブック 2026
- *   PBK-0029 ラインに触れた球はイン（サービスコートは周りのラインを含む）
- *   PBK-0021 サーブがキッチンライン上に落ちたらフォルト。ラリー中の返球はキッチン（ライン含む）でもイン
- *   PBK-0010 サーブは対角のサービスコートへ（センターラインの反対側＝となりのサービスコートはフォルト）
+ * 根拠：ソフトテニスハンドブック 2026 競技規則
+ *   第36条2 ラインに触れたものはすべてイン（サービスのときは、サービスコートを囲むラインに触れればイン）
+ *   第27条(1) サービスが正しいサービスコートに入らなかったらフォールト
+ *   第26条 サービスは対角線上の相手方サービスコートへ（センターラインの反対側＝となりのサービスコートはフォールト）
+ *   ラリー中は、サービスラインやセンターラインは関係なく、コートの中ならイン
  */
 
-/** 線の幅（cm）。ラインは2インチ（約5cm） */
+/** 線の幅（cm）。ラインは5cm以上6cm以内（第7条） */
 export const LINE_W = 5
-/** 球の半径（cm）。直径は約7.4cm */
-export const BALL_R = 3.7
+/** 球の半径（cm）。直径6.6cm（第15条） */
+export const BALL_R = 3.3
 
-export type LineKind = 'side' | 'base' | 'kitchen-serve' | 'kitchen-rally' | 'center-serve'
+export type LineKind = 'side' | 'base' | 'service-serve' | 'service-rally' | 'center-serve'
 
 export interface LineCase {
   kind: LineKind
-  /** 場面（サーブ／ラリー）と線の名前 */
+  /** 場面（サービス／ラリー）と線の名前 */
   scene: string
   line: string
   /** 線の両側の名前：a＝線の左、b＝線の右（線そのものは x=0〜LINE_W） */
@@ -28,14 +29,15 @@ export interface LineCase {
   source: string
 }
 
-export type Region = 'court' | 'out' | 'kitchen' | 'service' | 'target' | 'other-service'
+export type Region = 'court' | 'out' | 'service' | 'back' | 'target' | 'other-service'
 
 export const REGION_NAME: Record<Region, string> = {
   court: 'コート',
   out: 'コートのそと',
-  kitchen: 'キッチン',
   service: 'サービスコート',
-  /** センターラインのサーブ：入れるべき対角のサービスコートと、そのとなり */
+  /** サービスラインより後ろ（ベースライン側） */
+  back: 'サービスラインの おく',
+  /** センターラインのサービス：入れるべき対角のサービスコートと、そのとなり */
   target: 'ねらうコート',
   'other-service': 'となりのコート',
 }
@@ -48,7 +50,7 @@ export const touchesLine = (center: number) => center + BALL_R >= 0 && center - 
  * rand は 0〜1 を返す関数（テストでは決まった値を渡す）
  */
 export function makeLineCase(hard: boolean, rand: () => number = Math.random): LineCase {
-  const kinds: LineKind[] = hard ? ['side', 'base', 'kitchen-serve', 'kitchen-serve', 'kitchen-rally', 'center-serve'] : ['side', 'base', 'side', 'base', 'kitchen-serve']
+  const kinds: LineKind[] = hard ? ['side', 'base', 'service-serve', 'service-serve', 'service-rally', 'center-serve'] : ['side', 'base', 'side', 'base', 'service-serve']
   const kind = kinds[Math.floor(rand() * kinds.length)]
   // 線にどれだけ重なるか（＋）・離れているか（−）。cm
   const min = hard ? 0.5 : 1.2
@@ -83,15 +85,17 @@ export function makeLineCase(hard: boolean, rand: () => number = Math.random): L
 
   switch (kind) {
     case 'side':
-      return build('court', 'out', 'ラリー', 'サイドライン', 'in', 'out', 'ラインに すこしでも ふれたら イン', 'ラインに ふれていないので アウト', 'PBK-0029')
+      return build('court', 'out', 'ラリー', 'サイドライン', 'in', 'out', 'ラインに すこしでも ふれたら イン', 'ラインに ふれていないので アウト', '第36条2')
     case 'base':
-      return build('court', 'out', 'ラリー', 'ベースライン', 'in', 'out', 'ラインに すこしでも ふれたら イン', 'ラインに ふれていないので アウト', 'PBK-0029')
-    case 'kitchen-serve':
-      return build('kitchen', 'service', 'サーブ', 'キッチンライン', 'out', 'in', 'サーブが キッチンラインに ふれたら フォルト', 'キッチンラインを こえているので イン', 'PBK-0021')
-    case 'kitchen-rally':
-      return build('kitchen', 'service', 'ラリー', 'キッチンライン', 'in', 'in', 'ラリー中は キッチン（ライン）に おちても イン', 'ラリー中は キッチンラインの まわりは どこでも イン', 'PBK-0021')
+      return build('court', 'out', 'ラリー', 'ベースライン', 'in', 'out', 'ラインに すこしでも ふれたら イン', 'ラインに ふれていないので アウト', '第36条2')
+    case 'service-serve':
+      // サービス：サービスラインに触れればイン。サービスラインの奥に落ちたらフォールト
+      return build('service', 'back', 'サービス', 'サービスライン', 'in', 'out', 'サービスラインに ふれたら イン', 'サービスラインを こえたので フォールト', '第27条(1)・第36条2')
+    case 'service-rally':
+      // ラリー中は、サービスラインの前でも奥でもコートの中ならイン
+      return build('service', 'back', 'ラリー', 'サービスライン', 'in', 'in', 'ラリー中は サービスラインは かんけいない。イン', 'ラリー中は コートの なかなら どこでも イン', '第37条(2)・第36条')
     case 'center-serve':
-      // 球は「となりの コート」の側から近づく。線に触れればイン、離れていれば となりの サービスコートなので フォルト
-      return build('target', 'other-service', 'サーブ', 'センターライン', 'in', 'out', 'センターラインも ねらう サービスコートの いちぶ。イン', 'となりの サービスコートに おちたので フォルト', 'PBK-0010・0029')
+      // 球は「となりの コート」の側から近づく。線に触れればイン、離れていれば となりの サービスコートなので フォールト
+      return build('target', 'other-service', 'サービス', 'センターライン', 'in', 'out', 'センターラインも ねらう サービスコートの いちぶ。イン', 'となりの サービスコートに おちたので フォールト', '第26条・第27条(1)・第36条2')
   }
 }

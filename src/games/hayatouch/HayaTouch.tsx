@@ -216,7 +216,7 @@ const FLASH_TEXT: Record<FlashState, string> = {
   locked: 'おてつき…',
 }
 
-/** 合図をするピクルくんの表情 */
+/** 合図をするホークアイ先生の表情 */
 const FLASH_FACE: Record<FlashState, Face> = { wait: 'think', feint: 'eh', go: 'ok', done: 'ok', locked: 'oops' }
 
 function FlashPad({ state, onPress }: { state: FlashState; onPress: () => void }) {

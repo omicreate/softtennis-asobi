@@ -1,6 +1,6 @@
 /**
  * ホームのカードに出す、ゲームごとの絵（字が読めない子でも、絵でゲームを見分けられるように）。
- * 色はピクルくん仕様とコートの色（tokens.css）。パドルは本物の比率（面 28cm：幅 20cm、握り 13cm）で描く。
+ * 色はホークアイ先生の原画とコートの色（tokens.css）。ラケットは ui/paddleArt.ts と同じ比率（頭 31cm×24cm、のど＋グリップ 37cm）で描く。
  */
 import { useId } from 'react'
 import type { ReactNode } from 'react'
@@ -23,53 +23,47 @@ const C = {
   p1tint: '#d3e7f8',
 }
 
-/** ピックルボール（穴のあいた球） */
+/** 軟式球（縫い目のないゴムの球） */
 function Ball({ x, y, r, ring }: { x: number; y: number; r: number; ring?: string }) {
   return (
     <g>
       {ring && <circle cx={x} cy={y} r={r + 2.2} fill={ring} />}
-      <circle cx={x} cy={y} r={r} fill={C.ball} stroke={C.dark} strokeWidth={Math.max(1, r * 0.16)} />
-      {[
-        [-0.36, -0.24],
-        [0.3, -0.3],
-        [0.04, 0.38],
-      ].map(([dx, dy], i) => (
-        <circle key={i} cx={x + dx * r} cy={y + dy * r} r={r * 0.15} fill={C.dark} />
-      ))}
+      <circle cx={x} cy={y} r={r} fill="#fff1a8" stroke="#b39a3e" strokeWidth={Math.max(1, r * 0.14)} />
+      <circle cx={x - r * 0.32} cy={y - r * 0.32} r={r * 0.28} fill="rgba(255,255,255,0.8)" />
     </g>
   )
 }
 
-/** パドル（面の中心 x,y・面の長さ len・向き deg。0 のとき握りが下） */
+/** ラケット（頭の中心 x,y・頭の長さ len・向き deg。0 のときグリップが下） */
 function Paddle({ x, y, len, deg = 0, color }: { x: number; y: number; len: number; deg?: number; color: string }) {
-  const w = len * (20 / 28)
-  const grip = len * (13 / 28)
-  const gw = w * 0.24
+  const w = len * (24 / 31)
+  const throat = len * (18 / 31)
+  const grip = len * (19 / 31)
+  const gw = w * 0.17
+  const frame = Math.max(1.4, w * 0.11)
   return (
     <g transform={`translate(${x} ${y}) rotate(${deg})`}>
-      <rect x={-gw / 2} y={len / 2 - 1} width={gw} height={grip} rx={gw / 2} fill={C.dark} />
-      <circle cx={0} cy={len / 2 + grip - 0.5} r={gw * 0.62} fill={C.ink} />
-      <rect x={-w / 2} y={-len / 2} width={w} height={len} rx={w * 0.36} fill={color} stroke={C.dark} strokeWidth={Math.max(1.4, len * 0.07)} />
-      <rect x={-w / 2 + len * 0.12} y={-len / 2 + len * 0.12} width={w - len * 0.24} height={len - len * 0.24} rx={w * 0.26} fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth={Math.max(1, len * 0.05)} />
+      <rect x={-gw / 2} y={len / 2 + throat - 1} width={gw} height={grip} rx={gw / 2} fill={C.dark} />
+      <path d={`M ${-w * 0.36} ${len * 0.36} Q ${-w * 0.12} ${len / 2 + throat * 0.4} 0 ${len / 2 + throat} M ${w * 0.36} ${len * 0.36} Q ${w * 0.12} ${len / 2 + throat * 0.4} 0 ${len / 2 + throat}`} fill="none" stroke={color} strokeWidth={frame * 0.8} strokeLinecap="round" />
+      <ellipse cx={0} cy={0} rx={w / 2 - frame / 2} ry={len / 2 - frame / 2} fill="rgba(255,255,255,0.18)" />
+      <g stroke="rgba(255,255,255,0.7)" strokeWidth={Math.max(0.4, w * 0.02)}>
+        {[-0.3, -0.1, 0.1, 0.3].map((k) => (
+          <line key={`v${k}`} x1={k * w} y1={-len * 0.42} x2={k * w} y2={len * 0.42} />
+        ))}
+        {[-0.3, -0.1, 0.1, 0.3].map((k) => (
+          <line key={`h${k}`} x1={-w * 0.42} y1={k * len} x2={w * 0.42} y2={k * len} />
+        ))}
+      </g>
+      <ellipse cx={0} cy={0} rx={w / 2} ry={len / 2} fill="none" stroke={color} strokeWidth={frame} />
     </g>
   )
 }
 
-/** 小さな ピクルくん（からだ・ヘアバンド・目） */
+/** 小さな ホークアイ先生（原画の丸い顔をそのまま使う。描き直さない） */
 function MiniPikuru({ x, y, h, tilt = 0 }: { x: number; y: number; h: number; tilt?: number }) {
-  const w = h * 0.6
   return (
     <g transform={`translate(${x} ${y}) rotate(${tilt})`}>
-      <path d={`M ${w * 0.05} ${-h / 2} q ${w * 0.1} ${-h * 0.2} ${w * 0.3} ${-h * 0.16}`} fill="none" stroke={C.dark} strokeWidth={h * 0.07} strokeLinecap="round" />
-      <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={w / 2} fill={C.body} stroke={C.dark} strokeWidth={h * 0.07} />
-      <rect x={-w / 2 + 0.6} y={-h * 0.24} width={w - 1.2} height={h * 0.15} fill={C.ball} stroke={C.dark} strokeWidth={h * 0.04} />
-      {[-1, 1].map((s) => (
-        <g key={s}>
-          <circle cx={s * w * 0.2} cy={h * 0.06} r={h * 0.11} fill="#fff" stroke={C.dark} strokeWidth={h * 0.03} />
-          <circle cx={s * w * 0.2 + h * 0.02} cy={h * 0.07} r={h * 0.055} fill={C.ink} />
-        </g>
-      ))}
-      <path d={`M ${-w * 0.16} ${h * 0.26} q ${w * 0.16} ${h * 0.12} ${w * 0.32} 0`} fill="none" stroke={C.dark} strokeWidth={h * 0.05} strokeLinecap="round" />
+      <image href={`${import.meta.env.BASE_URL}hawk/ok.png`} x={-h / 2} y={-h / 2} width={h} height={h} />
     </g>
   )
 }
@@ -160,14 +154,29 @@ const ICONS: Record<GameId, () => ReactNode> = {
     <>
       <Bg fill={C.navy} />
       <rect x={20} y={14} width={56} height={74} fill={C.court} stroke={C.line} strokeWidth={1.6} />
-      <rect x={20} y={38} width={56} height={14} fill={C.kitchen} stroke={C.line} strokeWidth={1.2} />
-      <line x1={48} y1={14} x2={48} y2={38} stroke={C.line} strokeWidth={1.2} />
+      <line x1={20} y1={34} x2={76} y2={34} stroke={C.line} strokeWidth={1.2} />
+      <line x1={48} y1={34} x2={48} y2={52} stroke={C.line} strokeWidth={1.2} />
       <line x1={14} y1={52} x2={82} y2={52} stroke={C.ink} strokeWidth={2.6} strokeLinecap="round" />
-      <rect x={50} y={16} width={24} height={20} fill="rgba(212,240,60,0.45)" stroke={C.ball} strokeWidth={2} strokeDasharray="4 2" />
+      <rect x={21} y={15} width={26} height={18} fill="rgba(255,241,168,0.45)" stroke="#fff1a8" strokeWidth={2} strokeDasharray="4 2" />
       <rect x={36} y={4} width={24} height={8} rx={3} fill={C.body} stroke={C.dark} strokeWidth={1.4} />
-      <Trail d="M46 76 Q60 50 62 28" />
-      <Ball x={62} y={26} r={5} />
+      <Trail d="M58 76 Q44 50 34 26" />
+      <Ball x={34} y={24} r={5} />
       <Paddle x={42} y={80} len={13} deg={-15} color={C.orange} />
+    </>
+  ),
+  hawkeye: () => (
+    <>
+      <Bg fill={C.navy} />
+      <Court x={24} y={8} w={48} h={80} />
+      <rect x={30} y={22} width={8} height={8} rx={1.5} fill="#fff" stroke={C.ink} strokeWidth={1.2} />
+      <rect x={56} y={12} width={8} height={8} rx={1.5} fill="#fff" stroke={C.ink} strokeWidth={1.2} />
+      <circle cx={40} cy={62} r={4.5} fill="#f4e04d" stroke={C.ink} strokeWidth={1.2} />
+      <circle cx={58} cy={78} r={4.5} fill="#f4e04d" stroke={C.ink} strokeWidth={1.2} />
+      {/* 上から見わたす目 */}
+      <path d="M14 48 Q48 22 82 48 Q48 74 14 48 Z" fill="rgba(255,243,217,0.92)" stroke="#e4262c" strokeWidth={3} />
+      <circle cx={48} cy={48} r={11} fill="#f2a516" stroke={C.ink} strokeWidth={2} />
+      <circle cx={48} cy={48} r={5.5} fill={C.ink} />
+      <circle cx={44.5} cy={44.5} r={2.2} fill="#fff" />
     </>
   ),
   sensei: () => (

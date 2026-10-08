@@ -20,15 +20,17 @@ export interface MissionDef {
 
 export const EASY: MissionDef[] = [
   { id: 'any-3', text: 'ゲームを 3かい あそぼう', kind: 'any', need: 3 },
-  { id: 'play-lift', text: 'ポンポン リフティングで あそぼう', kind: 'play', need: 1, game: 'lift' },
-  { id: 'play-target', text: 'ねらってショットで あそぼう', kind: 'play', need: 1, game: 'target' },
+  { id: 'play-lift', text: 'ボールつきで あそぼう', kind: 'play', need: 1, game: 'lift' },
+  { id: 'play-target', text: 'ねらって ストロークで あそぼう', kind: 'play', need: 1, game: 'target' },
+  { id: 'play-hawkeye', text: 'ホークアイの めで あそぼう', kind: 'play', need: 1, game: 'hawkeye' },
   { id: 'play-sensei', text: 'ピクルくんと ラリーで あそぼう', kind: 'play', need: 1, game: 'sensei' },
   { id: 'play-reaction', text: 'リアクション ボレーで あそぼう', kind: 'play', need: 1, game: 'reaction' },
 ]
 
 export const RECORD: MissionDef[] = [
-  { id: 'lift-10', text: 'リフティングを 10かい つづけよう', kind: 'value', need: 10, game: 'lift' },
-  { id: 'target-3', text: 'ねらってショットで 3こ いれよう', kind: 'value', need: 3, game: 'target' },
+  { id: 'lift-10', text: 'ボールつきを 10かい つづけよう', kind: 'value', need: 10, game: 'lift' },
+  { id: 'target-3', text: 'ねらって ストロークで 3こ いれよう', kind: 'value', need: 3, game: 'target' },
+  { id: 'hawkeye-5', text: 'ホークアイの めで 5もん せいかい', kind: 'value', need: 5, game: 'hawkeye' },
 ]
 
 export const TOGETHER: MissionDef[] = [
