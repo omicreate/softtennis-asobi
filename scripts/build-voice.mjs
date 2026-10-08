@@ -3,7 +3,7 @@
 //   node scripts/build-voice.mjs           … まだ無いセリフだけ作る（同じ文は二度課金しない）
 //   node scripts/build-voice.mjs --prune   … 一覧から消えたセリフの mp3 を消す
 // 鍵と声は .env（git に入れない）：ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID / ELEVENLABS_MODEL（既定 eleven_v4）
-// 鍵がこちらの .env に無ければ ../pb-studio/.env の ELEVENLABS_API_KEY を使う
+// 鍵がこちらの .env に無ければ ../st-studio/.env（ソフトテニスIQの動画と同じアカウント）の ELEVENLABS_API_KEY を使う
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from 'node:fs'
 import { createServer } from 'vite'
 
@@ -15,8 +15,8 @@ const prune = args.includes('--prune')
 
 // .env を読む（値は表示しない）
 const env = { ...process.env }
-// 鍵は pb-studio と同じものを使えるよう、こちらに無ければ ../pb-studio/.env も見る（声の ID はこちらの .env）
-for (const file of ['.env', '../pb-studio/.env']) {
+// 鍵は st-studio と同じものを使えるよう、こちらに無ければ ../st-studio/.env も見る（声の ID はこちらの .env）
+for (const file of ['.env', '../st-studio/.env']) {
   if (!existsSync(path(file))) continue
   for (const line of readFileSync(path(file), 'utf8').split(/\r?\n/)) {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/)
@@ -41,6 +41,12 @@ const { voiceKey } = await server.ssrLoadModule('/src/core/voiceKey.ts')
 await server.close()
 
 const lines = allVoiceLines()
+
+// 読みを間違えやすい言葉は、声にするときだけ ひらがなにする（画面の字とファイル名は元の文のまま）
+// 動画（st-studio/src/tts.js の READINGS）と同じ読み。足したら、その言葉を含む mp3 を消してから作り直す
+// 文字起こし（scribe）は「雁行陣」を知らず「頑固人」などと書くが、読みは合っている（動画の Kozy も同じ）
+const READINGS = { 雁行陣: 'がんこうじん', 正クロス: 'せいクロス', 逆クロス: 'ぎゃくクロス', 打点: 'だてん', 並行陣: 'へいこうじん', 自陣: 'じじん' }
+const reading = (t) => Object.entries(READINGS).reduce((s, [w, r]) => s.replaceAll(w, r), t)
 const outDir = path('public/voice/')
 mkdirSync(outDir, { recursive: true })
 const todo = lines.filter((t) => !existsSync(`${outDir}${voiceKey(t)}.mp3`))
@@ -66,7 +72,7 @@ if (dry) {
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`, {
       method: 'POST',
       headers: { 'xi-api-key': key, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
-      body: JSON.stringify({ text, model_id: model, voice_settings: settings }),
+      body: JSON.stringify({ text: reading(text), model_id: model, voice_settings: settings }),
     })
     if (!res.ok) {
       console.error(`ElevenLabs ${res.status}: ${(await res.text()).slice(0, 300)}`)

@@ -31,7 +31,7 @@ for (const [name, p] of [
 
 // .env を読む（値は表示しない）
 const env = { ...process.env }
-for (const file of ['.env', '../pb-studio/.env']) {
+for (const file of ['.env', '../st-studio/.env']) {
   if (!existsSync(path(file))) continue
   for (const line of readFileSync(path(file), 'utf8').split(/\r?\n/)) {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/)
