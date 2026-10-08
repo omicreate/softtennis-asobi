@@ -23,7 +23,7 @@ for (const f of ['sw.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'
 
 writeFileSync(
   join(out, 'index.html'),
-  `<title>ピクルくんとあそぼ</title>
+  `<title>ホークアイ先生とあそぼ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap">
