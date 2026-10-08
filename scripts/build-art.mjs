@@ -5,6 +5,7 @@
 //   アイコン（art/icon.png の丸の中） → public/icon-*.png・apple-touch-icon.png
 //   絵の大きさ → src/ui/artSize.json
 // 表情の原画がまだ無いものは、ある絵で代わりにする（FALLBACK）。原画が届いたら art/ に置いて npm run art。
+// 2026-10-08 に eh（びっくり）・oops（しまった）・run（走る）がそろった。run は市松模様が描きこまれていたので透明にしてから置いた
 import { chromium } from '@playwright/test'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 

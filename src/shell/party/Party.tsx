@@ -247,7 +247,8 @@ export function Party({ fixed }: { fixed?: GameId }) {
             <h1 className="party-title">じゅんばんモード</h1>
           </header>
           <div className="party-intro">
-            <HawkCut art="ok" height={92} />
+            {/* 走るホークアイ先生（本人が ChatGPT で作った原画。じゅんばんに遊び始める場面） */}
+            <HawkCut art="run" height={110} />
             <p>1だいを じゅんばんに まわして、おなじ ゲームの きろくで しょうぶ！ さいごに ホークアイ先生が ひょうしょう するよ。</p>
             <button className="btn btn-small" aria-label="せつめいを よみあげる" onClick={() => speak(PHRASES.partyIntro)}>
               🗣️
