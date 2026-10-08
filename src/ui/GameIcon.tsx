@@ -9,7 +9,6 @@ import type { GameId } from '../shell/games'
 const C = {
   navy: '#1f5a42',
   court: '#2f8a5f',
-  kitchen: '#3d8f7a',
   line: '#ffffff',
   ball: '#d8f04a',
   dark: '#154d36',

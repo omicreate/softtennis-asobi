@@ -172,8 +172,7 @@ function draw(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, s: L
   ctx.roundRect(X(0), Y(0), FIELD_W * k, FIELD_H * k, 14)
   ctx.fillStyle = '#2f8a5f'
   ctx.fill()
-  ctx.fillStyle = '#3d8f7a'
-  ctx.fillRect(X(0), Y(0), FIELD_W * k, FIELD_H * 0.22 * k)
+  // サービスラインとセンターサービスライン（コートの一部に見えるように）
   ctx.strokeStyle = 'rgba(255,255,255,0.85)'
   ctx.lineWidth = 2
   ctx.beginPath()
