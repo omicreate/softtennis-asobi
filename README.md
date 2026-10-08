@@ -55,7 +55,7 @@
 - **きねんカード**：結果画面の 📸 から、名前の入らない画像（1080×1080）を作って端末の共有画面で送る。作る前に保護者の確認（かけ算）を出す（`src/ui/ShareSheet.tsx`・`shareCard.ts`）
 - **じこベストと メダル**：ひとりで遊ぶ5本に、どう・ぎん・きん の目標。じゅんばんモードの記録は数えない（`src/core/records.ts`、画面は `#/records`）
 - **遊びすぎの声かけ**：続けて遊んだ時間が決めた時間をこえると、結果が出たときに「ちょっと きゅうけい しよう」（`src/core/playtime.ts`）
-- **遊ばれた回数の集計（匿名）**：公開版でだけ、できごととゲーム名・リンクの印（`?src=`）・ホーム画面から開いたか・アプリの版を送る。名前・点数・端末ID・Cookie は送らない。送り先は `site.config.json` の `counterUrl`。**いまは空**（何も送らない）。ソフトテニスIQの数値シートの GAS（`../stiq-metrics`）に受け口を足してから入れる（`src/core/counter.ts`）
+- **遊ばれた回数の集計（匿名）**：公開版でだけ、できごととゲーム名・リンクの印（`?src=`）・ホーム画面から開いたか・アプリの版を送る。名前・点数・端末ID・Cookie は送らない。送り先は `site.config.json` の `counterUrl`＝ソフトテニスIQの数値シートの GAS（`../stiq-metrics`、リンク遷移と同じ受け口 URL）。`app=softtennis-asobi` の行はシートの asobi_events に入り、タブ「ミニゲーム」でゲーム別に数える。ゲームを足したら stiq-metrics の CONFIG.ASOBI.GAMES にも足す（`src/core/counter.ts`）
 - **リンクの印**：Instagram のプロフィール `?src=st_ig_bio`、ソフトテニスIQから `?src=st_iq_cross`、きねんカード `?src=share`
 - **おうちの方へ**（`#/parents`、保護者の確認つき）：遊び方・この端末の記録・集計の説明とオンオフ・アプリの紹介・記録を消す
 

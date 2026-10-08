@@ -1,6 +1,6 @@
 /**
  * どのゲームが何回遊ばれたかを、匿名で数える（ソフトテニスIQと同じしくみ：Google Apps Script の受け口に送り、
- * 送り先はまだ決めていない（site.config.json の counterUrl が空のあいだは何も送らない。ソフトテニスIQの数値シートの GAS に足す予定）。
+ * スプレッドシート「softtennis_iq_数値集計」の asobi_events に1行ずつ書く。集計はタブ「ミニゲーム」。受け口の正本は別リポジトリ stiq-metrics）。
  *
  * 送るもの：できごとの種類（開いた・始めた・最後まで遊んだ・共有した）、ゲームの名前（例 jump）、
  *          どこから来たか（リンクの ?src= の印。例 st_ig_bio）、ホーム画面に追加して開いたか、アプリの版。
@@ -15,7 +15,7 @@ import { getSettings } from './settings'
 export const COUNTER_URL: string = site.counterUrl
 export const PUBLIC_URL: string = site.publicUrl
 /** アプリの版（集計で、直した前後を見分ける） */
-export const APP_VERSION = '0.14.1'
+export const APP_VERSION = '0.1.0'
 
 export type CountEvent = 'open' | 'start' | 'finish' | 'share'
 
