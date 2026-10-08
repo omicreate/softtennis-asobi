@@ -3,7 +3,7 @@
  * ここで えらんだラケットは「じぶんの ラケット」（ひとりで遊ぶとき・2人のときの下の人）になる。
  */
 import { useState } from 'react'
-import { ITEMS, SPECIAL_TEXT } from '../core/items'
+import { ITEMS, SPECIAL_TEXT, WEAR_ON } from '../core/items'
 import type { Item, ItemKind } from '../core/items'
 import { buy, owns, specialMet, toggleWear, useProgress } from '../core/progress'
 import { setSettings, useSettings } from '../core/settings'
@@ -18,7 +18,8 @@ import './setup.css'
 import './collection.css'
 
 const TABS: { kind: ItemKind; label: string }[] = [
-  { kind: 'wear', label: 'ホークアイ先生' },
+  // 小物を止めているあいだは、ホークアイ先生のタブを出さない（items.ts の WEAR_ON）
+  ...(WEAR_ON ? [{ kind: 'wear' as const, label: 'ホークアイ先生' }] : []),
   { kind: 'design', label: 'ラケットの いろ' },
   { kind: 'shape', label: 'ラケットの かたち' },
 ]
@@ -26,7 +27,7 @@ const TABS: { kind: ItemKind; label: string }[] = [
 export function Collection() {
   const progress = useProgress()
   const settings = useSettings()
-  const [tab, setTab] = useState<ItemKind>('wear')
+  const [tab, setTab] = useState<ItemKind>(TABS[0].kind)
   const [ask, setAsk] = useState<Item | null>(null)
   const mine = settings.paddles[0]
 

@@ -77,6 +77,7 @@ export const GAMES: GameInfo[] = [
     face: 'think',
     howto: 'ホークアイ先生の クイズだよ。こたえが わかったら、てもとの ボタンを はやく おそう。',
     players: 2,
+    adult: true,
   },
   {
     id: 'lift',
@@ -112,6 +113,7 @@ export const GAMES: GameInfo[] = [
     players: 1,
     party: true,
     unit: 'もん',
+    adult: true,
   },
   {
     id: 'sensei',
