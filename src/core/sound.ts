@@ -1,5 +1,6 @@
 /**
- * 効果音は Web Audio で合成する（音声ファイルを持たない＝軽い・オフラインでも鳴る）。
+ * 効果音は ElevenLabs の効果音生成で作った mp3（public/sfx/。scripts/build-sfx.mjs が作る）を鳴らす。
+ * 起動時に読んでおき（loadSfx）、読みこみが間に合わないときは鳴らさない（プログラムで作った電子音では代わりにしない）。
  * iOS は指で触れるまで音が出ないので、最初のタップで unlockAudio() を呼ぶ。
  */
 import { getSettings } from './settings'
@@ -33,72 +34,83 @@ export function unlockAudio(): void {
   src.start(0)
 }
 
-function tone(freq: number, start: number, dur: number, type: OscillatorType = 'sine', vol = 0.25, endFreq?: number) {
-  const a = audio()
-  if (!a) return
-  const t = a.currentTime + start
-  const osc = a.createOscillator()
-  const gain = a.createGain()
-  osc.type = type
-  osc.frequency.setValueAtTime(freq, t)
-  if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, t + dur)
-  gain.gain.setValueAtTime(0.0001, t)
-  gain.gain.exponentialRampToValueAtTime(vol, t + 0.008)
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur)
-  osc.connect(gain).connect(a.destination)
-  osc.start(t)
-  osc.stop(t + dur + 0.02)
+/** 効果音の名前（public/sfx/<名前>.mp3） */
+export const SFX_NAMES = ['pop', 'bounce', 'ok', 'ng', 'whistle', 'tick', 'go', 'fanfare'] as const
+type SfxName = (typeof SFX_NAMES)[number]
+
+const BASE = `${import.meta.env.BASE_URL}sfx/`
+const buffers = new Map<SfxName, AudioBuffer>()
+let loading: Promise<void> | null = null
+
+/** 効果音の mp3 を読んでおく（起動時に1回。音が出せるようになる前でも読める） */
+export function loadSfx(): Promise<void> {
+  if (!loading) {
+    loading = (async () => {
+      const a = audioContext()
+      if (!a) return
+      await Promise.all(
+        SFX_NAMES.map(async (n) => {
+          try {
+            const res = await fetch(`${BASE}${n}.mp3`)
+            buffers.set(n, await a.decodeAudioData(await res.arrayBuffer()))
+          } catch {
+            // 読めなかった音は鳴らさない
+          }
+        }),
+      )
+    })()
+  }
+  return loading
 }
 
-function noise(start: number, dur: number, freq: number, vol = 0.3) {
+function play(name: SfxName, vol = 1, rate = 1) {
   const a = audio()
   if (!a) return
-  const t = a.currentTime + start
-  const len = Math.max(1, Math.floor(a.sampleRate * dur))
-  const buf = a.createBuffer(1, len, a.sampleRate)
-  const data = buf.getChannelData(0)
-  for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 2
+  const buf = buffers.get(name)
+  if (!buf) {
+    void loadSfx()
+    return
+  }
   const src = a.createBufferSource()
   src.buffer = buf
-  const filter = a.createBiquadFilter()
-  filter.type = 'bandpass'
-  filter.frequency.value = freq
-  filter.Q.value = 1.2
+  src.playbackRate.value = rate
   const gain = a.createGain()
   gain.gain.value = vol
-  src.connect(filter).connect(gain).connect(a.destination)
-  src.start(t)
+  src.connect(gain).connect(a.destination)
+  src.start()
 }
 
 export const sfx = {
-  /** ラケットで打った「ポコッ」（ソフトテニスらしい乾いた音） */
+  /** ラケットで打った音（軟式球の「ポン」）。強く打つほど少し高く・大きく */
   pop(strength = 0.5) {
-    noise(0, 0.05, 1800 + strength * 900, 0.45)
-    tone(900 + strength * 300, 0, 0.07, 'triangle', 0.18, 500)
+    play('pop', 0.55 + strength * 0.45, 0.92 + strength * 0.16)
   },
+  /** ボールがはねた音 */
   bounce() {
-    tone(260, 0, 0.09, 'sine', 0.18, 140)
+    play('bounce', 0.8)
   },
+  /** 正解 */
   ok() {
-    tone(660, 0, 0.12, 'triangle', 0.2)
-    tone(880, 0.1, 0.12, 'triangle', 0.2)
-    tone(1320, 0.2, 0.22, 'triangle', 0.2)
+    play('ok', 0.9)
   },
+  /** まちがい・お手つき */
   ng() {
-    tone(330, 0, 0.18, 'square', 0.08, 220)
-    tone(220, 0.16, 0.26, 'square', 0.08, 150)
+    play('ng', 0.9)
   },
+  /** 審判の笛 */
   whistle() {
-    tone(2100, 0, 0.32, 'sine', 0.12, 2300)
+    play('whistle', 1)
   },
+  /** ボタンを押した */
   tick() {
-    tone(1200, 0, 0.05, 'sine', 0.12)
+    play('tick', 0.6)
   },
+  /** 合図（はやタッチ・リアクション） */
   go() {
-    tone(1568, 0, 0.18, 'triangle', 0.22)
+    play('go', 0.7)
   },
+  /** 勝ち・記録 */
   fanfare() {
-    ;[523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.24, 'triangle', 0.2))
-    tone(1047, 0.48, 0.5, 'triangle', 0.18)
+    play('fanfare', 0.9)
   },
 }

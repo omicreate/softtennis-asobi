@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import { readGo, watchInstallPrompt } from './core/browser'
 import { countOpen, readSource } from './core/counter'
+import { loadSfx } from './core/sound'
 import { loadVoices } from './core/speak'
 import { preloadHawk } from './ui/hawkArt'
 // 書体はアプリに同梱する（電波のない場所でも同じ見た目にするため）
@@ -16,6 +17,7 @@ readSource()
 countOpen()
 watchInstallPrompt()
 void loadVoices()
+void loadSfx()
 preloadHawk()
 
 createRoot(document.getElementById('root')!).render(

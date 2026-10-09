@@ -47,6 +47,7 @@ const shell = [
   "./apple-touch-icon.png",
   ...list("hawk/"),
   ...list("voice/").filter((f) => f.endsWith(".mp3") || f.endsWith(".json")),
+  ...list("sfx/").filter((f) => f.endsWith(".mp3")),
   ...assets,
 ];
 

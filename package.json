@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "test:all": "npm test && npm run build && playwright test",
     "voice": "node scripts/build-voice.mjs",
-    "voice:dry": "node scripts/build-voice.mjs --dry"
+    "voice:dry": "node scripts/build-voice.mjs --dry",
+    "sfx": "node scripts/build-sfx.mjs"
   },
   "dependencies": {
     "@fontsource/zen-maru-gothic": "^5.2.0",
