@@ -83,14 +83,17 @@ npm run build      # dist/ に出力（sw.js に事前キャッシュの一覧�
 
 ルールドリルの問題を取りこみ直す：`node scripts/import-drill.mjs`（元はソフトテニスIQの `src/tools/drill/questions.ts`。問題は元の方で直す）
 
-## 声（ElevenLabs）
+## 声と効果音（ElevenLabs）
 
-読み上げの声は ElevenLabs で**前もって** mp3 にして `public/voice/` に置く。遊ぶ最中は通信しない。mp3 が無いセリフは、端末の読み上げ（speechSynthesis）で読む。
-ホークアイ先生の声はまだ決めていない（候補を作って本人が選ぶ）。
+読み上げの声は ElevenLabs で**前もって** mp3 にして `public/voice/` に置く。遊ぶ最中は通信しない。mp3 が無いセリフは、端末の読み上げ（speechSynthesis）で読む（いまは全セリフに mp3 がある）。
+ホークアイ先生の声は **AKIRA**（eleven_v4、2026-10-08 に本人が5候補から選んだ）。鍵は `../st-studio/.env`（動画と同じアカウント）、声の ID はこちらの `.env`。読みを間違えやすい語（雁行陣など）は、声にするときだけ動画と同じ読みに置き換える（`scripts/build-voice.mjs` の READINGS）。
+
+効果音8種類（打つ・はねる・正解・まちがい・笛・ボタン・合図・ファンファーレ）も ElevenLabs の効果音生成で作った mp3（`public/sfx/`、2026-10-09）。元の音は `art/sfx/` に残し、長さ・音量の仕上げだけならクレジットを使わずにやり直せる。プログラムで作る電子音は使わない（`src/core/sound.test.ts` で確かめる）。
 
 ```bash
 npm run voice:dry        # 作るセリフと文字数を見る（API は呼ばない）
 npm run voice            # まだ無いセリフだけ作る
+npm run sfx              # 元の音が無い効果音だけ作り、全部を仕上げ直す（作り直すときは art/sfx/<名前>.mp3 を消す）
 ```
 
 ## 画像
