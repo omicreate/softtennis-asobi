@@ -15,7 +15,7 @@ import { getSettings } from './settings'
 export const COUNTER_URL: string = site.counterUrl
 export const PUBLIC_URL: string = site.publicUrl
 /** アプリの版（集計で、直した前後を見分ける） */
-export const APP_VERSION = '0.1.0'
+export const APP_VERSION = '0.1.1'
 
 export type CountEvent = 'open' | 'start' | 'finish' | 'share'
 

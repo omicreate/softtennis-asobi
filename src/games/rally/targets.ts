@@ -78,3 +78,17 @@ export function feedLanding(level: Level, zone: Zone, rand: () => number = Math.
   const x = zone.from === 'right' ? W / 2 + 0.8 + rand() * (W / 2 - 1.6) : zone.from === 'left' ? 0.8 + rand() * (W / 2 - 1.6) : 1.2 + rand() * (W - 2.4)
   return { x, y: N + depth }
 }
+
+/**
+ * 的を外したときの、次の1球への一言（どちらへずれたか＋直し方）。at は打った球が最初に跳ねた場所。
+ * 横の向きは下の人から見た左右（x が大きい側＝みぎ）。打球の向きは、ラケットのどこで当てたかと、横に振った向きで決まる（physics.ts の planShot）。
+ * 奥行きは、上の陣地で y が小さいほど深い（0＝ベースライン）。
+ */
+export function shotHint(z: Zone, at: { x: number; y: number }): string {
+  const eps = 1e-6
+  if (at.x < z.x0 - eps) return 'もうすこし みぎへ。ラケットの みぎはしで あてるか、みぎへ シュッと ふろう'
+  if (at.x > z.x1 + eps) return 'もうすこし ひだりへ。ラケットの ひだりはしで あてるか、ひだりへ シュッと ふろう'
+  if (at.y < z.y0 - eps) return 'ながすぎ！ もうすこし そっと あてよう'
+  if (at.y > z.y1 + eps) return 'もっと ふかく。うえに つよく ふろう'
+  return ''
+}

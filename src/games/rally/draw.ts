@@ -55,6 +55,8 @@ const C = {
   ballLine: '#b39a3e',
   shadow: 'rgba(0, 0, 0, 0.28)',
   target: 'rgba(255, 241, 168, 0.24)',
+  /** 外れた球の × （オレンジ：自分の色） */
+  miss: '#ff8a3d',
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -162,6 +164,21 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
       ctx.setLineDash([0.25 * s, 0.15 * s])
       ctx.strokeRect(X(z.x0), Y(z.y0), (z.x1 - z.x0) * s, (z.y1 - z.y0) * s)
       ctx.setLineDash([])
+    }
+    // 外れた球の落ちた場所（×）。的とのずれが目で分かるように、次の球を送るまで残す
+    const m = e.missAt
+    if (m && e.phase !== 'over') {
+      const k = 0.28 * s
+      ctx.beginPath()
+      ctx.moveTo(X(m.x) - k, Y(m.y) - k)
+      ctx.lineTo(X(m.x) + k, Y(m.y) + k)
+      ctx.moveTo(X(m.x) + k, Y(m.y) - k)
+      ctx.lineTo(X(m.x) - k, Y(m.y) + k)
+      ctx.strokeStyle = C.miss
+      ctx.lineWidth = Math.max(3, 0.09 * s)
+      ctx.lineCap = 'round'
+      ctx.stroke()
+      ctx.lineCap = 'butt'
     }
     drawMachine(ctx, X, Y, s, o.senseiFace ?? 'think')
   }

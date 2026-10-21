@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import { useFrame } from '../../core/loop'
-import { LEVEL_INFO, SIDE_NAME, other } from '../../core/players'
+import { LEVEL_INFO, LEVELS, SIDE_NAME, other } from '../../core/players'
 import type { Level, Side } from '../../core/players'
 import { sfx, unlockAudio } from '../../core/sound'
 import { speak } from '../../core/speak'
@@ -27,7 +27,7 @@ import { RallyEngine } from './engine'
 import type { Games, Kind, ShotMiss } from './engine'
 import { REASON_TEXT } from './rules'
 import type { RuleMode } from './rules'
-import { SHOTS } from './targets'
+import { SHOTS, shotHint } from './targets'
 import './rally.css'
 
 interface Props {
@@ -40,9 +40,26 @@ interface Props {
   cpu?: boolean
   paused: boolean
   onRestart: () => void
+  /** レベルを変えて やりなおす（ホークアイ先生と ラリーの結果で、ひとつ やさしい／つよい レベルをすすめる） */
+  onLevel?: (lv: Level) => void
 }
 
 const targetBest = (lv: Level) => `target-best-${lv}`
+/** ホークアイ先生と ラリー：いちばん長く続いたラリー（レベルごと。この端末にだけ保存） */
+const rallyBest = (lv: Level) => `sensei-rally-best-${lv}`
+/** 試合の中のラリーの回数を画面に出しはじめる数 */
+const RALLY_SHOW = 3
+
+/**
+ * 結果のあとに すすめる レベル（かんたんルールだけ）。
+ * 1てん以下で負けたら ひとつ やさしく、相手を1てん以下にして勝ったら ひとつ つよく。それ以外は すすめない。
+ */
+export function suggestLevel(lv: Level, won: boolean, mine: number, theirs: number): Level | null {
+  const i = LEVELS.indexOf(lv)
+  if (!won && mine <= 1 && i > 0) return LEVELS[i - 1]
+  if (won && theirs <= 1 && i < LEVELS.length - 1) return LEVELS[i + 1]
+  return null
+}
 
 const MISS_TEXT: Record<ShotMiss, { title: string; sub: string }> = {
   zone: { title: 'おしい！', sub: 'まとの そとに おちたよ' },
@@ -50,7 +67,7 @@ const MISS_TEXT: Record<ShotMiss, { title: string; sub: string }> = {
   'double-bounce': { title: 'ツーバウンズ！', sub: '2かい はねる まえに かえそう' },
 }
 
-export function RallyGame({ kind, levels, mode, target, games, cpu = false, paused, onRestart }: Props) {
+export function RallyGame({ kind, levels, mode, target, games, cpu = false, paused, onRestart, onLevel }: Props) {
   const stage = useStage()
   const play = usePlay()
   // じゅんばんモード（ねらって ストローク）：みんな同じ球の並び
@@ -75,6 +92,10 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
   const [gamesWon, setGamesWon] = useState<[number, number]>([0, 0])
   const [shots, setShots] = useState({ index: 0, hits: 0, label: '', best: load<number>(targetBest(levels[0]), 0) })
   const [over, setOver] = useState<{ winner: Side | null } | null>(null)
+  /** ホークアイ先生と ラリー：いまのラリーで打った回数（サービスもふくむ）・この試合でいちばん長いラリー・これまでの さいこう */
+  const [rallyNow, setRallyNow] = useState(0)
+  const rallyHits = useRef(0)
+  const [rallyLong, setRallyLong] = useState({ match: 0, best: load<number>(rallyBest(levels[0]), 0), record: false })
   /** ホークアイ先生（審判・相手・マシンの係）の表情。しばらくすると「かんがえる」に戻る */
   const [pkFace, setPkFace] = useState<Face>('think')
   const pkTimer = useRef(0)
@@ -130,6 +151,8 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             flash({ title: String(ev.n), big: true }, 0.9)
             break
           case 'serve':
+            rallyHits.current = 0
+            if (cpu) setRallyNow(0)
             setServer(ev.server)
             setCall(mode === 'real' && kind === 'versus' ? `${engine.serveNo === 2 ? 'セカンド　' : ''}${engine.scoreCall()}` : '')
             if (kind === 'versus') sfx.go()
@@ -139,6 +162,8 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             break
           case 'hit':
             sfx.pop(ev.power)
+            rallyHits.current += 1
+            if (cpu) setRallyNow(rallyHits.current)
             break
           case 'bounce':
             sfx.bounce()
@@ -161,6 +186,10 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             const title = ev.game ? `ゲーム！ ${name(ev.winner)}` : `${name(ev.winner)}の てん！`
             flash({ title, sub, faces }, 1.8)
             setScore([engine.score[0], engine.score[1]])
+            if (cpu) {
+              const n = rallyHits.current
+              setRallyLong((r) => (n > r.match ? { ...r, match: n } : r))
+            }
             setGamesWon([engine.gamesWon[0], engine.gamesWon[1]])
             if (cpu) react(ev.winner === 1 ? 'ok' : 'oops')
             // 審判：サービスの反則（ダブルフォールト・ダイレクト）は「えっ！？」、ふつうの得点は「！」
@@ -176,7 +205,9 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             } else {
               sfx.ng()
               const m = MISS_TEXT[ev.reason ?? 'zone']
-              flash({ title: m.title, sub: m.sub, face: 'oops' }, 1.3)
+              // どちらへ ずれたかと 直し方（落ちた場所が分かるとき）
+              const hint = ev.at && engine.zone ? shotHint(engine.zone, ev.at) : ''
+              flash({ title: m.title, sub: hint || m.sub, face: 'oops' }, hint ? 1.9 : 1.3)
               react('oops', 1.3)
             }
             setShots((s) => ({ ...s, hits: ev.hits }))
@@ -198,6 +229,12 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
               })
             } else if (cpu) {
               speak(ev.winner === 0 ? PHRASES.youWin : PHRASES.senseiWin)
+              setRallyLong((r) => {
+                if (r.match > r.best) save(rallyBest(levels[0]), r.match)
+                // 「さいこう きろく！」と言うのは、ある程度 続いたときだけ
+                const record = r.match > r.best && r.match >= RALLY_SHOW
+                return { ...r, best: Math.max(r.best, r.match), record }
+              })
             } else if (ev.winner !== null) {
               speak(ev.winner === 0 ? PHRASES.win0 : PHRASES.win1)
             }
@@ -291,6 +328,11 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           {gameText && <span className="solo-score-games">ゲーム {gameText}</span>}
         </div>
       )}
+      {kind === 'versus' && cpu && phase === 'play' && rallyNow >= RALLY_SHOW && (
+        <div className="rally-count" data-testid="rally-count">
+          ラリー <b>{rallyNow}</b>かい
+        </div>
+      )}
       {kind === 'versus' && !cpu && <Scores score={score} games={gameText ? gamesWon : undefined} />}
       {showServeHint && <ServeHint side={server} level={levels[server]} call={call} />}
       <Notice data={notice} />
@@ -310,6 +352,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           sub={() => (gameText ? `ゲーム ${gameText}（あなた たい せんせい）` : `あなた ${score[0]} たい ${score[1]} せんせい`)}
           face={() => (over.winner === 0 ? 'oops' : 'ok')}
           onAgain={again}
+          extra={<SenseiExtra long={rallyLong} level={levels[0]} next={mode === 'easy' ? suggestLevel(levels[0], over.winner === 0, score[0], score[1]) : null} onLevel={onLevel} />}
         />
       )}
       {over && kind === 'versus' && !cpu && (
@@ -321,6 +364,26 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
         />
       )}
     </div>
+  )
+}
+
+/** ホークアイ先生と ラリーの結果：いちばん長いラリーと、つぎに すすめる レベル */
+function SenseiExtra({ long, level, next, onLevel }: { long: { match: number; best: number; record: boolean }; level: Level; next: Level | null; onLevel?: (lv: Level) => void }) {
+  const up = next !== null && LEVELS.indexOf(next) > LEVELS.indexOf(level)
+  return (
+    <>
+      {long.match > 0 && (
+        <div className="rally-long" data-testid="rally-long">
+          いちばん ながい ラリー <b>{long.match}かい</b>
+          <small>{long.record ? 'さいこう きろく！' : `さいこう ${long.best}かい（${LEVEL_INFO[level].label}）`}</small>
+        </div>
+      )}
+      {next && onLevel && (
+        <button className="btn rally-next" data-testid="rally-next" onClick={() => onLevel(next)}>
+          {LEVEL_INFO[next].mark} {up ? `つぎは ${LEVEL_INFO[next].label}に ちょうせん！` : `${LEVEL_INFO[next].label}で れんしゅう する`}
+        </button>
+      )}
+    </>
   )
 }
 
