@@ -23,6 +23,7 @@ import { mulberry32 } from '../../core/rng'
 import { usePlay } from '../../shell/playContext'
 import { Cpu, CPU_SKILL } from './cpu'
 import { drawRally, makeView, toWorld } from './draw'
+import { RallyFx } from './fx'
 import { RallyEngine } from './engine'
 import type { Games, Kind, ShotMiss } from './engine'
 import { REASON_TEXT } from './rules'
@@ -79,6 +80,12 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
     [kind, mode, levels, target, games, cpu, contest],
   )
   const sensei = useMemo(() => (cpu ? new Cpu(1, CPU_SKILL[levels[1]]) : null), [cpu, levels])
+  const fx = useMemo(() => new RallyFx(), [engine])
+  /** ねらって ストローク：つづけて入った数（いま・この回の さいこう） */
+  const streak = useRef(0)
+  const [bestStreak, setBestStreak] = useState(0)
+  /** ラリーの節目（5・10・15…回）で回数の表示を はずませる */
+  const [rallyBeat, setRallyBeat] = useState(0)
   const view = useMemo(() => makeView(stage.w, stage.h, kind === 'target' ? 1.3 : 0), [stage.w, stage.h, kind])
   const pointers = useRef(new Map<number, Side>())
   const owner = useRef<[number | null, number | null]>([null, null])
@@ -151,6 +158,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             flash({ title: String(ev.n), big: true }, 0.9)
             break
           case 'serve':
+            fx.reset()
             rallyHits.current = 0
             if (cpu) setRallyNow(0)
             setServer(ev.server)
@@ -158,12 +166,20 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             if (kind === 'versus') sfx.go()
             break
           case 'feed':
+            fx.reset()
             setShots((s) => ({ ...s, index: ev.index, label: ev.zone.label }))
             break
           case 'hit':
             sfx.pop(ev.power)
             rallyHits.current += 1
-            if (cpu) setRallyNow(rallyHits.current)
+            fx.hit({ x: engine.ball.x, y: engine.ball.y }, ev.power, !cpu || ev.side === 0)
+            if (cpu) {
+              setRallyNow(rallyHits.current)
+              if (rallyHits.current % 5 === 0) {
+                fx.celebrate({ x: engine.ball.x, y: engine.ball.y })
+                setRallyBeat((b) => b + 1)
+              }
+            }
             break
           case 'bounce':
             sfx.bounce()
@@ -199,11 +215,17 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           case 'shot':
             if (ev.ok) {
               sfx.ok()
-              flash({ title: 'ナイス！', sub: 'ねらいどおり', face: 'ok' }, 1.3)
+              streak.current += 1
+              const n = streak.current
+              setBestStreak((b) => Math.max(b, n))
+              // 入った場所で はじけて「+1」（れんぞくの数は下の知らせに出す）
+              if (ev.at) fx.celebrate(ev.at, '+1')
+              flash({ title: n >= 2 ? `${n}れんぞく！` : 'ナイス！', sub: n >= 3 ? 'その ちょうし！' : 'ねらいどおり', face: 'ok' }, 1.3)
               speak(PHRASES.nice)
               react('ok', 1.3)
             } else {
               sfx.ng()
+              streak.current = 0
               const m = MISS_TEXT[ev.reason ?? 'zone']
               // どちらへ ずれたかと 直し方（落ちた場所が分かるとき）
               const hint = ev.at && engine.zone ? shotHint(engine.zone, ev.at) : ''
@@ -243,9 +265,10 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
         }
       }
       if (engine.phase !== phase) setPhase(engine.phase)
+      fx.update(dt, engine.ballVisible && engine.phase === 'play' ? engine.ball : null)
     }
     const ctx = canvasRef.current?.getContext('2d')
-    if (ctx) drawRally(ctx, stage.w, stage.h, view, engine, { showLanding, realRules: mode === 'real' && kind === 'versus', solo, senseiFace: pkFace, paddles: play.paddles })
+    if (ctx) drawRally(ctx, stage.w, stage.h, view, engine, { fx, showLanding, realRules: mode === 'real' && kind === 'versus', solo, senseiFace: pkFace, paddles: play.paddles })
   })
 
   // 指
@@ -329,7 +352,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
         </div>
       )}
       {kind === 'versus' && cpu && phase === 'play' && rallyNow >= RALLY_SHOW && (
-        <div className="rally-count" data-testid="rally-count">
+        <div className="rally-count" data-testid="rally-count" data-beat={rallyBeat % 2} key={rallyBeat}>
           ラリー <b>{rallyNow}</b>かい
         </div>
       )}
@@ -343,6 +366,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           sub={() => (shots.hits >= shots.best && shots.hits > 0 ? 'さいこう きろく！' : `さいこうは ${shots.best}きゅう（${LEVEL_INFO[levels[0]].label}）`)}
           face={() => (shots.hits >= SHOTS / 2 ? 'ok' : 'eh')}
           onAgain={again}
+          extra={bestStreak >= 2 ? <div className="rally-long">いちばん ながい れんぞく <b>{bestStreak}きゅう</b></div> : undefined}
         />
       )}
       {over && kind === 'versus' && cpu && (

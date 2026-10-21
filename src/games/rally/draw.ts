@@ -9,6 +9,7 @@ import { drawPaddleArt } from '../../ui/paddleArt'
 import type { PaddleLook } from '../../ui/paddleArt'
 import { drawHawkArt } from '../../ui/hawkArt'
 import type { Face } from '../../ui/Hawk'
+import type { RallyFx } from './fx'
 
 /**
  * ソフトテニスのラケットの大きさ（m）：全長68cm・頭の幅24cm、のど＋グリップ37cm（ui/paddleArt.ts と同じ比率）。
@@ -73,6 +74,8 @@ export interface DrawOptions {
   senseiFace?: Face
   /** ラケットの見た目（コレクション） */
   paddles?: [PaddleLook, PaddleLook]
+  /** 手応えの演出（残像・はじけ・ゆれ） */
+  fx?: RallyFx
 }
 
 export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, e: RallyEngine, o: DrawOptions): void {
@@ -82,6 +85,10 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
 
   ctx.fillStyle = C.bg
   ctx.fillRect(0, 0, w, h)
+  // 強く打ったときの ゆれ（背景の外側は ずらさない）
+  const shake = o.fx?.offset() ?? { x: 0, y: 0 }
+  ctx.save()
+  ctx.translate(shake.x, shake.y)
 
   // まわり・コート（ダブルスの横の帯も描く。判定はシングルスのコート）
   ctx.fillStyle = C.out
@@ -189,6 +196,8 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     drawPlayer(ctx, X, Y, s, e, side, o.senseiFace ?? 'think', o.paddles?.[side])
   }
 
+  o.fx?.drawUnder(ctx, X, Y, s)
+
   // 球（影で高さを見せる）
   if (e.ballVisible) {
     const r = 0.2
@@ -211,6 +220,8 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
     ctx.fill()
   }
+  o.fx?.drawOver(ctx, X, Y, s)
+  ctx.restore()
 }
 
 type Px = (v: number) => number

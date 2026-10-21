@@ -4,6 +4,7 @@ import { RallyEngine } from './engine'
 import type { EngineEvent } from './engine'
 import { suggestLevel } from './RallyGame'
 import { makeZone, shotHint } from './targets'
+import { RallyFx } from './fx'
 
 const W = COURT.W
 const N = COURT.NET_Y
@@ -78,5 +79,45 @@ describe('ホークアイ先生と ラリー：つぎに すすめる レベル'
     expect(suggestLevel('otona', true, 5, 3)).toBeNull()
     expect(suggestLevel('chibi', false, 0, 5)).toBeNull()
     expect(suggestLevel('senshu', true, 5, 0)).toBeNull()
+  })
+})
+
+describe('手応えの演出（RallyFx）', () => {
+  const rand = () => 0.5
+  it('強く打つと粒が多く、ゆれる。ふつうの打球はゆれない', () => {
+    const weak = new RallyFx(rand, false)
+    weak.hit({ x: 4, y: 20 }, 0.4, true)
+    const strong = new RallyFx(rand, false)
+    strong.hit({ x: 4, y: 20 }, 1.2, true)
+    expect(strong.counts().sparks).toBeGreaterThan(weak.counts().sparks)
+    expect(weak.offset()).toEqual({ x: 0, y: 0 })
+    // rand=0.5 だと ずれが 0 になるので、ゆれている時間があることを別の乱数で確かめる
+    const s2 = new RallyFx(() => 0.9, false)
+    s2.hit({ x: 4, y: 20 }, 1.2, true)
+    expect(Math.abs(s2.offset().x)).toBeGreaterThan(0)
+  })
+  it('ホークアイ先生の強打では画面をゆらさない', () => {
+    const f = new RallyFx(() => 0.9, false)
+    f.hit({ x: 4, y: 3 }, 1.2, false)
+    expect(f.offset()).toEqual({ x: 0, y: 0 })
+  })
+  it('動きを減らす設定では、粒もゆれも出さない（輪と文字は出す）', () => {
+    const f = new RallyFx(() => 0.9, true)
+    f.hit({ x: 4, y: 20 }, 1.2, true)
+    f.celebrate({ x: 4, y: 5 }, '2れんぞく！')
+    expect(f.counts().sparks).toBe(0)
+    expect(f.offset()).toEqual({ x: 0, y: 0 })
+    expect(f.counts().rings).toBe(2)
+    expect(f.counts().pops).toBe(1)
+  })
+  it('時間がたつと消える。球の残像は新しいポイントで消す', () => {
+    const f = new RallyFx(rand, false)
+    f.celebrate({ x: 4, y: 5 }, 'ナイス！')
+    for (let i = 0; i < 5; i++) f.update(0.05, { x: 4, y: 10 + i })
+    expect(f.counts().trail).toBeGreaterThan(1)
+    f.reset()
+    expect(f.counts().trail).toBe(0)
+    for (let i = 0; i < 40; i++) f.update(0.05, null)
+    expect(f.counts()).toEqual({ sparks: 0, rings: 0, pops: 0, trail: 0 })
   })
 })

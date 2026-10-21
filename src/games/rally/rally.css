@@ -170,3 +170,24 @@
 .rally-next {
   margin-top: 4px;
 }
+/* 5回ごとの節目で はずむ（key が変わるたびに動く） */
+.rally-count[data-beat] {
+  animation: rally-beat 0.45s ease-out;
+}
+@keyframes rally-beat {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  35% {
+    transform: translateX(-50%) scale(1.35);
+    background: var(--lime);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rally-count[data-beat] {
+    animation: none;
+  }
+}
