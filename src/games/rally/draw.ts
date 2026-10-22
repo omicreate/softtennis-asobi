@@ -9,6 +9,7 @@ import { drawPaddleArt } from '../../ui/paddleArt'
 import type { PaddleLook } from '../../ui/paddleArt'
 import { drawHawkArt } from '../../ui/hawkArt'
 import type { Face } from '../../ui/Hawk'
+import type { RallyFx } from './fx'
 
 /**
  * ソフトテニスのラケットの大きさ（m）：全長68cm・頭の幅24cm、のど＋グリップ37cm（ui/paddleArt.ts と同じ比率）。
@@ -55,6 +56,8 @@ const C = {
   ballLine: '#b39a3e',
   shadow: 'rgba(0, 0, 0, 0.28)',
   target: 'rgba(255, 241, 168, 0.24)',
+  /** 外れた球の × （オレンジ：自分の色） */
+  miss: '#ff8a3d',
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -71,6 +74,8 @@ export interface DrawOptions {
   senseiFace?: Face
   /** ラケットの見た目（コレクション） */
   paddles?: [PaddleLook, PaddleLook]
+  /** 手応えの演出（残像・はじけ・ゆれ） */
+  fx?: RallyFx
 }
 
 export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, e: RallyEngine, o: DrawOptions): void {
@@ -80,6 +85,10 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
 
   ctx.fillStyle = C.bg
   ctx.fillRect(0, 0, w, h)
+  // 強く打ったときの ゆれ（背景の外側は ずらさない）
+  const shake = o.fx?.offset() ?? { x: 0, y: 0 }
+  ctx.save()
+  ctx.translate(shake.x, shake.y)
 
   // まわり・コート（ダブルスの横の帯も描く。判定はシングルスのコート）
   ctx.fillStyle = C.out
@@ -163,6 +172,21 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
       ctx.strokeRect(X(z.x0), Y(z.y0), (z.x1 - z.x0) * s, (z.y1 - z.y0) * s)
       ctx.setLineDash([])
     }
+    // 外れた球の落ちた場所（×）。的とのずれが目で分かるように、次の球を送るまで残す
+    const m = e.missAt
+    if (m && e.phase !== 'over') {
+      const k = 0.28 * s
+      ctx.beginPath()
+      ctx.moveTo(X(m.x) - k, Y(m.y) - k)
+      ctx.lineTo(X(m.x) + k, Y(m.y) + k)
+      ctx.moveTo(X(m.x) + k, Y(m.y) - k)
+      ctx.lineTo(X(m.x) - k, Y(m.y) + k)
+      ctx.strokeStyle = C.miss
+      ctx.lineWidth = Math.max(3, 0.09 * s)
+      ctx.lineCap = 'round'
+      ctx.stroke()
+      ctx.lineCap = 'butt'
+    }
     drawMachine(ctx, X, Y, s, o.senseiFace ?? 'think')
   }
 
@@ -171,6 +195,8 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     if (e.opts.kind === 'target' && side === 1) continue
     drawPlayer(ctx, X, Y, s, e, side, o.senseiFace ?? 'think', o.paddles?.[side])
   }
+
+  o.fx?.drawUnder(ctx, X, Y, s)
 
   // 球（影で高さを見せる）
   if (e.ballVisible) {
@@ -194,6 +220,8 @@ export function drawRally(ctx: CanvasRenderingContext2D, w: number, h: number, v
     ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
     ctx.fill()
   }
+  o.fx?.drawOver(ctx, X, Y, s)
+  ctx.restore()
 }
 
 type Px = (v: number) => number

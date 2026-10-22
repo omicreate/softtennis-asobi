@@ -47,7 +47,8 @@ export type EngineEvent =
   | { type: 'fault'; server: Side }
   /** ねらってショット：ボールマシンが球を送った／打った球の結果 */
   | { type: 'feed'; index: number; zone: Zone }
-  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number }
+  /** at＝打った球が最初に跳ねた場所（返せなかったときは無し） */
+  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number; at?: Vec }
   | { type: 'over'; winner: Side | null }
 
 /** ねらってショットで外れた理由 */
@@ -113,6 +114,8 @@ export class RallyEngine {
   zone: Zone | null = null
   shotIndex = 0
   hits = 0
+  /** ねらってショット：外れた球の落ちた場所（次の球を送るまで目印を出す） */
+  missAt: Vec | null = null
   private readonly rand: () => number
   private serveWait = 0
   private now = 0
@@ -190,15 +193,18 @@ export class RallyEngine {
     // 送った球はラリー中の球とみなす（下の人の球は3球目）
     this.state = { lastHitter: 1, shot: 2, bounces: 0, serverX: this.ball.x }
     this.phase = 'play'
+    this.missAt = null
     ev.push({ type: 'feed', index: this.shotIndex, zone })
   }
 
   /** ねらってショット：1球の結果 */
-  private shotResult(ok: boolean, reason: ShotMiss | null, ev: EngineEvent[]): void {
+  private shotResult(ok: boolean, reason: ShotMiss | null, ev: EngineEvent[], at?: Vec): void {
     if (ok) this.hits += 1
+    else if (at) this.missAt = { x: at.x, y: at.y }
     this.phase = 'point'
-    this.timer = 1.4
-    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits })
+    // 外れたときは、直し方の一言を読めるように少し長く見せる
+    this.timer = ok ? 1.4 : 2.0
+    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits, at: at ? { x: at.x, y: at.y } : undefined })
   }
 
   private holdBall(): void {
@@ -383,7 +389,7 @@ export class RallyEngine {
           // 打った球が最初に跳ねた場所で判定（ラインに触れた球はイン）
           const inCourtTop = bounce.y <= COURT.NET_Y && bounce.x >= -1e-6 && bounce.x <= COURT.W + 1e-6 && bounce.y >= -1e-6
           const ok = inCourtTop && !!this.zone && inZone(this.zone, bounce)
-          this.shotResult(ok, ok ? null : inCourtTop ? 'zone' : 'out', ev)
+          this.shotResult(ok, ok ? null : inCourtTop ? 'zone' : 'out', ev, bounce)
         }
       } else if (bounce && !hitNow && this.phase === 'play') {
         this.state.bounces = this.ball.bounces

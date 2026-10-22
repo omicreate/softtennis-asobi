@@ -6,7 +6,7 @@ import { MEDAL_RULES, senseiValue } from '../core/records'
 import type { Level } from '../core/players'
 import { getProgress, recordPlay, recordStart } from '../core/progress'
 import type { Reward } from '../core/progress'
-import { useSettings } from '../core/settings'
+import { setSettings, useSettings } from '../core/settings'
 import { stopSpeaking } from '../core/speak'
 import { Stage } from '../core/Stage'
 import { usePlayClock } from '../core/usePlayClock'
@@ -31,6 +31,8 @@ export interface GameProps {
   levels: [Level, Level]
   paused: boolean
   onRestart: () => void
+  /** レベルを変えて やりなおす（ひとりで遊ぶゲームの結果から） */
+  onLevel?: (lv: Level) => void
 }
 
 // 開発中だけ：遊んだ時間を入れかえる（「きゅうけい しよう」の確かめに使う）
@@ -73,7 +75,7 @@ export function Play({ game }: { game: GameId }) {
   const [lastValue, setLastValue] = useState<number | undefined>(undefined)
   const solo = info?.players === 1
   // レベルはゲームの途中で変わらないように、始めたときの値で固定する（ひとりのときは自分とホークアイ先生が同じレベル）
-  const [levels] = useState<[Level, Level]>(() => (solo ? [settings.soloLevel, settings.soloLevel] : [settings.levels[0], settings.levels[1]]))
+  const [levels, setLevels] = useState<[Level, Level]>(() => (solo ? [settings.soloLevel, settings.soloLevel] : [settings.levels[0], settings.levels[1]]))
   const [handheld] = useState(() => HANDHELD.includes(game))
 
   // はじめた回数とスタンプ（StrictMode で2回呼ばれても1回だけ数える）
@@ -94,7 +96,12 @@ export function Play({ game }: { game: GameId }) {
     setRound((r) => r + 1)
   }
   const paused = menu || help || !!share || rest
-  const props: GameProps = { levels, paused, onRestart: restart }
+  const changeLevel = (lv: Level) => {
+    setSettings({ soloLevel: lv })
+    setLevels([lv, lv])
+    restart()
+  }
+  const props: GameProps = { levels, paused, onRestart: restart, onLevel: solo ? changeLevel : undefined }
 
   // 遊んだ時間をはかる（一時停止中・画面を見ていないときは数えない）
   usePlayClock(paused)
