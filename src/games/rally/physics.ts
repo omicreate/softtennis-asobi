@@ -55,27 +55,53 @@ export interface Shot {
   target: Vec
   /** 飛ぶ時間（timeScale=1 のとき） */
   T: number
-  /** 0〜1.4 の強さ（1を超えると外に出うる） */
+  /** 0〜POWER_MAX の強さ（1を超えると外に出うる） */
   power: number
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
+/** 振りの強さの上限（1を超えると奥へ。1.16 あたりでベースラインをこえる） */
+export const POWER_MAX = 1.25
+/** 振りの速さの目安（m/s）。スマホでは 1m ≒ 30px なので、30m/s ≒ 1秒に900px 動かす速さ */
+const SWING_SCALE = 30
+
 /**
  * ラケットの速さから、強さを決める。
  * vNet：ネットの方向へ動いた速さ（m/s）。止めて当てる＝0、速く振る＝大。
+ * 指で振る速さは人によって大きく違う（ふつうに払うと 1秒に1000〜2500px）。
+ * まっすぐ比例させるとすぐ上限に張りつくので、速くなるほど伸びがゆるやかになる曲線にする。
+ *   そっと（約10m/s）≒0.35　ふつう（約25m/s）≒0.7　つよく（約47m/s）≒1.0　思いきり（約120m/s）≒1.23（アウトになりうる）
  */
 export function powerFromSwing(vNet: number): number {
-  const p = Math.max(0, vNet) / 14
-  return clamp(p, 0, 1.4)
+  return POWER_MAX * (1 - Math.exp(-Math.max(0, vNet) / SWING_SCALE))
+}
+
+/** powerFromSwing の逆（その強さを出すのに要る振りの速さ m/s）。ホークアイ先生の振りに使う */
+export function swingForPower(power: number): number {
+  const p = clamp(power, 0, POWER_MAX * 0.995)
+  return -SWING_SCALE * Math.log(1 - p / POWER_MAX)
+}
+
+/**
+ * 振った向き（-1.2〜1.2）。ネットの方へ振った速さに対する、横に振った速さの割合。
+ * まっすぐ振る＝0、ななめ45°に振る＝1。速さそのものではなく向きで決めるので、強く振っても横へ飛びすぎない。
+ */
+export function aimFromSwing(vNet: number, swingX: number): number {
+  return clamp(swingX / Math.max(Math.abs(vNet), 8), -1.2, 1.2)
+}
+
+/** 打球の速さの見せ方（km/h）。強さ 0→30、1→118、上限→140 くらい。実物の計測ではなくゲームの目安 */
+export function speedKmh(power: number): number {
+  return Math.round(30 + 88 * clamp(power, 0, POWER_MAX))
 }
 
 /**
  * どこに落とすかを決める。
  * offset：ラケットのどこに当たったか（-1〜1。端に当たるほど角度がつく）
- * swingX：ラケットの横の速さ（m/s。横に振ると球もそちらへ）
+ * aim：振った向き（aimFromSwing。横に振ると球もそちらへ）
  */
-export function planShot(from: Vec, hitter: Side, power: number, offset: number, swingX: number, opts: ShotOptions): Shot {
+export function planShot(from: Vec, hitter: Side, power: number, offset: number, aim: number, opts: ShotOptions): Shot {
   const dir = toNet(hitter)
   let p = opts.keepIn ? Math.min(power, 1) : power
   // 止めて当てたときの深さ：ネットの近くなら短く、後ろからなら中くらいまで返る
@@ -87,10 +113,10 @@ export function planShot(from: Vec, hitter: Side, power: number, offset: number,
   if (opts.serve) {
     // サービスは対角へ。強く振るほど深い（サービスラインをこえるとフォールト）
     depth = SERVE_SHORT + (SERVE_LONG - SERVE_SHORT) * Math.min(power, 1.4) / 1.4
-    tx = COURT.W - from.x + offset * 1.0 + swingX * 0.12
+    tx = COURT.W - from.x + offset * 1.0 + aim * 1.0
     if (opts.keepIn) depth = clamp(depth, SERVE_SHORT, COURT.SERVICE - 0.6)
   } else {
-    tx = from.x + offset * 3.0 + swingX * 0.3
+    tx = from.x + offset * 2.0 + aim * 2.6
   }
 
   if (opts.keepIn) {

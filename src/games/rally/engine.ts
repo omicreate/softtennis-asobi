@@ -9,11 +9,11 @@
 import { LEVEL_INFO, other } from '../../core/players'
 import type { Level, Side } from '../../core/players'
 import { COURT, serveHalf, toNet } from './court'
-import { assistShift, contact, HIT_Z, launch, planShot, powerFromSwing, stepBall } from './physics'
+import { aimFromSwing, assistShift, contact, HIT_Z, launch, planShot, powerFromSwing, speedKmh, stepBall } from './physics'
 import type { Ball, Paddle, Vec } from './physics'
 import { judgeBounce, judgeHit } from './rules'
 import type { Fault, RallyState, RuleMode } from './rules'
-import { feedLanding, inZone, makeZone, SHOTS } from './targets'
+import { feedLanding, inZone, makeZone, shotPoints, SHOTS } from './targets'
 import type { Zone } from './targets'
 
 /** versus＝たいけつ（2人／ホークアイ先生）、target＝ねらって ストローク（ひとりで。上はボールマシン） */
@@ -48,7 +48,8 @@ export type EngineEvent =
   /** ねらってショット：ボールマシンが球を送った／打った球の結果 */
   | { type: 'feed'; index: number; zone: Zone }
   /** at＝打った球が最初に跳ねた場所（返せなかったときは無し） */
-  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number; at?: Vec }
+  /** points＝この球の得点（入らなければ 0）、total＝ここまでの合計 */
+  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number; at?: Vec; points: number; total: number }
   | { type: 'over'; winner: Side | null }
 
 /** ねらってショットで外れた理由 */
@@ -63,8 +64,12 @@ export const MACHINE = { x: COURT.W / 2, y: -1.9, z: 1.0 }
 
 /** 指の位置から、ラケットをネット側へ少し出す（指でラケットが隠れないように） */
 export const FINGER_LEAD = 1.2
-/** 指の速さを測る時間幅（秒） */
-const SWING_WINDOW = 0.09
+/** 指の速さを覚えておく時間（秒）。少し早めに振り終わっても、その振りの強さで打てる */
+const SWING_WINDOW = 0.12
+/** いまの速さを測る区間（秒）。短いほど振りはじめ・振り終わりに素早く応える */
+const SWING_SPAN = 0.04
+/** サービス：振りはじめてから打つまでの時間（秒）。振りの一番速いところを拾うため、ほんの少し待つ */
+const SERVE_CHARGE = 0.06
 /** サーブのときに「ネットへ向けて振った」とみなす速さ（m/s） */
 const SERVE_SWING = 2.4
 
@@ -114,10 +119,19 @@ export class RallyEngine {
   zone: Zone | null = null
   shotIndex = 0
   hits = 0
+  /** ねらってショット：得点の合計・つづけて入った数・いちばん長い れんぞく */
+  points = 0
+  streak = 0
+  bestStreak = 0
+  /** 最後に打った球の強さ（ねらってショットの速さボーナスに使う） */
+  private lastPower = 0
   /** ねらってショット：外れた球の落ちた場所（次の球を送るまで目印を出す） */
   missAt: Vec | null = null
   private readonly rand: () => number
   private serveWait = 0
+  /** サービスの振り：振りはじめてからの時間（振っていないときは -1）と、その間で一番強い振り */
+  private serveSwingT = -1
+  private serveSwing: Vec = { x: 0, y: 0 }
   private now = 0
   /** カウントダウンで最後に知らせた数 */
   private announced = 4
@@ -131,26 +145,51 @@ export class RallyEngine {
     ]
   }
 
-  /** 指の位置（コートの座標 m）。active=false は指を離したとき */
-  setFinger(side: Side, active: boolean, x: number, y: number): void {
+  /** いまの時刻（秒。step で進む。止めている間は進まない） */
+  get time(): number {
+    return this.now
+  }
+
+  /**
+   * 指の位置（コートの座標 m）。active=false は指を離したとき。
+   * t：指が動いた時刻（time と同じ物差し）。画面は指の動きを1コマに何回も伝えることがあるので、
+   * コマの時刻ではなく指が動いた時刻で速さを測る（省略時はいまのコマの時刻）
+   */
+  setFinger(side: Side, active: boolean, x: number, y: number, t = this.now): void {
     const f = this.fingers[side]
     f.active = active
     if (!active) return
     f.x = x
     f.y = y
-    f.samples.push({ t: this.now, x, y })
+    const last = f.samples[f.samples.length - 1]
+    f.samples.push({ t: last ? Math.max(t, last.t) : t, x, y })
   }
 
-  /** 指の速さ（m/s） */
+  /**
+   * 指の速さ（m/s）。直近 SWING_WINDOW 秒のうち、ネットの方へ一番速く動いた区間（SWING_SPAN 秒ほど）の速さ。
+   * 区間全体の平均だと、止めていた指を振りはじめた瞬間の速さが小さく出てしまうので、一番速いところを使う。
+   */
   private fingerVelocity(side: Side): Vec {
     const f = this.fingers[side]
     f.samples = f.samples.filter((s) => this.now - s.t <= SWING_WINDOW)
-    if (f.samples.length < 2) return { x: 0, y: 0 }
-    const a = f.samples[0]
-    const b = f.samples[f.samples.length - 1]
-    const dt = b.t - a.t
-    if (dt < 0.012) return { x: 0, y: 0 }
-    return { x: (b.x - a.x) / dt, y: (b.y - a.y) / dt }
+    const n = toNet(side)
+    let best: Vec = { x: 0, y: 0 }
+    let bestNet = -Infinity
+    let j = 0
+    for (let i = 1; i < f.samples.length; i++) {
+      const b = f.samples[i]
+      // b から SWING_SPAN 秒さかのぼった所にいちばん近い点 a（短すぎる区間は測らない）
+      while (j < i - 1 && b.t - f.samples[j + 1].t >= SWING_SPAN) j++
+      const a = f.samples[j]
+      const dt = b.t - a.t
+      if (dt < 0.012) continue
+      const v = { x: (b.x - a.x) / dt, y: (b.y - a.y) / dt }
+      if (v.y * n > bestNet) {
+        bestNet = v.y * n
+        best = v
+      }
+    }
+    return best
   }
 
   private levelOf(side: Side) {
@@ -179,6 +218,7 @@ export class RallyEngine {
   private startServe(): void {
     this.phase = 'serve'
     this.serveWait = 0
+    this.serveSwingT = -1
     this.ballVisible = true
     this.lastFault = null
     if (this.opts.kind === 'target') this.zone = makeZone(this.opts.levels[0], this.shotIndex, this.rand)
@@ -199,12 +239,21 @@ export class RallyEngine {
 
   /** ねらってショット：1球の結果 */
   private shotResult(ok: boolean, reason: ShotMiss | null, ev: EngineEvent[], at?: Vec): void {
-    if (ok) this.hits += 1
-    else if (at) this.missAt = { x: at.x, y: at.y }
+    let points = 0
+    if (ok && at) {
+      this.hits += 1
+      this.streak += 1
+      this.bestStreak = Math.max(this.bestStreak, this.streak)
+      points = shotPoints(at, speedKmh(this.lastPower), this.streak).total
+      this.points += points
+    } else {
+      this.streak = 0
+      if (at) this.missAt = { x: at.x, y: at.y }
+    }
     this.phase = 'point'
     // 外れたときは、直し方の一言を読めるように少し長く見せる
     this.timer = ok ? 1.4 : 2.0
-    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits, at: at ? { x: at.x, y: at.y } : undefined })
+    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits, at: at ? { x: at.x, y: at.y } : undefined, points, total: this.points })
   }
 
   private holdBall(): void {
@@ -219,10 +268,10 @@ export class RallyEngine {
     this.ball.bounces = 0
   }
 
-  private doServe(power: number, swingX: number): void {
+  private doServe(power: number, aim: number): void {
     const side = this.server
     const lv = this.levelOf(side)
-    const shot = planShot(this.ball, side, power, 0, swingX, { keepIn: lv.keepIn, serve: true })
+    const shot = planShot(this.ball, side, power, 0, aim, { keepIn: lv.keepIn, serve: true })
     launch(this.ball, shot.target, shot.T, this.levelOf(other(side)).ballSpeed)
     this.state = { lastHitter: side, shot: 0, bounces: 0, serverX: this.ball.x }
     this.phase = 'play'
@@ -288,12 +337,23 @@ export class RallyEngine {
         const vNet = sw.y * toNet(this.server)
         const lv = this.levelOf(this.server)
         const auto = lv.keepIn ? 3 : Infinity
-        if (this.serveWait > 0.35 && vNet > SERVE_SWING) {
-          this.doServe(powerFromSwing(vNet), sw.x)
-          ev.push({ type: 'hit', side: this.server, power: 0.5 })
+        if (this.serveSwingT < 0 && this.serveWait > 0.35 && vNet > SERVE_SWING) {
+          this.serveSwingT = 0
+          this.serveSwing = { x: 0, y: 0 }
+        }
+        if (this.serveSwingT >= 0) {
+          // 振りはじめたら、一番強いところを覚えて、少しあとに打つ（振りはじめの弱い速さで打たない）
+          this.serveSwingT += dt
+          if (vNet > this.serveSwing.y * toNet(this.server)) this.serveSwing = sw
+          if (this.serveSwingT >= SERVE_CHARGE) {
+            const v = this.serveSwing.y * toNet(this.server)
+            const power = powerFromSwing(v)
+            this.doServe(power, aimFromSwing(v, this.serveSwing.x))
+            ev.push({ type: 'hit', side: this.server, power })
+          }
         } else if (this.serveWait > auto) {
           this.doServe(0.45, 0)
-          ev.push({ type: 'hit', side: this.server, power: 0.4 })
+          ev.push({ type: 'hit', side: this.server, power: 0.45 })
         }
         break
       }
@@ -367,11 +427,13 @@ export class RallyEngine {
           break
         }
         const sw = swings[side]
-        const power = powerFromSwing(sw.y * toNet(side))
-        const shot = planShot(this.ball, side, power, off, sw.x, { keepIn: lv.keepIn })
+        const vNet = sw.y * toNet(side)
+        const power = powerFromSwing(vNet)
+        const shot = planShot(this.ball, side, power, off, aimFromSwing(vNet, sw.x), { keepIn: lv.keepIn })
         this.ball.z = Math.max(this.ball.z, 0.35)
         launch(this.ball, shot.target, shot.T, this.levelOf(other(side)).ballSpeed)
         this.state = { ...this.state, lastHitter: side, shot: this.state.shot + 1, bounces: 0 }
+        this.lastPower = power
         this.swingT[side] = SWING_TIME
         this.head[side] = off * (p.width / 2)
         hitNow = true

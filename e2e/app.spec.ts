@@ -179,6 +179,48 @@ test('ひとりで：ホークアイ先生と ラリーでは、ホークアイ�
   await expect(page.locator('.solo-score')).toHaveAttribute('aria-label', /ホークアイ先生/)
 })
 
+/** ホークアイ先生と ラリーで、自分のサービスを決まった速さで振り、打った直後の球の速さ（m/s）を返す */
+async function serveSpeed(page: Page, stepPx: number): Promise<number> {
+  await open(page, './#/play/sensei')
+  await expect(page.getByTestId('rally-canvas')).toBeVisible()
+  await page.waitForTimeout(3300)
+  const vp = page.viewportSize()!
+  // 16ms ごとに stepPx ずつ上へ動かす（ページの中で回して、間の時間をそろえる）。打った瞬間の球の速さを読む
+  return page.evaluate(
+    async ({ x, y0, step }) => {
+      const c = document.querySelector('[data-testid=rally-canvas]')!
+      const e = (window as unknown as { __rally: { phase: string; state: { lastHitter: number }; ball: { vx: number; vy: number } } }).__rally
+      const send = (type: string, y: number) => c.dispatchEvent(new PointerEvent(type, { pointerId: 1, clientX: x, clientY: y, bubbles: true, pointerType: 'touch', isPrimary: true }))
+      const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+      let y = y0
+      send('pointerdown', y)
+      await wait(80)
+      let v = 0
+      for (let i = 0; i < 12 && !v; i++) {
+        y -= step
+        send('pointermove', y)
+        await wait(16)
+        if (e.phase === 'play' && e.state.lastHitter === 0) v = Math.hypot(e.ball.vx, e.ball.vy)
+      }
+      send('pointerup', y)
+      return v
+    },
+    { x: vp.width * 0.6, y0: vp.height * 0.95, step: stepPx },
+  )
+}
+
+test('ひとりで：振る速さで球の速さが変わる（そっと振ったサービスより、シュッと振ったサービスが速い）', async ({ browser }) => {
+  const soft = await browser.newPage({ viewport: { width: 412, height: 915 }, hasTouch: true })
+  const hard = await browser.newPage({ viewport: { width: 412, height: 915 }, hasTouch: true })
+  // 1回 16ms ごとに 3px（約190px/秒）と 40px（約2500px/秒）
+  const vSoft = await serveSpeed(soft, 3)
+  const vHard = await serveSpeed(hard, 40)
+  expect(vSoft).toBeGreaterThan(0)
+  expect(vHard).toBeGreaterThan(vSoft * 1.2)
+  await soft.close()
+  await hard.close()
+})
+
 test('ホークアイの め：コートが消えたら答える。答えあわせで もう一度見せ、10もんで結果', async ({ page }) => {
   test.setTimeout(90_000)
   await open(page, './#/setup/hawkeye')

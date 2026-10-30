@@ -92,3 +92,29 @@ export function shotHint(z: Zone, at: { x: number; y: number }): string {
   if (at.y > z.y1 + eps) return 'もっと ふかく。うえに つよく ふろう'
   return ''
 }
+
+/**
+ * ねらって ストロークの得点（1球ぶん）。入らなければ 0。
+ *   的に入る 100 ＋ ふかい（ベースラインの まえ 3m 以内）50 ＋ はやい球 最大 40 ＋ れんぞく 20ずつ（最大 100）
+ * kmh：打った球の速さ（physics の speedKmh）。streak：この球をふくめて何球つづけて入ったか
+ */
+export function shotPoints(at: { x: number; y: number }, kmh: number, streak: number): { total: number; deep: boolean; fast: number; combo: number } {
+  const deep = at.y <= DEEP + 1e-6
+  const fast = Math.max(0, Math.min(40, Math.round((kmh - 70) / 1.5)))
+  const combo = Math.min(100, 20 * Math.max(0, streak - 1))
+  return { total: 100 + (deep ? 50 : 0) + fast + combo, deep, fast, combo }
+}
+
+export type Rank = 'S' | 'A' | 'B' | 'C'
+
+/** 10球の合計点のランク（ぜんぶ入れて れんぞくを つなぐと S） */
+export function rankOf(points: number): Rank {
+  return points >= 1600 ? 'S' : points >= 1100 ? 'A' : points >= 500 ? 'B' : 'C'
+}
+
+/** つぎのランクまで あと何点か（S なら null） */
+export function toNextRank(points: number): { rank: Rank; need: number } | null {
+  if (points >= 1600) return null
+  const next: [Rank, number] = points >= 1100 ? ['S', 1600] : points >= 500 ? ['A', 1100] : ['B', 500]
+  return { rank: next[0], need: next[1] - points }
+}

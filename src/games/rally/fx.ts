@@ -4,7 +4,9 @@
  *   はじけ …… 打った所・的に入った所で、光の粒が はじける
  *   ゆれ …… 強く打ったときだけ、画面を少しゆらす
  *   文字 …… 「2れんぞく！」などを、その場から浮かせて消す
- * 「動きを減らす」設定（prefers-reduced-motion）のときは、ゆれ・粒を出さない。
+ *   速さ …… 自分が打った球の速さ（km/h）を打点から浮かせる。振る速さが球の速さになったと分かるように
+ *   ため …… 強く打った瞬間だけ、球をほんの一瞬止める（ヒットストップ）
+ * 「動きを減らす」設定（prefers-reduced-motion）のときは、ゆれ・粒・ためを出さない。
  */
 import type { Vec } from './physics'
 
@@ -33,6 +35,9 @@ interface Pop {
   text: string
   age: number
   life: number
+  color: string
+  /** 文字の大きさの倍率 */
+  size: number
 }
 
 interface TrailPoint {
@@ -45,6 +50,8 @@ interface TrailPoint {
 export const STRONG_POWER = 0.95
 const TRAIL_LIFE = 0.16
 const SHAKE_TIME = 0.18
+/** 強く打ったときに球を止める時間（秒）。長いと遅れて感じるので短く */
+export const HIT_STOP = 0.06
 
 export const FX_COLOR = { hit: '#fff1a8', strong: '#ff8a3d', good: '#d8f04c', sensei: '#3fd08f' }
 
@@ -63,6 +70,7 @@ export class RallyFx {
   private trail: TrailPoint[] = []
   private shakeT = 0
   private shakeAmp = 0
+  private stopT = 0
   /** 球の尾をオレンジにする（強い打球のあいだ） */
   private hot = false
   private readonly calm: boolean
@@ -81,20 +89,36 @@ export class RallyFx {
     const color = strong ? FX_COLOR.strong : mine ? FX_COLOR.hit : FX_COLOR.sensei
     this.rings.push({ x: at.x, y: at.y, age: 0, life: strong ? 0.35 : 0.25, color, size: strong ? 1.6 : 1.0 })
     this.burst(at, strong ? 14 : 6, color, strong ? 7 : 4)
-    if (strong && mine) this.shake(5)
+    if (strong && mine) {
+      this.shake(5)
+      if (!this.calm) this.stopT = HIT_STOP
+    }
+  }
+
+  /** 自分が打った球の速さを、打点から浮かせる。強い球はオレンジで大きく */
+  speed(at: Vec, kmh: number, strong: boolean): void {
+    this.pops.push({ x: at.x, y: at.y, text: `${kmh}km/h`, age: 0, life: 0.9, color: strong ? FX_COLOR.strong : FX_COLOR.hit, size: strong ? 0.8 : 0.6 })
+  }
+
+  /** ヒットストップ中か。止めている間は true（進行を止める側が毎フレーム呼ぶ） */
+  holding(dt: number): boolean {
+    if (this.stopT <= 0) return false
+    this.stopT -= dt
+    return true
   }
 
   /** 的に入った・ラリーの節目：大きめの はじけ */
   celebrate(at: Vec, text?: string): void {
     this.rings.push({ x: at.x, y: at.y, age: 0, life: 0.5, color: FX_COLOR.good, size: 2.4 })
     this.burst(at, 18, FX_COLOR.good, 6)
-    if (text) this.pops.push({ x: at.x, y: at.y, text, age: 0, life: 1.1 })
+    if (text) this.pops.push({ x: at.x, y: at.y, text, age: 0, life: 1.1, color: FX_COLOR.good, size: 1 })
   }
 
   /** 新しいポイント・新しい球：残像を消す */
   reset(): void {
     this.trail = []
     this.hot = false
+    this.stopT = 0
   }
 
   private burst(at: Vec, n: number, color: string, speed: number): void {
@@ -183,14 +207,14 @@ export class RallyFx {
       // はじめに ぽんと大きくなり、上へ浮きながら消える
       const grow = Math.min(1, p.age / 0.12)
       ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3
-      ctx.font = `900 ${Math.round(Math.max(18, 0.9 * s) * (0.6 + 0.4 * grow))}px "Zen Maru Gothic", sans-serif`
+      ctx.font = `900 ${Math.round(Math.max(18, 0.9 * s) * p.size * (0.6 + 0.4 * grow))}px "Zen Maru Gothic", sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       const y = Y(p.y) - k * 1.6 * s
       ctx.lineWidth = Math.max(3, 0.16 * s)
       ctx.strokeStyle = '#12302b'
       ctx.strokeText(p.text, X(p.x), y)
-      ctx.fillStyle = FX_COLOR.good
+      ctx.fillStyle = p.color
       ctx.fillText(p.text, X(p.x), y)
     }
     ctx.globalAlpha = 1

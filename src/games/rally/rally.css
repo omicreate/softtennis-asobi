@@ -170,6 +170,52 @@
 .rally-next {
   margin-top: 4px;
 }
+/* ねらって ストロークの ランク（S・A は光らせる） */
+.rally-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.rally-rank-badge {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid var(--pk-line);
+  background: #fff;
+  font-size: 36px;
+  font-weight: 900;
+  animation: rally-rank-in 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.rally-rank[data-rank='S'] .rally-rank-badge {
+  background: #ffd84d;
+  box-shadow: 0 0 0 4px #fff3b0, 0 0 24px #ffd84d;
+}
+.rally-rank[data-rank='A'] .rally-rank-badge {
+  background: var(--lime);
+}
+.rally-rank small {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--mute);
+}
+@keyframes rally-rank-in {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rally-rank-badge {
+    animation: none;
+  }
+}
 /* 5回ごとの節目で はずむ（key が変わるたびに動く） */
 .rally-count[data-beat] {
   animation: rally-beat 0.45s ease-out;
@@ -190,4 +236,9 @@
   .rally-count[data-beat] {
     animation: none;
   }
+}
+
+/* 結果のあいだは「？」と一時停止を出さない（結果の文字に重なるため。結果に「もういちど」「おわる」がある） */
+body:has(.rally .result) .game-buttons {
+  display: none;
 }
