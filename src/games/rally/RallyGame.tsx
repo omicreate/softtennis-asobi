@@ -23,7 +23,8 @@ import { mulberry32 } from '../../core/rng'
 import { usePlay } from '../../shell/playContext'
 import { Cpu, CPU_SKILL } from './cpu'
 import { drawRally, makeView, toWorld } from './draw'
-import { RallyFx } from './fx'
+import { RallyFx, STRONG_POWER } from './fx'
+import { speedKmh } from './physics'
 import { RallyEngine } from './engine'
 import type { Games, Kind, ShotMiss } from './engine'
 import { REASON_TEXT } from './rules'
@@ -50,6 +51,17 @@ const targetBest = (lv: Level) => `target-best-${lv}`
 const rallyBest = (lv: Level) => `sensei-rally-best-${lv}`
 /** 試合の中のラリーの回数を画面に出しはじめる数 */
 const RALLY_SHOW = 3
+/** ひとりで遊ぶラリー・ねらって ストロークで、いちばん速かった球（km/h。この端末にだけ保存） */
+const SPEED_BEST = 'rally-speed-best'
+
+/** 打った手応えを、指に小さなふるえで返す（対応している端末だけ。Android の Chrome など） */
+function buzz(ms: number): void {
+  try {
+    navigator.vibrate?.(ms)
+  } catch {
+    // ふるえに対応していない端末では何もしない
+  }
+}
 
 /**
  * 結果のあとに すすめる レベル（かんたんルールだけ）。
@@ -103,6 +115,9 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
   const [rallyNow, setRallyNow] = useState(0)
   const rallyHits = useRef(0)
   const [rallyLong, setRallyLong] = useState({ match: 0, best: load<number>(rallyBest(levels[0]), 0), record: false })
+  /** ひとりのとき：この回で いちばん速かった球（km/h）と、これまでの さいこう */
+  const topSpeed = useRef(0)
+  const [speed, setSpeed] = useState({ match: 0, best: load<number>(SPEED_BEST, 0), record: false })
   /** ホークアイ先生（審判・相手・マシンの係）の表情。しばらくすると「かんがえる」に戻る */
   const [pkFace, setPkFace] = useState<Face>('think')
   const pkTimer = useRef(0)
@@ -140,8 +155,15 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
     noticeTimer.current = seconds
   }
 
-  useFrame((dt) => {
-    if (!paused) {
+  /** いちばん新しいコマの時刻（ms。指の動いた時刻を、ゲームの時刻に直すのに使う） */
+  const frameAt = useRef(0)
+
+  useFrame((dt, now) => {
+    frameAt.current = now
+    // 強く打った瞬間は、球と相手をほんの一瞬止める（演出だけ。粒や輪は動かし続ける）
+    const hold = !paused && fx.holding(dt)
+    if (!paused && hold) fx.update(dt, null)
+    if (!paused && !hold) {
       if (noticeTimer.current > 0) {
         noticeTimer.current -= dt
         if (noticeTimer.current <= 0) setNotice(null)
@@ -169,10 +191,19 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             fx.reset()
             setShots((s) => ({ ...s, index: ev.index, label: ev.zone.label }))
             break
-          case 'hit':
-            sfx.pop(ev.power)
+          case 'hit': {
+            sfx.pop(Math.min(1, ev.power))
             rallyHits.current += 1
-            fx.hit({ x: engine.ball.x, y: engine.ball.y }, ev.power, !cpu || ev.side === 0)
+            const mine = !cpu || ev.side === 0
+            fx.hit({ x: engine.ball.x, y: engine.ball.y }, ev.power, mine)
+            // ひとりで遊ぶとき：自分の球の速さを見せる（振る速さが そのまま球の速さになる）
+            if (solo && ev.side === 0) {
+              const strong = ev.power >= STRONG_POWER
+              const kmh = speedKmh(ev.power)
+              fx.speed({ x: engine.ball.x, y: engine.ball.y }, kmh, strong)
+              topSpeed.current = Math.max(topSpeed.current, kmh)
+              buzz(strong ? 18 : 8)
+            } else if (!solo) buzz(8)
             if (cpu) {
               setRallyNow(rallyHits.current)
               if (rallyHits.current % 5 === 0) {
@@ -181,6 +212,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
               }
             }
             break
+          }
           case 'bounce':
             sfx.bounce()
             break
@@ -238,6 +270,13 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             sfx.fanfare()
             setNotice(null)
             play.finish(kind === 'target' ? { value: engine.hits } : { winner: ev.winner })
+            if (solo && !contest) {
+              const top = topSpeed.current
+              setSpeed((sp) => {
+                if (top > sp.best) save(SPEED_BEST, top)
+                return { match: top, best: Math.max(sp.best, top), record: top > sp.best && sp.best > 0 }
+              })
+            }
             if (contest) {
               setOver({ winner: ev.winner })
               break
@@ -288,13 +327,18 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
     const { side, x, y } = toCourt(e)
     pointers.current.set(e.pointerId, side)
     owner.current[side] = e.pointerId
-    engine.setFinger(side, true, x, y)
+    engine.setFinger(side, true, x, y, fingerTime(e))
+  }
+  /** 指が動いた時刻を、ゲームの時刻（秒）に直す。いまのコマから先へ最大 0.05 秒まで */
+  const fingerTime = (e: PointerEvent) => {
+    const ahead = (e.timeStamp - frameAt.current) / 1000
+    return engine.time + (Number.isFinite(ahead) ? Math.min(0.05, Math.max(0, ahead)) : 0)
   }
   const onMove = (e: PointerEvent<HTMLCanvasElement>) => {
     const side = pointers.current.get(e.pointerId)
     if (side === undefined || owner.current[side] !== e.pointerId) return
     const { x, y } = toCourt(e)
-    engine.setFinger(side, true, x, y)
+    engine.setFinger(side, true, x, y, fingerTime(e))
   }
   const onUp = (e: PointerEvent<HTMLCanvasElement>) => {
     const side = pointers.current.get(e.pointerId)
@@ -366,7 +410,16 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           sub={() => (shots.hits >= shots.best && shots.hits > 0 ? 'さいこう きろく！' : `さいこうは ${shots.best}きゅう（${LEVEL_INFO[levels[0]].label}）`)}
           face={() => (shots.hits >= SHOTS / 2 ? 'ok' : 'eh')}
           onAgain={again}
-          extra={bestStreak >= 2 ? <div className="rally-long">いちばん ながい れんぞく <b>{bestStreak}きゅう</b></div> : undefined}
+          extra={
+            <>
+              {bestStreak >= 2 && (
+                <div className="rally-long">
+                  いちばん ながい れんぞく <b>{bestStreak}きゅう</b>
+                </div>
+              )}
+              <SpeedLine speed={speed} />
+            </>
+          }
         />
       )}
       {over && kind === 'versus' && cpu && (
@@ -376,7 +429,12 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           sub={() => (gameText ? `ゲーム ${gameText}（あなた たい せんせい）` : `あなた ${score[0]} たい ${score[1]} せんせい`)}
           face={() => (over.winner === 0 ? 'oops' : 'ok')}
           onAgain={again}
-          extra={<SenseiExtra long={rallyLong} level={levels[0]} next={mode === 'easy' ? suggestLevel(levels[0], over.winner === 0, score[0], score[1]) : null} onLevel={onLevel} />}
+          extra={
+            <>
+              <SenseiExtra long={rallyLong} level={levels[0]} next={mode === 'easy' ? suggestLevel(levels[0], over.winner === 0, score[0], score[1]) : null} onLevel={onLevel} />
+              <SpeedLine speed={speed} />
+            </>
+          }
         />
       )}
       {over && kind === 'versus' && !cpu && (
@@ -387,6 +445,17 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           onAgain={again}
         />
       )}
+    </div>
+  )
+}
+
+/** 結果：この回で いちばん速かった球（ひとりのとき） */
+function SpeedLine({ speed }: { speed: { match: number; best: number; record: boolean } }) {
+  if (speed.match <= 0) return null
+  return (
+    <div className="rally-long rally-speed" data-testid="rally-speed">
+      いちばん はやい ボール <b>{speed.match}km/h</b>
+      <small>{speed.record ? 'さいこう きろく！' : `さいこう ${speed.best}km/h`}</small>
     </div>
   )
 }

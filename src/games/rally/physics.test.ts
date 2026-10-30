@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { COURT, inServiceCourt } from './court'
-import { contact, G, launch, planShot, powerFromSwing, predictLanding, stepBall } from './physics'
+import { aimFromSwing, contact, G, launch, planShot, POWER_MAX, powerFromSwing, predictLanding, speedKmh, stepBall, swingForPower } from './physics'
 import type { Ball } from './physics'
 
 const N = COURT.NET_Y
@@ -33,11 +33,50 @@ describe('打つ強さと落ちる場所', () => {
   })
   it('速く振るほど奥へ。強すぎると外に出る', () => {
     const from = { x: 4, y: COURT.L }
-    const mid = planShot(from, 0, powerFromSwing(7), 0, 0, { keepIn: false })
-    const deep = planShot(from, 0, powerFromSwing(14), 0, 0, { keepIn: false })
-    const over = planShot(from, 0, powerFromSwing(20), 0, 0, { keepIn: false })
+    // スマホで 1m ≒ 30px。ふつうに払う（25m/s）・つよく（47m/s）・思いきり（120m/s）
+    const mid = planShot(from, 0, powerFromSwing(25), 0, 0, { keepIn: false })
+    const deep = planShot(from, 0, powerFromSwing(47), 0, 0, { keepIn: false })
+    const over = planShot(from, 0, powerFromSwing(120), 0, 0, { keepIn: false })
     expect(deep.target.y).toBeLessThan(mid.target.y)
+    expect(deep.target.y).toBeGreaterThan(0)
     expect(over.target.y).toBeLessThan(0)
+  })
+})
+
+describe('振る速さと球の速さ（操作の速さが球に出る）', () => {
+  it('そっと・ふつう・つよく・思いきりで、強さが段階的に上がる（すぐ上限に張りつかない）', () => {
+    const p = [10, 25, 47, 80, 120].map(powerFromSwing)
+    for (let i = 1; i < p.length; i++) expect(p[i]).toBeGreaterThan(p[i - 1])
+    expect(p[0]).toBeGreaterThan(0.25)
+    expect(p[0]).toBeLessThan(0.45)
+    expect(p[1]).toBeGreaterThan(0.6)
+    expect(p[1]).toBeLessThan(0.8)
+    expect(p[2]).toBeGreaterThan(0.9)
+    expect(p[2]).toBeLessThan(1.05)
+    expect(p[4]).toBeLessThanOrEqual(POWER_MAX)
+  })
+  it('強いほど速く飛ぶ（飛ぶ時間が短い）', () => {
+    const from = { x: 4, y: COURT.L }
+    const soft = planShot(from, 0, powerFromSwing(10), 0, 0, { keepIn: false })
+    const hard = planShot(from, 0, powerFromSwing(47), 0, 0, { keepIn: false })
+    expect(hard.T).toBeLessThan(soft.T - 0.5)
+  })
+  it('swingForPower は powerFromSwing の逆', () => {
+    for (const p of [0, 0.3, 0.7, 1.0, 1.12]) expect(powerFromSwing(swingForPower(p))).toBeCloseTo(p, 5)
+  })
+  it('振った向き：まっすぐ＝0、ななめ45°＝1。強く振っても横へ飛びすぎない', () => {
+    expect(aimFromSwing(30, 0)).toBe(0)
+    expect(aimFromSwing(30, 30)).toBeCloseTo(1)
+    expect(aimFromSwing(30, -30)).toBeCloseTo(-1)
+    expect(aimFromSwing(100, 300)).toBe(1.2)
+    const shot = planShot({ x: 3, y: COURT.L }, 0, powerFromSwing(40), 0, aimFromSwing(40, 40), { keepIn: false })
+    expect(shot.target.x).toBeGreaterThan(4.5)
+    expect(shot.target.x).toBeLessThan(COURT.W + 0.1)
+  })
+  it('見せる速さ（km/h）は強さとともに上がる', () => {
+    expect(speedKmh(powerFromSwing(10))).toBeLessThan(speedKmh(powerFromSwing(25)))
+    expect(speedKmh(powerFromSwing(25))).toBeLessThan(speedKmh(powerFromSwing(47)))
+    expect(speedKmh(POWER_MAX)).toBeLessThanOrEqual(140)
   })
   it('小さい子（keepIn）は強く振ってもコートに入る', () => {
     const shot = planShot({ x: 0.2, y: COURT.L }, 0, 1.4, -1, -8, { keepIn: true })

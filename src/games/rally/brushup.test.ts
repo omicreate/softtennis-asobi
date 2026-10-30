@@ -35,7 +35,7 @@ describe('ねらって ストローク：外れたときの一言', () => {
   })
 
   it('打球の向きの説明が、打ち方の決まり（右はしで当てる・右へ振る＝右へ飛ぶ）と合っている', () => {
-    // physics.ts の planShot：tx = 打点の x + 当てた位置 × 3 + 横に振った速さ × 0.3
+    // physics.ts の planShot：tx = 打点の x + 当てた位置 × 2 + 振った向き × 2.6
     expect(shotHint(right, { x: 0.5, y: 5 })).toContain('みぎはし')
     expect(shotHint(right, { x: W + 1, y: 5 })).toContain('ひだりはし')
   })

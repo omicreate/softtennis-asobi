@@ -7,7 +7,7 @@ import type { Level, Side } from '../../core/players'
 import { COURT, inCourt, sideOf, toNet } from './court'
 import { FINGER_LEAD } from './engine'
 import type { RallyEngine } from './engine'
-import { REACH_Z, stepBall } from './physics'
+import { REACH_Z, stepBall, swingForPower } from './physics'
 import type { Ball } from './physics'
 
 export interface CpuSkill {
@@ -17,8 +17,8 @@ export interface CpuSkill {
   speed: number
   /** ねらいのズレ（m）。大きいほど空振りする */
   error: number
-  /** 振る速さ（m/s）の範囲。大きいほど深く速い球 */
-  swing: [number, number]
+  /** 振る強さ（physics の powerFromSwing と同じ 0〜1.25）の範囲。大きいほど深く速い球 */
+  power: [number, number]
   /** アウトになる球を見送る */
   judgeOut: boolean
   /** ネットからどれくらい後ろで構えるか（m） */
@@ -28,11 +28,14 @@ export interface CpuSkill {
 }
 
 export const CPU_SKILL: Record<Level, CpuSkill> = {
-  chibi: { react: 0.4, speed: 3.3, error: 1.2, swing: [0, 4], judgeOut: false, depth: 10.0, whiff: 0.3 },
-  kids: { react: 0.3, speed: 4.8, error: 0.8, swing: [0, 8], judgeOut: false, depth: 10.6, whiff: 0.2 },
-  otona: { react: 0.2, speed: 6.8, error: 0.45, swing: [3, 12], judgeOut: true, depth: 11.2, whiff: 0.1 },
-  senshu: { react: 0.14, speed: 9.5, error: 0.24, swing: [4, 16], judgeOut: true, depth: 11.4, whiff: 0.04 },
+  chibi: { react: 0.4, speed: 3.3, error: 1.2, power: [0, 0.29], judgeOut: false, depth: 10.0, whiff: 0.3 },
+  kids: { react: 0.3, speed: 4.8, error: 0.8, power: [0, 0.57], judgeOut: false, depth: 10.6, whiff: 0.2 },
+  otona: { react: 0.2, speed: 6.8, error: 0.45, power: [0.21, 0.86], judgeOut: true, depth: 11.2, whiff: 0.1 },
+  senshu: { react: 0.14, speed: 9.5, error: 0.24, power: [0.29, 1.12], judgeOut: true, depth: 11.4, whiff: 0.04 },
 }
+
+/** サービスで振る速さ（m/s。強さ 0.57 ≒ 深すぎない、ふつうのサービス） */
+const CPU_SERVE_SWING = swingForPower(0.57)
 
 export interface HitPlan {
   x: number
@@ -137,7 +140,7 @@ export class Cpu {
         if (this.serveT > 1.6) this.serveT = 0.5
         this.moveToward(COURT.W / 2 + 1.2, home - s * FINGER_LEAD, dt)
       } else {
-        this.fy += s * 8 * dt
+        this.fy += s * CPU_SERVE_SWING * dt
       }
       e.setFinger(this.side, true, this.fx, this.fy)
       return
@@ -152,8 +155,8 @@ export class Cpu {
       this.err = (this.rand() * 2 - 1) * this.skill.error
       // ときどき、届かないところへ動いて空振りする
       if (this.rand() < this.skill.whiff) this.err = (this.rand() < 0.5 ? -1 : 1) * (e.paddles[this.side].width / 2 + 0.6)
-      const [a, b] = this.skill.swing
-      this.swingV = a + this.rand() * (b - a)
+      const [a, b] = this.skill.power
+      this.swingV = swingForPower(a + this.rand() * (b - a))
     }
     this.since += dt
 
