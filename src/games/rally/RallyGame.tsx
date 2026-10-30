@@ -29,7 +29,7 @@ import { RallyEngine } from './engine'
 import type { Games, Kind, ShotMiss } from './engine'
 import { REASON_TEXT } from './rules'
 import type { RuleMode } from './rules'
-import { SHOTS, shotHint } from './targets'
+import { rankOf, SHOTS, shotHint, shotPoints, toNextRank } from './targets'
 import './rally.css'
 
 interface Props {
@@ -47,6 +47,8 @@ interface Props {
 }
 
 const targetBest = (lv: Level) => `target-best-${lv}`
+/** ねらって ストローク：さいこう得点（レベルごと。この端末にだけ保存） */
+const targetScoreBest = (lv: Level) => `target-score-best-${lv}`
 /** ホークアイ先生と ラリー：いちばん長く続いたラリー（レベルごと。この端末にだけ保存） */
 const rallyBest = (lv: Level) => `sensei-rally-best-${lv}`
 /** 試合の中のラリーの回数を画面に出しはじめる数 */
@@ -109,7 +111,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
   const [server, setServer] = useState<Side>(0)
   const [call, setCall] = useState('')
   const [gamesWon, setGamesWon] = useState<[number, number]>([0, 0])
-  const [shots, setShots] = useState({ index: 0, hits: 0, label: '', best: load<number>(targetBest(levels[0]), 0) })
+  const [shots, setShots] = useState({ index: 0, hits: 0, label: '', best: load<number>(targetBest(levels[0]), 0), points: 0, bestPoints: load<number>(targetScoreBest(levels[0]), 0), record: false })
   const [over, setOver] = useState<{ winner: Side | null } | null>(null)
   /** ホークアイ先生と ラリー：いまのラリーで打った回数（サービスもふくむ）・この試合でいちばん長いラリー・これまでの さいこう */
   const [rallyNow, setRallyNow] = useState(0)
@@ -250,9 +252,11 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
               streak.current += 1
               const n = streak.current
               setBestStreak((b) => Math.max(b, n))
-              // 入った場所で はじけて「+1」（れんぞくの数は下の知らせに出す）
-              if (ev.at) fx.celebrate(ev.at, '+1')
-              flash({ title: n >= 2 ? `${n}れんぞく！` : 'ナイス！', sub: n >= 3 ? 'その ちょうし！' : 'ねらいどおり', face: 'ok' }, 1.3)
+              // 入った場所で はじけて、その球の得点（れんぞくの数とボーナスは下の知らせに出す）
+              if (ev.at) fx.celebrate(ev.at, `+${ev.points}`)
+              const deep = ev.at ? shotPoints(ev.at, 0, 1).deep : false
+              const bonus = [deep ? 'ふかい！' : '', n >= 2 ? `れんぞく ボーナス` : ''].filter(Boolean).join('　')
+              flash({ title: n >= 2 ? `${n}れんぞく！` : 'ナイス！', sub: bonus || (n >= 3 ? 'その ちょうし！' : 'ねらいどおり'), face: 'ok' }, 1.3)
               speak(PHRASES.nice)
               react('ok', 1.3)
             } else {
@@ -264,7 +268,7 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
               flash({ title: m.title, sub: hint || m.sub, face: 'oops' }, hint ? 1.9 : 1.3)
               react('oops', 1.3)
             }
-            setShots((s) => ({ ...s, hits: ev.hits }))
+            setShots((s) => ({ ...s, hits: ev.hits, points: ev.total }))
             break
           case 'over':
             sfx.fanfare()
@@ -285,8 +289,10 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
               setShots((s) => {
                 const best = Math.max(s.best, engine.hits)
                 save(targetBest(levels[0]), best)
-                if (engine.hits > s.best) speak(PHRASES.great)
-                return { ...s, hits: engine.hits, best }
+                const record = engine.points > s.bestPoints && engine.points > 0
+                if (record) save(targetScoreBest(levels[0]), engine.points)
+                if (record) speak(PHRASES.great)
+                return { ...s, hits: engine.hits, best, points: engine.points, bestPoints: Math.max(s.bestPoints, engine.points), record }
               })
             } else if (cpu) {
               speak(ev.winner === 0 ? PHRASES.youWin : PHRASES.senseiWin)
@@ -381,7 +387,10 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
             <span>
               {Math.min(shots.index + 1, SHOTS)} / {SHOTS} きゅう
             </span>
-            <span className="solo-score-main">まと {shots.hits}</span>
+            <span className="solo-score-main" data-testid="target-points">
+              {shots.points}てん
+            </span>
+            <span>まと {shots.hits}</span>
           </div>
         </>
       )}
@@ -406,12 +415,13 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
       {over && kind === 'target' && !contest && (
         <Result
           single
-          title={() => `${SHOTS}きゅう中 ${shots.hits}きゅう まとに はいった！`}
-          sub={() => (shots.hits >= shots.best && shots.hits > 0 ? 'さいこう きろく！' : `さいこうは ${shots.best}きゅう（${LEVEL_INFO[levels[0]].label}）`)}
-          face={() => (shots.hits >= SHOTS / 2 ? 'ok' : 'eh')}
+          title={() => `ランク ${rankOf(shots.points)}　${shots.points}てん`}
+          sub={() => `${SHOTS}きゅう中 ${shots.hits}きゅう まとに はいった！ ${shots.record ? 'さいこう きろく！' : `さいこうは ${shots.bestPoints}てん（${LEVEL_INFO[levels[0]].label}）`}`}
+          face={() => (rankOf(shots.points) === 'S' || rankOf(shots.points) === 'A' ? 'ok' : 'eh')}
           onAgain={again}
           extra={
             <>
+              <RankLine points={shots.points} />
               {bestStreak >= 2 && (
                 <div className="rally-long">
                   いちばん ながい れんぞく <b>{bestStreak}きゅう</b>
@@ -445,6 +455,18 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
           onAgain={again}
         />
       )}
+    </div>
+  )
+}
+
+/** ねらって ストロークの結果：ランクと、つぎのランクまで あと何点か */
+function RankLine({ points }: { points: number }) {
+  const rank = rankOf(points)
+  const next = toNextRank(points)
+  return (
+    <div className="rally-rank" data-rank={rank} data-testid="target-rank">
+      <span className="rally-rank-badge">{rank}</span>
+      <small>{next ? `ランク ${next.rank}まで あと ${next.need}てん` : 'さいこうランク！ ぜんぶ ねらいどおり'}</small>
     </div>
   )
 }

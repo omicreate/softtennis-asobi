@@ -3,7 +3,7 @@ import { COURT } from './court'
 import { RallyEngine } from './engine'
 import type { EngineEvent } from './engine'
 import { suggestLevel } from './RallyGame'
-import { makeZone, shotHint } from './targets'
+import { makeZone, rankOf, shotHint, shotPoints, SHOTS, toNextRank } from './targets'
 import { RallyFx } from './fx'
 
 const W = COURT.W
@@ -119,5 +119,44 @@ describe('手応えの演出（RallyFx）', () => {
     expect(f.counts().trail).toBe(0)
     for (let i = 0; i < 40; i++) f.update(0.05, null)
     expect(f.counts()).toEqual({ sparks: 0, rings: 0, pops: 0, trail: 0 })
+  })
+})
+
+describe('ねらって ストローク：得点とランク', () => {
+  it('入った球は 100てん。ふかい・はやい・れんぞくで ふえる', () => {
+    const mid = { x: 2, y: 6 }
+    const deep = { x: 2, y: 1 }
+    expect(shotPoints(mid, 60, 1).total).toBe(100)
+    expect(shotPoints(deep, 60, 1).total).toBe(150)
+    expect(shotPoints(mid, 130, 1).total).toBe(140)
+    expect(shotPoints(mid, 60, 3).total).toBe(140)
+    // れんぞくボーナスは 100 まで
+    expect(shotPoints(mid, 60, 20).combo).toBe(100)
+  })
+  it('ランク：ぜんぶ入れて れんぞくを つなぐと S、半分くらいで B', () => {
+    let all = 0
+    for (let i = 1; i <= SHOTS; i++) all += shotPoints({ x: 2, y: 6 }, 90, i).total
+    expect(rankOf(all)).toBe('S')
+    let half = 0
+    for (let i = 0; i < SHOTS / 2; i++) half += shotPoints({ x: 2, y: 6 }, 90, 1).total
+    expect(rankOf(half)).toBe('B')
+    expect(rankOf(0)).toBe('C')
+    expect(toNextRank(1599)).toEqual({ rank: 'S', need: 1 })
+    expect(toNextRank(1600)).toBeNull()
+  })
+  it('エンジンの合計点は、1球ごとの得点の合計', () => {
+    const e = new RallyEngine({ kind: 'target', mode: 'easy', levels: ['chibi', 'chibi'], target: 0, rand: () => 0.5 })
+    let sum = 0
+    let push = 0
+    for (let t = 0; t < 120 && e.phase !== 'over'; t += 1 / 60) {
+      const coming = e.phase === 'play' && e.state.lastHitter === 1
+      push = coming && e.ball.y > COURT.L - 5 ? push + 20 / 60 : 0
+      e.setFinger(0, true, e.ball.x, COURT.L + 1.0 - push)
+      for (const ev of e.step(1 / 60)) if (ev.type === 'shot') sum += ev.points
+    }
+    expect(e.phase).toBe('over')
+    expect(e.hits).toBeGreaterThan(0)
+    expect(e.points).toBe(sum)
+    expect(e.points).toBeGreaterThanOrEqual(e.hits * 100)
   })
 })

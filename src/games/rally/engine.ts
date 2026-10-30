@@ -9,11 +9,11 @@
 import { LEVEL_INFO, other } from '../../core/players'
 import type { Level, Side } from '../../core/players'
 import { COURT, serveHalf, toNet } from './court'
-import { aimFromSwing, assistShift, contact, HIT_Z, launch, planShot, powerFromSwing, stepBall } from './physics'
+import { aimFromSwing, assistShift, contact, HIT_Z, launch, planShot, powerFromSwing, speedKmh, stepBall } from './physics'
 import type { Ball, Paddle, Vec } from './physics'
 import { judgeBounce, judgeHit } from './rules'
 import type { Fault, RallyState, RuleMode } from './rules'
-import { feedLanding, inZone, makeZone, SHOTS } from './targets'
+import { feedLanding, inZone, makeZone, shotPoints, SHOTS } from './targets'
 import type { Zone } from './targets'
 
 /** versus＝たいけつ（2人／ホークアイ先生）、target＝ねらって ストローク（ひとりで。上はボールマシン） */
@@ -48,7 +48,8 @@ export type EngineEvent =
   /** ねらってショット：ボールマシンが球を送った／打った球の結果 */
   | { type: 'feed'; index: number; zone: Zone }
   /** at＝打った球が最初に跳ねた場所（返せなかったときは無し） */
-  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number; at?: Vec }
+  /** points＝この球の得点（入らなければ 0）、total＝ここまでの合計 */
+  | { type: 'shot'; ok: boolean; reason: ShotMiss | null; index: number; hits: number; at?: Vec; points: number; total: number }
   | { type: 'over'; winner: Side | null }
 
 /** ねらってショットで外れた理由 */
@@ -118,6 +119,12 @@ export class RallyEngine {
   zone: Zone | null = null
   shotIndex = 0
   hits = 0
+  /** ねらってショット：得点の合計・つづけて入った数・いちばん長い れんぞく */
+  points = 0
+  streak = 0
+  bestStreak = 0
+  /** 最後に打った球の強さ（ねらってショットの速さボーナスに使う） */
+  private lastPower = 0
   /** ねらってショット：外れた球の落ちた場所（次の球を送るまで目印を出す） */
   missAt: Vec | null = null
   private readonly rand: () => number
@@ -232,12 +239,21 @@ export class RallyEngine {
 
   /** ねらってショット：1球の結果 */
   private shotResult(ok: boolean, reason: ShotMiss | null, ev: EngineEvent[], at?: Vec): void {
-    if (ok) this.hits += 1
-    else if (at) this.missAt = { x: at.x, y: at.y }
+    let points = 0
+    if (ok && at) {
+      this.hits += 1
+      this.streak += 1
+      this.bestStreak = Math.max(this.bestStreak, this.streak)
+      points = shotPoints(at, speedKmh(this.lastPower), this.streak).total
+      this.points += points
+    } else {
+      this.streak = 0
+      if (at) this.missAt = { x: at.x, y: at.y }
+    }
     this.phase = 'point'
     // 外れたときは、直し方の一言を読めるように少し長く見せる
     this.timer = ok ? 1.4 : 2.0
-    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits, at: at ? { x: at.x, y: at.y } : undefined })
+    ev.push({ type: 'shot', ok, reason, index: this.shotIndex, hits: this.hits, at: at ? { x: at.x, y: at.y } : undefined, points, total: this.points })
   }
 
   private holdBall(): void {
@@ -417,6 +433,7 @@ export class RallyEngine {
         this.ball.z = Math.max(this.ball.z, 0.35)
         launch(this.ball, shot.target, shot.T, this.levelOf(other(side)).ballSpeed)
         this.state = { ...this.state, lastHitter: side, shot: this.state.shot + 1, bounces: 0 }
+        this.lastPower = power
         this.swingT[side] = SWING_TIME
         this.head[side] = off * (p.width / 2)
         hitNow = true
