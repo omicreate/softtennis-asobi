@@ -237,3 +237,8 @@
     animation: none;
   }
 }
+
+/* 結果のあいだは「？」と一時停止を出さない（結果の文字に重なるため。結果に「もういちど」「おわる」がある） */
+body:has(.rally .result) .game-buttons {
+  display: none;
+}

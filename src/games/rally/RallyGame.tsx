@@ -13,6 +13,7 @@ import { sfx, unlockAudio } from '../../core/sound'
 import { speak } from '../../core/speak'
 import { PHRASES } from '../../core/voiceLines'
 import { Half, useStage } from '../../core/Stage'
+import { getSettings } from '../../core/settings'
 import { load, save } from '../../core/storage'
 import { Notice, Result, Scores } from '../../ui/GameUI'
 import type { NoticeData } from '../../ui/GameUI'
@@ -56,8 +57,9 @@ const RALLY_SHOW = 3
 /** ひとりで遊ぶラリー・ねらって ストロークで、いちばん速かった球（km/h。この端末にだけ保存） */
 const SPEED_BEST = 'rally-speed-best'
 
-/** 打った手応えを、指に小さなふるえで返す（対応している端末だけ。Android の Chrome など） */
+/** 打った手応えを、指に小さなふるえで返す（対応している端末だけ。Android の Chrome など）。音を切っているときは ふるえない */
 function buzz(ms: number): void {
+  if (!getSettings().sound) return
   try {
     navigator.vibrate?.(ms)
   } catch {
@@ -335,10 +337,14 @@ export function RallyGame({ kind, levels, mode, target, games, cpu = false, paus
     owner.current[side] = e.pointerId
     engine.setFinger(side, true, x, y, fingerTime(e))
   }
-  /** 指が動いた時刻を、ゲームの時刻（秒）に直す。いまのコマから先へ最大 0.05 秒まで */
+  /**
+   * 指が動いた時刻を、ゲームの時刻（秒）に直す。いまのコマから先へ最大 0.05 秒まで。
+   * 指の時刻とコマの時刻の物差しが ちがう端末（1秒以上ずれる）では、コマの時刻を使う（速さが いつも 0 にならないように）
+   */
   const fingerTime = (e: PointerEvent) => {
     const ahead = (e.timeStamp - frameAt.current) / 1000
-    return engine.time + (Number.isFinite(ahead) ? Math.min(0.05, Math.max(0, ahead)) : 0)
+    if (!Number.isFinite(ahead) || Math.abs(ahead) > 1) return engine.time
+    return engine.time + Math.min(0.05, Math.max(0, ahead))
   }
   const onMove = (e: PointerEvent<HTMLCanvasElement>) => {
     const side = pointers.current.get(e.pointerId)
